@@ -1,0 +1,67 @@
+/**
+ * [INPUT]: 依赖 @dionysus/ui 共享 Token/基础样式、Web 文档组件与 Tailwind v4 source scanning
+ * [OUTPUT]: 对外提供设计系统站点专属的视口、文档进入、搜索/抽屉、代码和打印样式
+ * [POS]: web/src 的站点样式层，只定义文档呈现与动效，不创建第二套基础视觉 Token
+ * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
+ */
+@import "@dionysus/ui/styles.css";
+@source "./**/*.{ts,tsx}";
+@source "../../../packages/ui/src/**/*.{ts,tsx}";
+
+html,
+body,
+#root {
+  min-width: 20rem;
+  min-height: 100%;
+}
+
+body {
+  overflow: hidden;
+}
+
+.docs-code {
+  color: oklch(0.88 0.01 286);
+  background: oklch(0.17 0.005 286);
+}
+
+.docs-code-copy {
+  color: oklch(0.72 0.01 286);
+}
+
+.docs-code-copy:hover {
+  color: white;
+  background: rgb(255 255 255 / 8%);
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes specimen-enter {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes search-enter {
+  from { opacity: 0; transform: translateY(-8px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes drawer-enter {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.page-enter { animation: page-enter 360ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.specimen-enter { animation: specimen-enter 180ms ease-out both; }
+.search-enter { animation: search-enter 180ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.drawer-enter { animation: drawer-enter 220ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@media print {
+  body { overflow: visible; background: var(--page-canvas); }
+  aside,
+  header,
+  footer { display: none !important; }
+  main { overflow: visible !important; box-shadow: none !important; }
+}
