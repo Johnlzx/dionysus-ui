@@ -1,6 +1,6 @@
-# Dionysus Desktop Design System
+# Dionysus UI Design System
 
-> 视觉基线来源：Multica `dd692058d7bc050dbc5518d9470e1b4f4b51ab03`；生成等待动效使用 React Bits Pro Fog Sphere 授权源码。业务语义、代码组织与 Electron 安全边界已适配 Dionysus。许可与署名见仓库根目录 `THIRD_PARTY_NOTICES.md`。
+> 当前仓库是 Dionysus 设计系统的 React 源码预览：`packages/ui` 提供共享 Token 与基础原语，`apps/web` 使用真实共享组件生成活文档。Desktop、FogSphere、GlassSurface 等更完整产品原语仍属于后续迁移/发布范围。视觉基线来源、授权边界与再分发限制见仓库根目录 `THIRD_PARTY_NOTICES.md`。
 
 ## 1. 设计哲学
 
@@ -11,14 +11,13 @@
 
 ## 2. 真相源与依赖边界
 
-- 唯一 Token 真相源：`app/styles.css`。
-- 开发态活规范入口：侧栏 `Design System`；只在 `import.meta.env.DEV` 为真时出现。
-- 原子 UI：`shared/ui/`，只依赖 React、浏览器能力和纯样式工具。
-- GPU 动效：`shared/ui/fog-sphere.tsx` 只依赖 React、`@react-three/fiber`、Three.js 与语义 Token；不得在业务页面复制 Shader 或维护第二套调色值。
-- 页面模式：`shared/layout/`，组合原子组件，不包含文章业务数据。
-- 领域业务页面：`features/articles/`、`features/creation/` 与 `features/knowledge-base/`。
-- Renderer 禁止导入 `electron`、`node:*`、`fs`、`path`、`child_process`。
-- Main、Preload、API、Agent、Contracts 禁止依赖本设计系统。
+- 唯一 Token 真相源：`packages/ui/src/styles.css`。
+- 共享原语入口：`packages/ui/src/index.ts`，消费者只从 `@dionysus/ui` 和 `@dionysus/ui/styles.css` 引入。
+- 当前稳定原语：`Button / Badge / Avatar / Input / SearchField / DropdownMenu / Surface / Dialog / SegmentedControl / ThemeToggle`。
+- Web 活规范入口：`apps/web`，侧栏、搜索、示例和页面模式必须消费真实共享组件。
+- Web 站点样式：`apps/web/src/styles.css` 只定义文档呈现、动画和打印规则，不创建第二套基础视觉 Token。
+- 后续产品原语：`FogSphere / GlassSurface / TreeView / MarkdownEditor / Page primitives` 等必须先进入 `packages/ui` 或明确标注为路线图，再允许业务消费。
+- Desktop / Electron 适配层可以消费本设计系统，但本设计系统不得导入 `electron`、`node:*`、`fs`、`path`、`child_process` 或业务协议。
 - 禁止增加平行全局 CSS、Tailwind 配置文件或第二套颜色变量。
 - 禁止业务页面硬编码颜色、阴影、圆角或任意基础尺寸；新增值先进入 Token 或稳定组件变体。
 
@@ -93,7 +92,7 @@
 
 ### Button
 
-- 变体：`default / outline / secondary / glass / ghost / destructive / link`；`glass` 只用于 Glass Surface 内的紧凑工具操作。
+- 当前变体：`default / outline / secondary / ghost / destructive / link`。
 - 尺寸：`default / xs / sm / lg / icon / icon-xs / icon-sm`。
 - Icon-only Button 必须有 `aria-label` 和 `title`。
 - 危险操作使用低饱和背景，不使用整块高纯度红色。
@@ -122,16 +121,38 @@
 - `prefers-reduced-motion` 下速度和旋转归零，并把 Canvas 帧循环降为 demand；等待语义仍通过不可见的 `role="status"` 可访问名称表达。
 - Retina 场景必须限制 DPR；材料成纲等待态固定使用 14 次 ray march、6 次 turbulence 与 DPR 1，避免短时反馈长期占满 GPU。
 
+### Dialog
+
+- 所有模态交互统一使用 `Dialog`；业务只提供标题、说明、内容与 footer 操作。
+- 遮罩、Raised Surface、Escape 关闭、初始焦点、Tab 焦点循环、遮罩关闭和关闭后的焦点恢复由共享原语维护。
+- 危险操作必须在标题与正文中明确说明真实影响，并把最终按钮设为 `destructive`；禁止只用颜色传达风险。
+
+### SegmentedControl
+
+- 用于少量互斥视图切换，例如预览/代码。
+- 必须实现 `tablist/tab`、`aria-selected`、roving tabindex、方向键与 Home/End。
+- 视图状态如果影响可分享页面，应同步到 URL；纯局部示例状态可以保持组件内部状态。
+
 ### Input / SearchField / OneTimeCodeInput
 
-- 输入框的边框、阴影、placeholder、focus-visible、disabled 与 invalid 由 `shared/ui/input.tsx` 统一维护。
+- 输入框的边框、阴影、placeholder、focus-visible、disabled 与 invalid 由 `packages/ui/src/primitives.tsx` 统一维护。
 - 搜索清除行为由受控 `SearchField` 提供，业务页面不得重复拼接图标、输入框和清除按钮。
-- 一次性验证码使用单个 `OneTimeCodeInput`，保留 `autocomplete="one-time-code"`、数字键盘、粘贴与屏幕阅读器能力；禁止拆成六个制造焦点陷阱的输入框。
+- 一次性验证码属于后续原语；实现时使用单个 `OneTimeCodeInput`，保留 `autocomplete="one-time-code"`、数字键盘、粘贴与屏幕阅读器能力；禁止拆成六个制造焦点陷阱的输入框。
 
 ### Surface
 
 - `card / raised / subtle / selected / flat` 是允许的基础表面变体。
 - 业务页面不得重复组合 `border + background + shadow + radius` 创建平行卡片。
+
+### DropdownMenu
+
+- 用于搜索型下拉选择、成员分配、标签选择和轻量 command palette；支持分组、多选、右侧计数与指令项。
+- 同一个菜单内的 `value` 必须稳定且唯一；组件用它维护 active、selection 和键盘状态。
+- 顶部搜索栏是浮层的一部分，不额外套 Input 外框；打开后优先聚焦搜索，`ArrowDown` 进入结果，`Escape` 关闭并返回触发器。
+- 多选项使用 `menuitemcheckbox` 与 `aria-checked`；选中通过勾选和字重表达，高亮/hover 行使用 `surface-selected`，两种状态不得混淆。
+- 指令项只触发 `onCommandSelect`，可以打开另一个 `DropdownMenu` 或 `Dialog`；邀请、分配、权限升级等业务副作用不得进入组件库。
+- 非受控搜索默认在关闭后清空；受控搜索值由业务层在 `onOpenChange` 中决定是否清理。
+- 浮层使用 `Raised Surface`、`--floating-shadow`、语义 Token 和平台无关 DOM 事件；不得访问 Electron、Node、网络请求或产品协议。
 
 ### GlassSurface
 
@@ -139,24 +160,18 @@
 - 只用于正文画布内的紧凑工具栏或操作组，不替代普通信息 Surface、页面 Header 或 Dialog。
 - 长画布中的主操作工具栏使用 `shape="capsule"`，可在所属滚动容器内通过 `sticky top-0` 固定；必须保留独立层级，让滚动内容成为真实折射背景，不得脱离页面结构做全局悬浮。
 - SVG backdrop filter 不可用时必须自动回落到 `blur + saturate`，轮廓、边框、阴影和操作可用性不得改变。
-- 内部操作统一使用 Button `glass` 变体，共享 light/dark 材质 Token；不支持 backdrop-filter 时退化为 Raised Surface。
-
-### Dialog
-
-- 所有模态交互统一使用 `shared/ui/dialog.tsx`；业务只提供标题、说明、内容与 footer 操作。
-- 遮罩、Raised Surface、焦点陷阱、Escape/外部关闭和进出场状态由 Base UI 原语维护。
-- 危险操作必须在标题与正文中明确说明真实影响，并把最终按钮设为 `destructive`；禁止只用颜色传达风险。
+- 若后续引入 `glass` Button 变体，内部操作必须共享 light/dark 材质 Token；不支持 backdrop-filter 时退化为 Raised Surface。
 
 ### ContextMenu
 
-- 常规上下文操作统一使用 `shared/ui/context-menu.tsx`，业务层只提供无副作用的菜单描述和动作回调。
+- 常规上下文操作后续统一进入 `packages/ui`，业务层只提供无副作用的菜单描述和动作回调。
 - 触发元素模式必须支持右键、长按、`Shift + F10` 与菜单键；受控坐标模式用于由列表或树统一托管当前 occurrence 的菜单。
 - 方向键、Enter、Escape、点击外部关闭、关闭后的焦点恢复和视口碰撞由 Base UI 原语维护，业务页面不得重复实现菜单焦点系统。
 - 菜单项只允许 `default / destructive` 语义、disabled 状态和 separator；危险操作必须使用 destructive 项，并在后续确认流中说明真实影响。
 
 ### TreeView
 
-- 业务层先把层级或 DAG 展开为扁平 occurrence，再交给 `TreeView`；共享组件不理解文件类型或业务关系。
+- `TreeView` 是后续复杂原语。业务层先把层级或 DAG 展开为扁平 occurrence，再交给 `TreeView`；共享组件不理解文件类型或业务关系。
 - 必须实现 `tree/treeitem`、`aria-level`、`aria-posinset`、`aria-setsize`、`aria-expanded`、roving tabindex、方向键与 Home/End。
 - 同一节点多父时 occurrence ID 必须不同；`aria-selected` 只标记精确 occurrence，解除关系必须保留具体 edge 语义。
 - 排序只允许在同一 parent occurrence 内执行；拖拽需显示 before/after 插入线，并提供 `Alt + ArrowUp/ArrowDown` 等价键盘路径；排序不得隐式切换选择或打开文件。
@@ -164,13 +179,14 @@
 
 ### MarkdownEditor
 
+- `MarkdownEditor` 是后续复杂原语。
 - CodeMirror 只编辑 Markdown 源码，禁止把预览 DOM 或 WYSIWYG 序列化结果写回事实源。
 - 内建搜索、撤销历史、GFM 输入、格式工具栏、可见焦点和 `Cmd/Ctrl + S`；保存、冲突与文件身份由业务层负责。
 - 编辑器主题只能引用语义 CSS Variables；禁止引入第二套亮暗主题色值。
 
 ### Page primitives
 
-- 页面统一使用 `Page → PageHeader → PageToolbar → PageContent`。
+- Page primitives 是后续布局原语。成熟页面统一使用 `Page → PageHeader → PageToolbar → PageContent`。
 - 标题栏和工具栏高度、边界与 padding 由页面原语维护，领域页面只注入内容与操作。
 
 ## 8.1 开发态活规范
@@ -261,14 +277,14 @@
 
 - [ ] 是否只使用语义 Token，没有组件硬编码色值？
 - [ ] Light / Dark Token 是否对称？
-- [ ] 是否复用现有 Button、Badge、Avatar 与 AppShell？
-- [ ] 是否复用 Input、SearchField、Surface 与 Page primitives，而不是在业务页重复拼接？
+- [ ] 是否复用现有 Button、Badge、Avatar、DropdownMenu、Dialog 与 SegmentedControl？
+- [ ] 是否复用 Input、SearchField、Surface 与已发布页面模式，而不是在业务页重复拼接？
 - [ ] 认证是否默认保持验证码登录/注册同路、密码入口避免账号枚举，并且未在 Renderer 持久化 Token 或密码？
 - [ ] Agent Composer 是否只在聚焦时高亮、只在非空时激活发送，并正确处理 Enter/Shift+Enter/输入法？
 - [ ] 大纲素材栏是否只保存引用、在请求时现读正文、明确展示选择/失效/超限状态，并在切换知识库前确认？
 - [ ] 材料成纲期间是否仅在大纲展示区显示 FogSphere，并保留 Header/右侧对话，且 light/dark、DPR 上限与 reduced-motion 都来自共享契约？
 - [ ] 新基础组件是否已经进入开发态 Design System 页面供人工 Review？
-- [ ] Dialog、ContextMenu、TreeView、MarkdownEditor 是否保持键盘、焦点、长中文与 light/dark 契约？
+- [ ] Dialog、SegmentedControl 以及后续 ContextMenu、TreeView、MarkdownEditor 是否保持键盘、焦点、长中文与 light/dark 契约？
 - [ ] 页面属于 Collection、Workflow Board、Settings 或明确的新模式吗？
 - [ ] Hover 是否轻于 Selected，且不会覆盖 Selected？
 - [ ] 键盘焦点是否可见？Icon-only 控件是否有可访问名称？

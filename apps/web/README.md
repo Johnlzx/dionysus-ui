@@ -5,7 +5,7 @@
 ## 本地运行
 
 ```bash
-pnpm dev:web
+pnpm dev
 ```
 
 打开 <http://127.0.0.1:20003/overview>。
@@ -21,7 +21,7 @@ pnpm --filter @dionysus/web build
 ## 当前边界
 
 - 设计系统站点不连接 API、Supabase、Electron IPC 或本地文件系统。
-- 共享基础包当前包含 Token、Button、Badge、Avatar、Input、SearchField、Surface 和主题控制。
+- 共享基础包当前包含 Token、Button、Badge、Avatar、Input、SearchField、DropdownMenu、Surface、Dialog、SegmentedControl 和主题控制。
 - Desktop 仍使用既有 Renderer 组件；迁移为共同消费 `@dionysus/ui` 是下一阶段工作。
 - React Bits Pro Fog Sphere 不进入共享基础包；Glass Surface 与 Multica 相关实现公开分发前仍需许可复核或替换。
 

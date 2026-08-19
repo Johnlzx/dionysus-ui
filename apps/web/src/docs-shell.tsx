@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 React 状态/副作用、React Router、Lucide、共享 UI 原语、导航模型与页面目录元数据
+ * [INPUT]: 依赖 React 状态/副作用、React Router、Lucide、共享 UI 交互原语、导航模型与页面目录元数据
  * [OUTPUT]: 对外提供含桌面侧栏、移动抽屉、顶栏、搜索面板、页内目录和 inset canvas 的 DocsShell
  * [POS]: web/src 的顶级文档壳，用 Dionysus 自身布局语言呈现整个设计系统
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
@@ -7,7 +7,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, BookOpen, Menu, Search, X } from "lucide-react";
-import { Badge, Button, Surface, ThemeToggle, cn } from "@dionysus/ui";
+import { Badge, Button, Dialog, SearchField, ThemeToggle, cn } from "@dionysus/ui";
 import { DOC_ITEMS, DOC_NAVIGATION } from "./navigation";
 import { PAGE_TOC } from "./pages";
 
@@ -40,11 +40,10 @@ function Navigation({ onNavigate }: { onNavigate?: () => void }) {
                   onClick={onNavigate}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "group/nav relative flex min-h-8 items-center gap-2 rounded-md px-2 text-xs text-muted-foreground outline-none transition-colors hover:bg-sidebar-accent/65 hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+                    "group/nav flex min-h-8 items-center gap-2 rounded-md px-2 text-xs text-muted-foreground outline-none transition-colors hover:bg-sidebar-accent/65 hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring",
                     active && "bg-sidebar-accent font-medium text-sidebar-accent-foreground hover:bg-sidebar-accent",
                   )}
                 >
-                  <span aria-hidden className={cn("h-3 w-0.5 rounded-full bg-transparent transition-colors", active && "bg-foreground")} />
                   <span className="min-w-0 flex-1 truncate">{item.label}</span>
                   {item.badge ? <span className="tabular-nums text-micro text-muted-foreground">{item.badge}</span> : null}
                 </Link>
@@ -59,7 +58,6 @@ function Navigation({ onNavigate }: { onNavigate?: () => void }) {
 
 function SearchPanel({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const [query, setQuery] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
   const results = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("zh-CN");
     return !normalized ? DOC_ITEMS.slice(0, 7) : DOC_ITEMS.filter((item) => (
@@ -68,27 +66,24 @@ function SearchPanel({ open, onOpenChange }: { open: boolean; onOpenChange: (ope
   }, [query]);
 
   useEffect(() => {
-    if (!open) {
-      setQuery("");
-      return;
-    }
-    const timer = window.setTimeout(() => inputRef.current?.focus(), 40);
-    return () => window.clearTimeout(timer);
+    if (!open) setQuery("");
   }, [open]);
 
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-foreground/12 px-4 pt-[12vh] backdrop-blur-[2px]" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onOpenChange(false); }}>
-      <Surface variant="raised" role="dialog" aria-modal="true" aria-label="搜索设计系统" className="search-enter w-full max-w-xl overflow-hidden">
+    <Dialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title="搜索设计系统"
+      description="输入关键词定位组件、Token 或页面模式"
+      panelClassName="search-enter max-w-xl"
+    >
         <div className="flex h-12 items-center gap-3 border-b border-border px-3">
-          <Search aria-hidden className="size-4 text-muted-foreground" />
-          <input
-            ref={inputRef}
+          <SearchField
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            onKeyDown={(event) => { if (event.key === "Escape") onOpenChange(false); }}
-            className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            onClear={() => setQuery("")}
+            wrapperClassName="h-8 min-w-0 flex-1 border-0 bg-transparent px-0 shadow-none focus-within:border-transparent focus-within:ring-0"
+            className="text-sm"
             placeholder="搜索组件、Token 或模式…"
             aria-label="搜索"
           />
@@ -96,7 +91,7 @@ function SearchPanel({ open, onOpenChange }: { open: boolean; onOpenChange: (ope
         </div>
         <div className="max-h-[24rem] overflow-y-auto p-1.5">
           {results.map((item) => (
-            <Link key={item.id} to={item.path} onClick={() => onOpenChange(false)} className="group flex items-center gap-3 rounded-lg px-3 py-2.5 outline-none hover:bg-surface-hover focus-visible:bg-surface-hover">
+            <Link key={item.id} to={item.path} onClick={() => onOpenChange(false)} className="group flex items-center gap-3 rounded-lg px-3 py-2.5 outline-none hover:bg-surface-hover focus-visible:bg-surface-hover focus-visible:ring-2 focus-visible:ring-ring">
               <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground"><BookOpen className="size-3.5" /></span>
               <span className="min-w-0 flex-1">
                 <span className="block text-xs font-medium">{item.label}</span>
@@ -111,8 +106,7 @@ function SearchPanel({ open, onOpenChange }: { open: boolean; onOpenChange: (ope
           <span>输入关键词定位设计资产</span>
           <span>{DOC_ITEMS.length} 个条目</span>
         </div>
-      </Surface>
-    </div>
+    </Dialog>
   );
 }
 
@@ -150,11 +144,11 @@ function DocsShell({ children }: { children: ReactNode }) {
       <aside className="hidden w-sidebar shrink-0 flex-col bg-sidebar text-sidebar-foreground lg:flex">
         <div className="px-2 pb-1 pt-2"><Brand /></div>
         <div className="px-2 py-2">
-          <button type="button" onClick={() => setSearchOpen(true)} className="flex h-8 w-full items-center gap-2 rounded-lg border border-sidebar-border bg-surface/55 px-2 text-xs text-muted-foreground shadow-[var(--surface-shadow)] outline-none transition-colors hover:bg-surface-hover hover:text-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring">
+          <Button onClick={() => setSearchOpen(true)} variant="ghost" className="h-8 w-full justify-start border-sidebar-border bg-surface/55 px-2 text-xs text-muted-foreground shadow-[var(--surface-shadow)] hover:bg-surface-hover hover:text-foreground focus-visible:ring-sidebar-ring">
             <Search className="size-3.5" />
             <span className="flex-1 text-left">搜索文档</span>
             <kbd className="rounded border border-sidebar-border px-1 py-0.5 font-mono text-micro">⌘K</kbd>
-          </button>
+          </Button>
         </div>
         <Navigation />
         <div className="m-2 flex items-center justify-between rounded-lg border border-sidebar-border bg-surface/35 px-2.5 py-2">
@@ -166,22 +160,25 @@ function DocsShell({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      {mobileOpen ? (
-        <div className="fixed inset-0 z-40 bg-foreground/12 backdrop-blur-[2px] lg:hidden" onMouseDown={(event) => { if (event.target === event.currentTarget) setMobileOpen(false); }}>
-          <aside className="drawer-enter flex h-full w-[min(19rem,88vw)] flex-col bg-sidebar shadow-[var(--floating-shadow)]">
+      <Dialog
+        open={mobileOpen}
+        onOpenChange={setMobileOpen}
+        title="设计系统导航"
+        description="浏览 Dionysus UI 的 Foundations、Components、Patterns 和 Resources"
+        overlayClassName="z-40 items-stretch justify-start p-0 pt-0 lg:hidden"
+        panelClassName="drawer-enter flex h-full w-[min(19rem,88vw)] max-w-none flex-col rounded-none bg-sidebar shadow-[var(--floating-shadow)] ring-0"
+      >
             <div className="flex items-center justify-between px-2 pb-1 pt-2">
               <Brand />
               <Button variant="ghost" size="icon-sm" aria-label="关闭导航" onClick={() => setMobileOpen(false)}><X /></Button>
             </div>
             <div className="px-2 py-2">
-              <button type="button" onClick={() => { setMobileOpen(false); setSearchOpen(true); }} className="flex h-8 w-full items-center gap-2 rounded-lg border border-sidebar-border bg-surface/55 px-2 text-xs text-muted-foreground shadow-[var(--surface-shadow)] outline-none hover:bg-surface-hover focus-visible:ring-2 focus-visible:ring-sidebar-ring">
+              <Button onClick={() => { setMobileOpen(false); setSearchOpen(true); }} variant="ghost" className="h-8 w-full justify-start border-sidebar-border bg-surface/55 px-2 text-xs text-muted-foreground shadow-[var(--surface-shadow)] hover:bg-surface-hover focus-visible:ring-sidebar-ring">
                 <Search className="size-3.5" /><span className="flex-1 text-left">搜索文档</span><kbd className="rounded border border-sidebar-border px-1 py-0.5 font-mono text-micro">⌘K</kbd>
-              </button>
+              </Button>
             </div>
             <Navigation onNavigate={() => setMobileOpen(false)} />
-          </aside>
-        </div>
-      ) : null}
+      </Dialog>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 shrink-0 items-center gap-2 px-2 sm:px-3">
@@ -211,7 +208,7 @@ function DocsShell({ children }: { children: ReactNode }) {
                   <p className="mb-3 text-micro font-medium uppercase tracking-[0.12em] text-muted-foreground">On this page</p>
                   <nav aria-label="页内目录" className="border-l border-border pl-3">
                     {toc.map((item) => (
-                      <a key={item.id} href={`#${item.id}`} className="block py-1.5 text-xs leading-4 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:text-foreground">{item.label}</a>
+                      <a key={item.id} href={`#${item.id}`} className="block rounded-sm py-1.5 text-xs leading-4 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:ring-2 focus-visible:ring-ring">{item.label}</a>
                     ))}
                   </nav>
                 </div>

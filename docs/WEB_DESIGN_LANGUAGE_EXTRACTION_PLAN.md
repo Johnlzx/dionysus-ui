@@ -4,7 +4,7 @@
 > 审计日期：2026-08-03。  
 > 审计范围：当前仓库 Renderer 源码、现有活规范、代表性业务页面、平台适配器与第三方来源记录。  
 > 名称说明：口述中的 “Motica” 根据仓库现有审计记录应为 **Multica**；本文统一使用 Multica。
-> 实施进度：同日已建立 `packages/ui` 与 `apps/web` 第一条纵向切片，包含共享 Token/核心原语、专业设计系统信息架构、浏览器路由、搜索、主题、预览/代码切换及桌面/窄屏验收；Desktop 消费共享包与完整业务 Web 化仍按本文后续阶段推进。
+> 实施进度：已建立 `packages/ui` 与 `apps/web` 第一条纵向切片，包含共享 Token、Button、Badge、Avatar、Input、SearchField、DropdownMenu、Surface、Dialog、SegmentedControl、主题控制、专业设计系统信息架构、浏览器路由、搜索及预览/代码切换；Desktop 消费共享包与完整业务 Web 化仍按本文后续阶段推进。
 
 ## 1. 结论先行
 
@@ -22,7 +22,7 @@
 ```text
 同一个 monorepo
 ├── packages/design-tokens   颜色、字体、间距、圆角、阴影和主题
-├── packages/ui              Button、Input、Surface、Dialog 等原子组件
+├── packages/ui              Button、Input、DropdownMenu、Surface、Dialog 等原子组件
 ├── packages/ui-patterns     AppShell、Page、Collection、Workflow 等页面模式
 ├── packages/product-ui      可选：纯展示型业务视图与 view-model
 ├── apps/desktop             Electron 平台适配器 + 桌面组合根
@@ -35,19 +35,14 @@
 
 主要事实来源：
 
-- [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md)：现有设计原则、组件与页面契约。
-- [`app/styles.css`](./app/styles.css)：475 行，当前唯一视觉 Token 和 light/dark 真相源。
-- [`shared/layout/app-shell.tsx`](./shared/layout/app-shell.tsx)：桌面壳、侧栏、顶栏、标签与 inset canvas。
-- [`shared/layout/page.tsx`](./shared/layout/page.tsx)：Page、Header、Toolbar、Content 四个页面骨架。
-- [`shared/ui/`](./shared/ui/)：14 类共享 UI 原语，包括 Button、Input、Surface、Dialog、ContextMenu、TreeView、MarkdownEditor、GlassSurface 与 FogSphere。
-- [`features/design-system/design-system-page.tsx`](./features/design-system/design-system-page.tsx)：开发态真实组件陈列馆。
-- [`features/articles/article-board.tsx`](./features/articles/article-board.tsx)：工作流看板与列表模式。
-- [`features/creation/creation-page.tsx`](./features/creation/creation-page.tsx)：AI 创作、大纲、正文、素材与对话三栏工作区。
-- [`features/knowledge-base/knowledge-base-page.tsx`](./features/knowledge-base/knowledge-base-page.tsx)：树、编辑、预览、分屏和本地文件操作工作台。
-- [`features/auth/auth-page.tsx`](./features/auth/auth-page.tsx)：单列、低装饰的认证页面。
-- [`THIRD_PARTY_NOTICES.md`](../../../../THIRD_PARTY_NOTICES.md)：Multica、React Bits 与 React Bits Pro 的来源和本地审计结论。
+- [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md)：当前设计原则、组件与页面契约。
+- [`../packages/ui/src/styles.css`](../packages/ui/src/styles.css)：当前唯一视觉 Token 和 light/dark 真相源。
+- [`../packages/ui/src/primitives.tsx`](../packages/ui/src/primitives.tsx)：当前共享 UI 原语，包括 Button、Badge、Avatar、Input、SearchField、Surface、Dialog 与 SegmentedControl。
+- [`../packages/ui/src/dropdown-menu.tsx`](../packages/ui/src/dropdown-menu.tsx)：当前共享 DropdownMenu 原语，覆盖搜索、多选、分组与指令项。
+- 历史 Desktop 来源：`app/styles.css`、`shared/layout/`、`shared/ui/` 与 `features/*` 是本方案审计时的视觉和交互基线；当前独立仓库只保留 Web 设计系统纵向切片。
+- [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md)：Multica、React Bits 与 React Bits Pro 的来源和本地审计结论。
 
-初次审计以真实组件源码、Token 数值、页面组合和已有活规范为依据；随后的实现阶段已经安装根 Workspace 依赖，并完成 Vite 生产构建以及 1280px、390px 的 light/dark 浏览器截图验收。
+初次审计以真实组件源码、Token 数值、页面组合和已有活规范为依据；当前独立仓库的验证入口是根目录 `pnpm typecheck` 与 `pnpm build`，需要先安装 Workspace 依赖。
 
 ## 3. 这套设计语言是什么
 
@@ -290,12 +285,12 @@ Inter 的优势是安静、紧凑、跨平台稳定，符合 Linear 式生产力
 | 类别 | 现有资产 | 判断 |
 | --- | --- | --- |
 | Foundation | CSS Variables、light/dark、字体、滚动条、selection | 高可复用 |
-| Actions | Button 7 个变体、7 个尺寸 | 高可复用 |
-| Signals | Badge、Avatar、ShinyText | 高可复用 |
-| Inputs | Input、SearchField、OneTimeCodeInput | 高可复用 |
-| Surfaces | Surface、Dialog、ContextMenu | 高可复用 |
-| Structure | TreeView、MarkdownEditor | Web 技术上可复用，业务契约需要文档化 |
-| Layout | Page primitives | 高可复用 |
+| Actions | Button 6 个变体、7 个尺寸 | 已进入 `packages/ui` |
+| Signals | Badge、Avatar | 已进入 `packages/ui`；ShinyText 属于后续原语 |
+| Inputs | Input、SearchField | 已进入 `packages/ui`；OneTimeCodeInput 属于后续原语 |
+| Surfaces | Surface、Dialog、DropdownMenu | 已进入 `packages/ui`；ContextMenu 属于后续复杂原语 |
+| Structure | TreeView、MarkdownEditor | 后续复杂原语，业务契约需要文档化 |
+| Layout | Page primitives | 后续布局原语 |
 | Theme | ThemeToggle | 高可复用，持久化策略需可注入 |
 
 这些组件没有导入 Electron、Node 或业务 Feature，已经具备设计系统雏形。
@@ -465,7 +460,7 @@ Electron IPC / HTTP / browser capabilities
 #### `@dionysus/ui`
 
 - 纯 React + Base UI 原语；
-- Button、Badge、Input、Surface、Dialog 等；
+- Button、Badge、Input、DropdownMenu、Surface、Dialog 等；
 - peerDependencies 使用 React/React DOM；
 - 不直接包含产品文案；
 - 输出编译后的组件 CSS，避免消费者漏扫 Tailwind 源码。
@@ -662,7 +657,7 @@ Web App Shell 的具体变化：
 ### 设计一致性
 
 - Desktop 与 Web 的 Token 只来自一个包。
-- Button、Input、Surface、Dialog 等不在应用内重复实现。
+- Button、Input、DropdownMenu、Surface、Dialog 等不在应用内重复实现。
 - Light/Dark 的结构、层级和状态语义一致。
 - 1440px 大屏下与当前桌面视觉基线保持一致。
 
@@ -704,7 +699,7 @@ Web App Shell 的具体变化：
 
 最合理的第一步不是立即创建 Web 页面，而是用一个小规模验证切片完成：
 
-1. 抽出 Button、Input、Surface、Page 和 AppShell；
+1. 抽出 Button、Input、DropdownMenu、Surface、Page 和 AppShell；
 2. 去掉 AppShell 对窗口拖拽区的硬绑定；
 3. 在普通 Vite Web 环境复现登录页与 Article Board；
 4. 建立 light/dark 和 1440/1024 两档截图回归；

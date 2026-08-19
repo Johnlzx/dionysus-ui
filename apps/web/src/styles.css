@@ -20,17 +20,17 @@ body {
 }
 
 .docs-code {
-  color: oklch(0.88 0.01 286);
-  background: oklch(0.17 0.005 286);
+  color: var(--primary-foreground);
+  background: var(--primary);
 }
 
 .docs-code-copy {
-  color: oklch(0.72 0.01 286);
+  color: color-mix(in oklab, var(--primary-foreground) 72%, transparent);
 }
 
 .docs-code-copy:hover {
-  color: white;
-  background: rgb(255 255 255 / 8%);
+  color: var(--primary-foreground);
+  background: color-mix(in oklab, var(--primary-foreground) 8%, transparent);
 }
 
 @keyframes page-enter {

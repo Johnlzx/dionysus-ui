@@ -1,12 +1,12 @@
 /**
- * [INPUT]: 依赖 React 状态、Lucide 图标与 @dionysus/ui 真实 Button/Badge/Surface 原语
+ * [INPUT]: 依赖 React 状态、Lucide 图标与 @dionysus/ui 真实 Button/Badge/Surface/SegmentedControl 原语
  * [OUTPUT]: 对外提供文档页标题、Section、Specimen、代码复制、Token 行、属性表和规则提示组件
  * [POS]: web/src 的文档呈现层，只组织设计系统信息，不创建平行基础组件
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
 import { useState, type ReactNode } from "react";
 import { Check, Clipboard, Info, ShieldCheck } from "lucide-react";
-import { Badge, Button, Surface, cn } from "@dionysus/ui";
+import { Badge, Button, SegmentedControl, Surface, cn } from "@dionysus/ui";
 
 interface PageIntroProps {
   eyebrow: string;
@@ -77,10 +77,15 @@ function Specimen({ title, description, children, code, previewClassName }: Spec
           <p className="text-xs font-medium">{title}</p>
           <p className="mt-0.5 text-micro leading-4 text-muted-foreground">{description}</p>
         </div>
-        <div className="flex items-center rounded-lg bg-muted p-0.5" role="tablist" aria-label={`${title} 展示方式`}>
-          <Button role="tab" aria-selected={view === "preview"} variant={view === "preview" ? "secondary" : "ghost"} size="xs" onClick={() => setView("preview")}>预览</Button>
-          <Button role="tab" aria-selected={view === "code"} variant={view === "code" ? "secondary" : "ghost"} size="xs" onClick={() => setView("code")}>代码</Button>
-        </div>
+        <SegmentedControl
+          value={view}
+          onValueChange={(nextView) => setView(nextView === "code" ? "code" : "preview")}
+          label={`${title} 展示方式`}
+          items={[
+            { value: "preview", label: "预览" },
+            { value: "code", label: "代码" },
+          ]}
+        />
       </div>
       {view === "preview" ? (
         <div className={cn("specimen-enter flex min-h-56 items-center justify-center bg-muted/15 p-6 sm:p-10", previewClassName)}>

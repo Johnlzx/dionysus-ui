@@ -1,15 +1,20 @@
 /**
  * [INPUT]: 依赖 React DOM 属性、CVA 变体系统、Lucide 搜索图标与 cn 类名工具
- * [OUTPUT]: 对外提供 Button、Badge、Avatar、Input、SearchField、Surface 六类平台无关 UI 原语
+ * [OUTPUT]: 对外提供 Button、Badge、Avatar、Input、SearchField、Surface、Dialog、SegmentedControl 等平台无关 UI 原语
  * [POS]: ui/src 的核心组件层，从 Desktop 视觉基线摘录并维持同一密度、状态和语义 Token
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
 import {
   forwardRef,
+  useEffect,
+  useId,
+  useRef,
   type ButtonHTMLAttributes,
-  type ComponentProps,
+  type ComponentPropsWithoutRef,
   type HTMLAttributes,
   type InputHTMLAttributes,
+  type KeyboardEvent,
+  type ReactNode,
 } from "react";
 import { Search, X } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -175,11 +180,247 @@ const surfaceVariants = cva("text-surface-foreground", {
   defaultVariants: { variant: "card", padding: "none" },
 });
 
-type SurfaceProps = ComponentProps<"div"> & VariantProps<typeof surfaceVariants>;
+type SurfaceProps = ComponentPropsWithoutRef<"div"> & VariantProps<typeof surfaceVariants>;
 
-function Surface({ className, variant, padding, ...props }: SurfaceProps) {
-  return <div data-slot="surface" className={cn(surfaceVariants({ variant, padding }), className)} {...props} />;
+const Surface = forwardRef<HTMLDivElement, SurfaceProps>(
+  ({ className, variant, padding, ...props }, ref) => (
+    <div ref={ref} data-slot="surface" className={cn(surfaceVariants({ variant, padding }), className)} {...props} />
+  ),
+);
+Surface.displayName = "Surface";
+
+const focusableSelector = [
+  "a[href]",
+  "button:not([disabled])",
+  "textarea:not([disabled])",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "[tabindex]:not([tabindex='-1'])",
+].join(",");
+
+interface DialogProps extends Omit<ComponentPropsWithoutRef<"div">, "title"> {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: ReactNode;
+  description?: ReactNode;
+  overlayClassName?: string;
+  panelClassName?: string;
+  children: ReactNode;
 }
 
-export { Avatar, Badge, Button, Input, SearchField, Surface, badgeVariants, buttonVariants, surfaceVariants };
-export type { AvatarProps, BadgeProps, ButtonProps, SearchFieldProps, SurfaceProps };
+function Dialog({
+  open,
+  onOpenChange,
+  title,
+  description,
+  overlayClassName,
+  panelClassName,
+  className,
+  children,
+  ...props
+}: DialogProps) {
+  const titleId = useId();
+  const descriptionId = useId();
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousActiveElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const overlay = overlayRef.current;
+    const panel = panelRef.current;
+    const siblingState = Array.from(overlay?.parentElement?.children ?? [])
+      .filter((element): element is HTMLElement => element instanceof HTMLElement && element !== overlay)
+      .map((element) => ({
+        element,
+        inert: element.inert,
+        ariaHidden: element.getAttribute("aria-hidden"),
+      }));
+    siblingState.forEach(({ element }) => {
+      element.inert = true;
+      element.setAttribute("aria-hidden", "true");
+    });
+    const focusFirstElement = () => {
+      const focusable = panel?.querySelector<HTMLElement>(focusableSelector);
+      (focusable ?? panel)?.focus();
+    };
+    const frame = window.requestAnimationFrame(focusFirstElement);
+
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onOpenChange(false);
+        return;
+      }
+      if (event.key !== "Tab" || !panel) return;
+
+      const focusable = Array.from(panel.querySelectorAll<HTMLElement>(focusableSelector))
+        .filter((element) => !element.hasAttribute("disabled") && element.getAttribute("aria-hidden") !== "true");
+      if (focusable.length === 0) {
+        event.preventDefault();
+        panel.focus();
+        return;
+      }
+
+      const first = focusable[0]!;
+      const last = focusable[focusable.length - 1]!;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      document.removeEventListener("keydown", handleKeyDown);
+      siblingState.forEach(({ element, inert, ariaHidden }) => {
+        element.inert = inert;
+        if (ariaHidden === null) {
+          element.removeAttribute("aria-hidden");
+        } else {
+          element.setAttribute("aria-hidden", ariaHidden);
+        }
+      });
+      previousActiveElement?.focus();
+    };
+  }, [onOpenChange, open]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      ref={overlayRef}
+      data-slot="dialog-overlay"
+      className={cn("fixed inset-0 z-50 flex items-start justify-center overscroll-contain bg-foreground/12 px-4 pt-[12vh] backdrop-blur-[2px]", overlayClassName)}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onOpenChange(false);
+      }}
+    >
+      <Surface
+        ref={panelRef}
+        variant="raised"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={description ? descriptionId : undefined}
+        tabIndex={-1}
+        className={cn("w-full max-w-lg overflow-hidden outline-none focus-visible:ring-3 focus-visible:ring-ring/30", panelClassName, className)}
+        {...props}
+      >
+        <div className="sr-only">
+          <h2 id={titleId}>{title}</h2>
+          {description ? <p id={descriptionId}>{description}</p> : null}
+        </div>
+        {children}
+      </Surface>
+    </div>
+  );
+}
+
+interface SegmentedControlItem {
+  value: string;
+  label: ReactNode;
+  disabled?: boolean;
+}
+
+interface SegmentedControlProps extends Omit<HTMLAttributes<HTMLDivElement>, "onChange"> {
+  value: string;
+  items: SegmentedControlItem[];
+  onValueChange: (value: string) => void;
+  label: string;
+  size?: NonNullable<VariantProps<typeof buttonVariants>["size"]>;
+}
+
+function SegmentedControl({
+  value,
+  items,
+  onValueChange,
+  label,
+  size = "xs",
+  className,
+  ...props
+}: SegmentedControlProps) {
+  const controlRef = useRef<HTMLDivElement>(null);
+  const enabledItems = items.filter((item) => !item.disabled);
+  const focusItem = (nextValue: string) => {
+    window.requestAnimationFrame(() => {
+      controlRef.current?.querySelector<HTMLButtonElement>(`[data-segmented-value="${CSS.escape(nextValue)}"]`)?.focus();
+    });
+  };
+  const selectRelativeItem = (event: KeyboardEvent<HTMLDivElement>, offset: number) => {
+    const currentIndex = enabledItems.findIndex((item) => item.value === value);
+    if (currentIndex < 0 || enabledItems.length === 0) return;
+    event.preventDefault();
+    const nextItem = enabledItems[(currentIndex + offset + enabledItems.length) % enabledItems.length]!;
+    onValueChange(nextItem.value);
+    focusItem(nextItem.value);
+  };
+  const selectEdgeItem = (event: KeyboardEvent<HTMLDivElement>, edge: "first" | "last") => {
+    const nextItem = edge === "first" ? enabledItems[0] : enabledItems[enabledItems.length - 1];
+    if (!nextItem) return;
+    event.preventDefault();
+    onValueChange(nextItem.value);
+    focusItem(nextItem.value);
+  };
+
+  return (
+    <div
+      ref={controlRef}
+      role="tablist"
+      aria-label={label}
+      data-slot="segmented-control"
+      className={cn("flex items-center rounded-lg bg-muted p-0.5", className)}
+      onKeyDown={(event) => {
+        if (event.key === "ArrowRight" || event.key === "ArrowDown") selectRelativeItem(event, 1);
+        if (event.key === "ArrowLeft" || event.key === "ArrowUp") selectRelativeItem(event, -1);
+        if (event.key === "Home") selectEdgeItem(event, "first");
+        if (event.key === "End") selectEdgeItem(event, "last");
+      }}
+      {...props}
+    >
+      {items.map((item) => (
+        <Button
+          key={item.value}
+          role="tab"
+          aria-selected={value === item.value}
+          tabIndex={value === item.value ? 0 : -1}
+          variant={value === item.value ? "secondary" : "ghost"}
+          size={size}
+          disabled={item.disabled}
+          data-segmented-value={item.value}
+          onClick={() => onValueChange(item.value)}
+        >
+          {item.label}
+        </Button>
+      ))}
+    </div>
+  );
+}
+
+export {
+  Avatar,
+  Badge,
+  Button,
+  Dialog,
+  Input,
+  SearchField,
+  SegmentedControl,
+  Surface,
+  badgeVariants,
+  buttonVariants,
+  surfaceVariants,
+};
+export type {
+  AvatarProps,
+  BadgeProps,
+  ButtonProps,
+  DialogProps,
+  SearchFieldProps,
+  SegmentedControlItem,
+  SegmentedControlProps,
+  SurfaceProps,
+};

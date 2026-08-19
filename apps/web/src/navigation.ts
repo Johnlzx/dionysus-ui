@@ -38,6 +38,7 @@ const DOC_NAVIGATION: DocNavGroup[] = [
     items: [
       { id: "button", label: "Button", description: "操作层级、尺寸和状态", path: "/components/button" },
       { id: "input", label: "Input", description: "文本输入、搜索与表单反馈", path: "/components/input" },
+      { id: "dropdown-menu", label: "DropdownMenu", description: "搜索、多选、分组与指令弹窗", path: "/components/dropdown-menu", badge: "New" },
       { id: "surface", label: "Surface", description: "常驻、浮层、选中与低层级表面", path: "/components/surface" },
       { id: "feedback", label: "Feedback", description: "Badge、状态、空态和错误", path: "/components/feedback", badge: "4" },
     ],

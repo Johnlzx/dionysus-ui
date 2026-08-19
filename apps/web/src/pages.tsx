@@ -16,18 +16,22 @@ import {
   ChevronRight,
   Circle,
   CircleCheck,
+  CornerDownRight,
   FileText,
   Layers3,
   LoaderCircle,
+  MailPlus,
   MoreHorizontal,
   Paperclip,
   Plus,
   Search,
+  Send,
   ShieldCheck,
   Sparkles,
   Type,
+  UserRoundX,
 } from "lucide-react";
-import { Avatar, Badge, Button, Input, SearchField, Surface, cn } from "@dionysus/ui";
+import { Avatar, Badge, Button, DropdownMenu, Input, SearchField, Surface, cn, type DropdownMenuGroup } from "@dionysus/ui";
 import { DocSection, InlineCode, PageIntro, PropTable, RuleNote, Specimen, TokenRow } from "./docs-elements";
 import { DOC_ITEMS } from "./navigation";
 
@@ -70,6 +74,11 @@ const PAGE_TOC: Record<string, TocItem[]> = {
     { id: "search-field", label: "Search field" },
     { id: "input-states", label: "States" },
     { id: "input-api", label: "API" },
+  ],
+  "dropdown-menu": [
+    { id: "assignee-menu", label: "Assignee menu" },
+    { id: "behavior", label: "Behavior" },
+    { id: "dropdown-api", label: "API" },
   ],
   surface: [
     { id: "surface-variants", label: "Variants" },
@@ -182,7 +191,7 @@ function OverviewPage() {
         title="为作者型 AI 工作台建立一套安静的秩序。"
         description="Dionysus UI 以内容为中心，以中性色建立层级，以小面积语义色表达状态，并把最终判断与发布控制权始终留给用户。"
         status="Active"
-        meta={<><Metric value="2" label="Color modes" /><Metric value="7" label="Core primitives" /><Metric value="4px" label="Base grid" /><Metric value="AA" label="Target contrast" /></>}
+        meta={<><Metric value="2" label="Color modes" /><Metric value="10" label="Core primitives" /><Metric value="4px" label="Base grid" /><Metric value="AA" label="Target contrast" /></>}
       />
       <DocSection id="system-map" title="系统地图" description="从共享 Token 到产品工作区，层级越向上越接近业务，越向下越稳定。">
         <MiniAppShell />
@@ -223,7 +232,7 @@ function OverviewPage() {
             ["/components/button", "Button", "用真实操作优先级决定按钮变体。"],
             ["/patterns/app-shell", "App shell", "复用悬浮主画布与侧栏结构。"],
           ].map(([path, label, copy]) => (
-            <Link key={path} to={path} className="group flex items-center gap-4 px-4 py-4 outline-none hover:bg-surface-hover focus-visible:bg-surface-hover">
+            <Link key={path} to={path} className="group flex items-center gap-4 px-4 py-4 outline-none hover:bg-surface-hover focus-visible:bg-surface-hover focus-visible:ring-2 focus-visible:ring-ring">
               <span className="min-w-0 flex-1"><span className="block text-xs font-medium">{label}</span><span className="mt-1 block text-micro leading-4 text-muted-foreground">{copy}</span></span>
               <ArrowRight className="size-3.5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
             </Link>
@@ -493,6 +502,188 @@ function InputPage() {
   );
 }
 
+function NoAssigneeMark() {
+  return (
+    <span className="relative flex size-8 items-center justify-center text-foreground">
+      <span className="absolute inset-1 rounded-full border-2 border-dashed border-foreground/80" />
+      <UserRoundX className="size-5 stroke-[2.35]" />
+    </span>
+  );
+}
+
+function SketchAvatar() {
+  return (
+    <span className="relative flex size-8 overflow-hidden rounded-full bg-background ring-1 ring-foreground/10">
+      <span className="absolute inset-1 rounded-full border border-foreground/15" />
+      <span className="absolute left-1 top-2 h-px w-7 rotate-12 bg-foreground/18" />
+      <span className="absolute left-0.5 top-3 h-px w-8 -rotate-12 bg-foreground/16" />
+      <span className="absolute left-2 top-4 h-px w-6 rotate-45 bg-foreground/18" />
+      <span className="absolute left-1.5 top-5 h-px w-7 -rotate-45 bg-foreground/14" />
+      <span className="absolute left-3 top-1 h-7 w-px rotate-12 bg-foreground/12" />
+      <span className="absolute left-5 top-0.5 h-8 w-px -rotate-12 bg-foreground/10" />
+    </span>
+  );
+}
+
+const dropdownMenuCode = `const [assignees, setAssignees] = useState(["amelia-hart"])
+const [inviteOpen, setInviteOpen] = useState(false)
+
+const handleAssigneesChange = (values, item) => {
+  setAssignees(item.value === "none" ? ["none"] : values.filter((value) => value !== "none"))
+}
+
+<DropdownMenu
+  label="Assign issue"
+  searchPlaceholder="Assign to..."
+  searchShortcut="A"
+  multiple
+  selectedValues={assignees}
+  onSelectedValuesChange={handleAssigneesChange}
+  onCommandSelect={() => setInviteOpen(true)}
+  groups={[
+    { items: [{ value: "none", label: "No assignee", count: 0 }] },
+    { label: "Project members", items: projectMembers },
+    { label: "New user", items: [{ type: "command", value: "invite", label: "Invite and assign..." }] },
+  ]}
+/>`;
+
+function AssigneeDropdownDemo() {
+  const [assignees, setAssignees] = useState(["amelia-hart"]);
+  const [query, setQuery] = useState("");
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteQuery, setInviteQuery] = useState("");
+  const assigneeGroups: DropdownMenuGroup[] = [
+    {
+      items: [
+        { value: "none", label: "No assignee", count: 0, visual: <NoAssigneeMark /> },
+        { value: "amelia-hart", label: "Amelia Hart", count: 1, visual: <SketchAvatar /> },
+      ],
+    },
+    {
+      label: "Project members",
+      items: [
+        { value: "noah-chen", label: "Noah Chen", visual: { initials: "NC", tone: "blue" } },
+        { value: "maya-lin", label: "Maya Lin", visual: { initials: "ML", tone: "neutral" } },
+        { value: "ethan-brooks", label: "Ethan Brooks", visual: { initials: "EB", tone: "teal" } },
+        { value: "sofia-park", label: "Sofia Park", visual: { initials: "SP", tone: "amber" } },
+      ],
+    },
+    {
+      label: "Team members",
+      items: [
+        { value: "leo-martin", label: "Leo Martin", visual: { initials: "LM", tone: "blue" } },
+        { value: "nora-patel", label: "Nora Patel", visual: { initials: "NP", tone: "rose" } },
+        { value: "clara-wilson", label: "Clara Wilson", visual: { initials: "CW", tone: "amber" } },
+      ],
+    },
+    {
+      label: "New user",
+      items: [
+        {
+          type: "command",
+          value: "invite",
+          label: "Invite and assign...",
+          visual: <Send className="-ml-0.5 size-7 -rotate-12 stroke-[2.35] text-muted-foreground" />,
+          className: inviteOpen ? "bg-surface-selected font-medium" : undefined,
+        },
+      ],
+    },
+  ];
+  const inviteGroups: DropdownMenuGroup[] = [
+    {
+      items: [
+        { type: "command", value: "invite-email", label: inviteQuery.includes("@") ? inviteQuery : "name@company.com", visual: { icon: <MailPlus />, tone: "neutral" } },
+        { value: "avery-reed", label: "Avery Reed", visual: { initials: "AR", tone: "violet" } },
+      ],
+    },
+    {
+      label: "Permission",
+      items: [
+        { value: "member", label: "Member", count: "default", visual: { initials: "M", tone: "blue" } },
+        { value: "guest", label: "Guest", visual: { initials: "G", tone: "neutral" } },
+      ],
+    },
+  ];
+
+  return (
+    <div className="relative flex min-h-[46rem] w-full max-w-[47rem] flex-col items-center lg:block">
+      <DropdownMenu
+        label="Assign issue"
+        open
+        position="static"
+        searchPlaceholder="Assign to..."
+        searchShortcut="A"
+        searchValue={query}
+        onSearchValueChange={setQuery}
+        defaultActiveValue="none"
+        multiple
+        selectedValues={assignees}
+        onSelectedValuesChange={(values, item) => {
+          setAssignees(item.value === "none" ? ["none"] : values.filter((value) => value !== "none"));
+        }}
+        onCommandSelect={(item) => {
+          if (item.value === "invite") setInviteOpen(true);
+        }}
+        groups={assigneeGroups}
+        className="block w-full max-w-[25.75rem] shrink-0"
+        panelClassName="w-full"
+      />
+      {inviteOpen ? (
+        <div className="mt-3 w-full max-w-[20rem] lg:absolute lg:left-[26.75rem] lg:top-[31rem] lg:mt-0">
+          <DropdownMenu
+            label="Invite user"
+            open
+            position="static"
+            searchPlaceholder="Invite user..."
+            searchShortcut="I"
+            searchValue={inviteQuery}
+            onSearchValueChange={setInviteQuery}
+            selectedValues={["member"]}
+            groups={inviteGroups}
+            className="block w-full"
+            panelClassName="w-full rounded-[1.125rem]"
+            listClassName="max-h-[18rem]"
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function DropdownMenuPage() {
+  return (
+    <>
+      <PageIntro eyebrow="Components" title="DropdownMenu" description="一个 Linear 式的高密度浮层：顶部搜索像标题一样安静嵌入，列表支持分组、多选、右侧计数，以及可打开下一层弹窗的指令项。" status="New" meta={<span>Source: <InlineCode>@dionysus/ui</InlineCode></span>} />
+      <DocSection id="assignee-menu" title="Assignee menu" description="复刻参考图的核心比例：412px 浮层宽度、76px 搜索头、64px 行高、32px 头像列、高亮行使用 Selected Surface。">
+        <Specimen title="Linear-style dropdown" description="搜索、多选、分组与指令弹窗" code={dropdownMenuCode} previewClassName="min-h-[50rem] items-start overflow-hidden bg-app-shell/70 p-4 sm:p-10">
+          <AssigneeDropdownDemo />
+        </Specimen>
+      </DocSection>
+      <DocSection id="behavior" title="Behavior" description="组件维护浮层打开、搜索过滤、键盘移动和选择状态；业务层只接收选择值或指令回调。">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3">
+          {[
+            [<Check />, "Multi select", "选项使用 menuitemcheckbox；多选时点击不会关闭菜单。"],
+            [<CornerDownRight />, "Command item", "指令项触发 onCommandSelect，可打开另一个 DropdownMenu 或 Dialog。"],
+            [<Search />, "Search first", "打开后聚焦顶部搜索；ArrowDown 进入结果，Escape 返回触发器。"],
+          ].map(([icon, title, copy]) => <div key={String(title)} className="bg-background p-4"><span className="text-muted-foreground [&>svg]:size-4">{icon as ReactNode}</span><p className="mt-6 text-xs font-medium">{title}</p><p className="mt-1 text-micro leading-4 text-muted-foreground">{copy}</p></div>)}
+        </div>
+        <RuleNote kind="safety">DropdownMenu 不连接网络、不保存业务状态、不理解成员权限；邀请、分配、权限升级等副作用必须由业务层显式处理。</RuleNote>
+      </DocSection>
+      <DocSection id="dropdown-api" title="API">
+        <PropTable rows={[
+          { name: "groups", type: "DropdownMenuGroup[]", defaultValue: "[]", description: "按组提供 option 或 command 项；组件只读取展示描述。" },
+          { name: "multiple", type: "boolean", defaultValue: "false", description: "开启多选，选项使用 menuitemcheckbox 语义并保持浮层打开。" },
+          { name: "selectedValues", type: "string[]", defaultValue: "—", description: "受控选择值；未提供时可用 defaultSelectedValues 或 item.selected 初始化。" },
+          { name: "onSelectedValuesChange", type: "(values, item) => void", defaultValue: "—", description: "选项切换时触发，由业务层持久化。" },
+          { name: "onCommandSelect", type: "(item) => void", defaultValue: "—", description: "点击 command 项时触发，可打开二级弹窗或确认流。" },
+          { name: "clearSearchOnClose", type: "boolean", defaultValue: "true", description: "只清理非受控搜索值；受控搜索由业务在 onOpenChange 中决定是否重置。" },
+          { name: "trigger", type: "(props) => ReactNode", defaultValue: "—", description: "渲染触发器并接收 aria、ref、click 与键盘属性。" },
+        ]} />
+      </DocSection>
+    </>
+  );
+}
+
 function SurfacePage() {
   return (
     <>
@@ -686,6 +877,7 @@ function DocsPage({ pageId }: { pageId: string }) {
     case "layout": content = <LayoutPage />; break;
     case "button": content = <ButtonPage />; break;
     case "input": content = <InputPage />; break;
+    case "dropdown-menu": content = <DropdownMenuPage />; break;
     case "surface": content = <SurfacePage />; break;
     case "feedback": content = <FeedbackPage />; break;
     case "app-shell": content = <AppShellPage />; break;
