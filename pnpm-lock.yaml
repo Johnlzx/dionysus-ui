@@ -16,9 +16,6 @@ importers:
       '@fontsource-variable/inter':
         specifier: ^5.2.5
         version: 5.2.8
-      lucide-react:
-        specifier: ^1.0.1
-        version: 1.24.0(react@19.2.7)
       react:
         specifier: ^19.2.7
         version: 19.2.7
@@ -63,7 +60,7 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       lucide-react:
-        specifier: ^1.0.1
+        specifier: 1.24.0
         version: 1.24.0(react@19.2.7)
       motion:
         specifier: ^13.1.0

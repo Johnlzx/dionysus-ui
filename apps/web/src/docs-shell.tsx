@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 React 状态/副作用、React Router、Lucide、共享 UI 交互与侧栏运动原语、导航模型与页面目录元数据
+ * [INPUT]: 依赖 React 状态/副作用、React Router、设计系统图标、共享 UI 交互与侧栏运动原语、导航模型与页面目录元数据
  * [OUTPUT]: 对外提供含可折叠 Motion 桌面侧栏、移动抽屉、顶栏、搜索面板、页内目录和 inset canvas 的 DocsShell
  * [POS]: web/src 的顶级文档壳，用 Dionysus 自身布局语言呈现整个设计系统
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
@@ -23,11 +23,13 @@ import {
   PanelLeft,
   PanelsTopLeft,
   Search,
+  Shapes,
   TextCursorInput,
+  TextSelect,
   Type,
   X,
   type LucideIcon,
-} from "lucide-react";
+} from "@dionysus/ui/icons";
 import {
   Badge,
   Button,
@@ -59,10 +61,12 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   principles: Compass,
   colors: Palette,
   typography: Type,
+  icons: Shapes,
   layout: LayoutGrid,
   button: MousePointer2,
   input: TextCursorInput,
   "dropdown-menu": ListFilter,
+  "inline-edit": TextSelect,
   surface: Layers3,
   feedback: MessageSquareWarning,
   "app-shell": PanelLeft,

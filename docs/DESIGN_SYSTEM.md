@@ -12,8 +12,8 @@
 ## 2. 真相源与依赖边界
 
 - 唯一 Token 真相源：`packages/ui/src/styles.css`。
-- 共享原语入口：`packages/ui/src/index.ts`，消费者只从 `@dionysus/ui` 和 `@dionysus/ui/styles.css` 引入。
-- 当前稳定原语：`Button / Badge / Avatar / Input / SearchField / DropdownMenu / Surface / Dialog / SegmentedControl / ThemeToggle`。
+- 共享原语入口：`packages/ui/src/index.ts`；图标入口：`packages/ui/src/icons.tsx`。消费者只从 `@dionysus/ui`、`@dionysus/ui/icons` 和 `@dionysus/ui/styles.css` 引入。
+- 当前稳定原语：`Button / Badge / Avatar / Input / SearchField / DropdownMenu / InlineEdit / InlineEditSelect / Surface / Dialog / SegmentedControl / ThemeToggle`。
 - Web 活规范入口：`apps/web`，侧栏、搜索、示例和页面模式必须消费真实共享组件。
 - Web 站点样式：`apps/web/src/styles.css` 只定义文档呈现、动画和打印规则，不创建第二套基础视觉 Token。
 - 后续产品原语：`FogSphere / GlassSurface / TreeView / MarkdownEditor / Page primitives` 等必须先进入 `packages/ui` 或明确标注为路线图，再允许业务消费。
@@ -68,6 +68,15 @@
 - 字号纪律：`text-base` 用于重要正文，`text-sm` 用于主界面，`text-xs` 用于元数据；`text-[0.8rem]` 仅用于小按钮。
 - 字重仅使用 `font-normal` 与 `font-medium`。禁止 `font-bold`、`font-semibold`。
 - 同一区块最多两种字号；第三层级优先通过颜色或字重表达。
+
+## 5.1 图标
+
+- 基础字形统一使用 `lucide-react`，但第三方包只允许出现在 `packages/ui/src/icons.tsx`；业务应用不得直接依赖或导入 `lucide-react`。
+- `@dionysus/ui/icons` 只开放批准使用的静态子集。优先使用 `AddIcon / BackIcon / CloseIcon / ConfirmIcon / SearchIcon` 等语义别名，使底层字形可替换。
+- 标准尺寸为 `xs 12px / sm 14px / md 16px / lg 20px / xl 24px`，标准笔画为 `2`，颜色继承 `currentColor`。
+- 使用 `Icon` 包装器时，未提供 `label` 的图标默认作为装饰隐藏；独立表达含义时传入 `label`。Icon-only Button 的可访问名称必须由按钮提供。
+- 只使用静态具名导入；禁止 `import * as Icons`、字符串动态查找、复制完整 SVG 集或混用第二套图标库。
+- 新图标必须先确认现有子集无法表达目标语义，再补充出口、活文档和许可证审查。
 
 ## 6. 间距、圆角与阴影
 
@@ -153,6 +162,18 @@
 - 指令项只触发 `onCommandSelect`，可以打开另一个 `DropdownMenu` 或 `Dialog`；邀请、分配、权限升级等业务副作用不得进入组件库。
 - 非受控搜索默认在关闭后清空；受控搜索值由业务层在 `onOpenChange` 中决定是否清理。
 - 浮层使用 `Raised Surface`、`--floating-shadow`、语义 Token 和平台无关 DOM 事件；不得访问 Electron、Node、网络请求或产品协议。
+
+### InlineEdit / InlineEditSelect
+
+- `InlineEdit` 是基于锚定 Popover 的非模态原位编辑外壳：当前值同时承担查看与编辑入口，编辑器不得推动页面布局或遮蔽整个工作区。
+- `InlineEditSelect` 是枚举、成员、标签等高频属性的默认实现；单选在选择开始时关闭，多选保持浮层打开，并按需开启搜索或创建。
+- 字段类型决定 editor 语义：少量枚举使用 listbox，成员使用 searchable combobox，日期使用 date picker；禁止因为视觉相似就把所有选择器实现成 action menu。
+- 选择后先乐观更新本地值，再由业务层 `onCommit(nextValue, previousValue)` 写入事实源；Promise reject 时组件必须恢复 `previousValue`，显示就地错误并通过 live region 宣告。
+- 保存中、成功和错误反馈附着在原字段，不使用 Toast 作为唯一反馈。失败不得静默关闭；错误不能只依赖颜色。
+- `Enter / Space / ArrowDown` 可以打开，`Escape` 关闭并恢复触发器焦点；Popover 自动翻转、避让视口边缘，并在滚动或窗口变化时重新定位。
+- 只对单字段、低风险、高频、可逆变更默认使用“选中即提交”。删除、发布、付款、权限移交、复杂联动和多字段校验必须使用确认流、Dialog、侧栏或完整表单。
+- 移动端若无法保证浮层宽度和命中区，应由产品模式层切换为 Bottom Sheet；共享组件不自行推断业务断点。
+- `InlineEdit` 不连接网络、不持久化业务数据、不判断权限；消费者负责真实保存函数、冲突策略、审计记录和可选撤销能力。
 
 ### GlassSurface
 
@@ -283,7 +304,7 @@
 
 - [ ] 是否只使用语义 Token，没有组件硬编码色值？
 - [ ] Light / Dark Token 是否对称？
-- [ ] 是否复用现有 Button、Badge、Avatar、DropdownMenu、Dialog 与 SegmentedControl？
+- [ ] 是否复用现有 Button、Badge、Avatar、DropdownMenu、InlineEdit、Dialog 与 SegmentedControl？
 - [ ] 是否复用 Input、SearchField、Surface 与已发布页面模式，而不是在业务页重复拼接？
 - [ ] 认证是否默认保持验证码登录/注册同路、密码入口避免账号枚举，并且未在 Renderer 持久化 Token 或密码？
 - [ ] Agent Composer 是否只在聚焦时高亮、只在非空时激活发送，并正确处理 Enter/Shift+Enter/输入法？

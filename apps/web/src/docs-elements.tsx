@@ -1,12 +1,12 @@
 /**
- * [INPUT]: 依赖 React 状态、Lucide 图标与 @dionysus/ui 真实 Button/Badge/Surface/SegmentedControl 原语
+ * [INPUT]: 依赖 React 状态、设计系统图标与 @dionysus/ui 真实 Button/Badge/Surface/SegmentedControl 原语
  * [OUTPUT]: 对外提供文档页标题、Section、Specimen、代码复制、Token 行、属性表和规则提示组件
  * [POS]: web/src 的文档呈现层，只组织设计系统信息，不创建平行基础组件
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
 import { useState, type ReactNode } from "react";
-import { Check, Clipboard, Info, ShieldCheck } from "lucide-react";
 import { Badge, Button, SegmentedControl, Surface, cn } from "@dionysus/ui";
+import { Check, Clipboard, Info, ShieldCheck } from "@dionysus/ui/icons";
 
 interface PageIntroProps {
   eyebrow: string;

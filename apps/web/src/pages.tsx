@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 React 状态、React Router、Lucide、@dionysus/ui 真实原语、文档呈现组件与导航顺序
+ * [INPUT]: 依赖 React 状态、React Router、设计系统图标、@dionysus/ui 真实原语、文档呈现组件与导航顺序
  * [OUTPUT]: 对外提供所有设计系统页面内容、页内目录、页面分发器和相邻页导航
  * [POS]: web/src 的设计知识主体，以 Foundations→Components→Patterns→Resources 层级呈现视觉语言
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
@@ -7,38 +7,54 @@
 import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import {
+  AddIcon,
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
   ArrowUp,
+  BackIcon,
+  CalendarDays,
   Check,
   CheckCircle2,
   ChevronRight,
   Circle,
   CircleCheck,
+  CloseIcon,
+  ConfirmIcon,
   Clock3,
   CornerDownRight,
   FileText,
+  Flag,
+  Icon,
   Layers3,
+  ListFilter,
   LoaderCircle,
   MailPlus,
+  MessageSquareWarning,
   MoreHorizontal,
   Paperclip,
   PanelLeft,
   Plus,
   Search,
+  SearchIcon,
   Send,
   ShieldCheck,
   Sparkles,
+  Tags,
   Type,
+  UserRound,
   UserRoundX,
-} from "lucide-react";
+  type IconSize,
+  type LucideIcon,
+} from "@dionysus/ui/icons";
 import {
   Avatar,
   Badge,
   Button,
   CollapsibleSidebar,
   DropdownMenu,
+  InlineEdit,
+  InlineEditSelect,
   Input,
   SearchField,
   SidebarHeader,
@@ -46,6 +62,8 @@ import {
   Surface,
   cn,
   type DropdownMenuGroup,
+  type InlineEditOption,
+  type InlineEditSelectValue,
 } from "@dionysus/ui";
 import { DocSection, InlineCode, PageIntro, PropTable, RuleNote, Specimen, TokenRow } from "./docs-elements";
 import { DOC_ITEMS } from "./navigation";
@@ -73,6 +91,12 @@ const PAGE_TOC: Record<string, TocItem[]> = {
     { id: "reading", label: "阅读排版" },
     { id: "rules", label: "使用规则" },
   ],
+  icons: [
+    { id: "icon-catalog", label: "精选图标" },
+    { id: "icon-sizing", label: "尺寸与笔画" },
+    { id: "icon-semantics", label: "语义与入口" },
+    { id: "icon-accessibility", label: "无障碍" },
+  ],
   layout: [
     { id: "grid", label: "4px 网格" },
     { id: "inset-canvas", label: "Inset canvas" },
@@ -94,6 +118,15 @@ const PAGE_TOC: Record<string, TocItem[]> = {
     { id: "assignee-menu", label: "Assignee menu" },
     { id: "behavior", label: "Behavior" },
     { id: "dropdown-api", label: "API" },
+  ],
+  "inline-edit": [
+    { id: "inline-edit-specimen", label: "Live specimen" },
+    { id: "inline-edit-anatomy", label: "Anatomy" },
+    { id: "inline-edit-fields", label: "Field types" },
+    { id: "inline-edit-commit", label: "Commit model" },
+    { id: "inline-edit-principles", label: "Usage principles" },
+    { id: "inline-edit-accessibility", label: "Accessibility" },
+    { id: "inline-edit-api", label: "API" },
   ],
   surface: [
     { id: "surface-variants", label: "Variants" },
@@ -458,6 +491,92 @@ function TypographyPage() {
   );
 }
 
+const curatedIcons: Array<{ name: string; icon: LucideIcon; usage: string }> = [
+  { name: "AddIcon", icon: AddIcon, usage: "创建、添加" },
+  { name: "BackIcon", icon: BackIcon, usage: "返回上一层" },
+  { name: "CloseIcon", icon: CloseIcon, usage: "关闭、清除" },
+  { name: "ConfirmIcon", icon: ConfirmIcon, usage: "确认、完成" },
+  { name: "SearchIcon", icon: SearchIcon, usage: "搜索、查找" },
+  { name: "CalendarDays", icon: CalendarDays, usage: "日期、日程" },
+  { name: "FileText", icon: FileText, usage: "文档、正文" },
+  { name: "Layers3", icon: Layers3, usage: "集合、知识库" },
+  { name: "ListFilter", icon: ListFilter, usage: "筛选、菜单" },
+  { name: "MessageSquareWarning", icon: MessageSquareWarning, usage: "反馈、异常" },
+  { name: "PanelLeft", icon: PanelLeft, usage: "侧栏、导航" },
+  { name: "ShieldCheck", icon: ShieldCheck, usage: "安全、已验证" },
+  { name: "Sparkles", icon: Sparkles, usage: "AI、生成" },
+  { name: "Tags", icon: Tags, usage: "标签、分类" },
+  { name: "UserRound", icon: UserRound, usage: "成员、负责人" },
+];
+
+const iconSizeSamples: IconSize[] = ["xs", "sm", "md", "lg", "xl"];
+
+function IconsPage() {
+  return (
+    <>
+      <PageIntro
+        eyebrow="Foundations"
+        title="图标是一种界面语言，不是素材库存。"
+        description="Lucide 提供底层字形，Dionysus UI 只开放经过选择的子集，并在同一个入口内统一尺寸、笔画、语义和无障碍行为。"
+        status="Ready"
+        meta={<span>Source: <InlineCode>@dionysus/ui/icons</InlineCode> · Lucide React 1.24.0</span>}
+      />
+      <DocSection id="icon-catalog" title="精选图标" description="这里只展示设计系统当前允许使用的核心语义；新增图标必须先明确用途，不能因为视觉相近而随意替换。">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3 lg:grid-cols-5">
+          {curatedIcons.map(({ name, icon, usage }) => (
+            <div key={name} className="group bg-background p-4 transition-colors hover:bg-surface-hover">
+              <span className="flex size-9 items-center justify-center rounded-lg bg-muted text-foreground">
+                <Icon icon={icon} size="lg" />
+              </span>
+              <code className="mt-5 block truncate font-mono text-micro text-foreground">{name}</code>
+              <p className="mt-1 text-micro text-muted-foreground">{usage}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="icon-sizing" title="尺寸与笔画" description="尺寸跟随组件密度，不由单个页面自由缩放。所有标准尺寸使用 2px viewBox 笔画和 currentColor。">
+        <Surface variant="subtle" padding="lg" className="flex flex-wrap items-end justify-between gap-6">
+          {iconSizeSamples.map((size) => (
+            <div key={size} className="flex min-w-16 flex-col items-center gap-3">
+              <span className="flex size-10 items-center justify-center"><Icon icon={Sparkles} size={size} /></span>
+              <code className="font-mono text-micro text-muted-foreground">{size}</code>
+            </div>
+          ))}
+        </Surface>
+        <div className="mt-4 grid gap-3 sm:grid-cols-5">
+          {[["xs", "12px", "微型状态"], ["sm", "14px", "紧凑控件"], ["md", "16px", "默认界面"], ["lg", "20px", "空态与强调"], ["xl", "24px", "低频展示"]].map(([size, pixels, usage]) => (
+            <div key={size} className="border-l border-border pl-3"><p className="font-mono text-micro">{pixels}</p><p className="mt-1 text-micro text-muted-foreground">{usage}</p></div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="icon-semantics" title="语义与入口" description="应用只依赖 Dionysus 的稳定出口；第三方包名、字形选择和升级节奏留在设计系统内部。">
+        <Specimen
+          title="Curated import"
+          description="静态具名导入保持依赖清晰，并允许构建工具移除未使用图标"
+          code={'import { AddIcon, Icon } from "@dionysus/ui/icons"\n\n<Button aria-label="新建" size="icon">\n  <Icon icon={AddIcon} />\n</Button>'}
+        >
+          <div className="flex items-center gap-3">
+            <Button size="icon" aria-label="新建"><Icon icon={AddIcon} /></Button>
+            <div><p className="text-xs font-medium">语义名属于产品语言</p><p className="mt-1 text-micro text-muted-foreground">AddIcon 可以在不改变业务代码的前提下更换底层字形。</p></div>
+          </div>
+        </Specimen>
+        <div className="mt-5 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2">
+          <div className="bg-background p-4"><p className="text-xs font-medium text-success-foreground">Do</p><p className="mt-2 text-micro leading-4 text-muted-foreground">从 <InlineCode>@dionysus/ui/icons</InlineCode> 具名导入；同一语义始终使用同一图标。</p></div>
+          <div className="bg-background p-4"><p className="text-xs font-medium text-destructive">Avoid</p><p className="mt-2 text-micro leading-4 text-muted-foreground">直接依赖 <InlineCode>lucide-react</InlineCode>、使用字符串动态查找，或在同一产品中混用多套图标库。</p></div>
+        </div>
+      </DocSection>
+      <DocSection id="icon-accessibility" title="无障碍" description="装饰图标不进入可访问性树；承载独立含义时提供标签；图标按钮的名称始终属于按钮。">
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Surface padding="md"><Icon icon={Sparkles} /><p className="mt-5 text-xs font-medium">装饰图标</p><p className="mt-1 text-micro leading-4 text-muted-foreground">未提供 label 时，Icon 默认 aria-hidden。</p></Surface>
+          <Surface padding="md"><Icon icon={ShieldCheck} label="安全检查已通过" /><p className="mt-5 text-xs font-medium">独立语义</p><p className="mt-1 text-micro leading-4 text-muted-foreground">使用 label 生成 img 语义和可访问名称。</p></Surface>
+          <Surface padding="md"><Button size="icon-sm" aria-label="搜索"><Icon icon={SearchIcon} /></Button><p className="mt-5 text-xs font-medium">图标按钮</p><p className="mt-1 text-micro leading-4 text-muted-foreground">按钮提供 aria-label，内部图标保持装饰性。</p></Surface>
+        </div>
+        <div className="mt-4"><RuleNote kind="safety">颜色和图标不能成为状态的唯一表达。错误、成功和风险还需要可见文本，必要时通过 aria-live 宣告变化。</RuleNote></div>
+      </DocSection>
+    </>
+  );
+}
+
 function LayoutPage() {
   return (
     <>
@@ -764,6 +883,246 @@ function DropdownMenuPage() {
   );
 }
 
+const statusOptions: InlineEditOption[] = [
+  { value: "backlog", label: "待整理", visual: <Circle className="size-3.5 text-muted-foreground" /> },
+  { value: "planned", label: "已计划", visual: <Circle className="size-3.5 fill-muted text-muted-foreground" /> },
+  { value: "in-progress", label: "进行中", visual: <LoaderCircle className="size-3.5 text-warning-foreground" /> },
+  { value: "completed", label: "已完成", visual: <CircleCheck className="size-3.5 text-success-foreground" /> },
+  { value: "canceled", label: "已取消", visual: <Circle className="size-3.5 text-destructive/70" /> },
+];
+
+const priorityOptions: InlineEditOption[] = [
+  { value: "none", label: "无优先级", visual: <span className="h-px w-3 bg-muted-foreground/55" /> },
+  { value: "low", label: "低", visual: <Flag className="size-3.5 text-muted-foreground" /> },
+  { value: "medium", label: "中", visual: <Flag className="size-3.5 text-info-foreground" /> },
+  { value: "high", label: "高", visual: <Flag className="size-3.5 text-warning-foreground" /> },
+  { value: "urgent", label: "紧急", visual: <Flag className="size-3.5 fill-destructive/15 text-destructive" /> },
+];
+
+const assigneeOptions: InlineEditOption[] = [
+  { value: "lin-yanqiu", label: "林砚秋", description: "产品设计", visual: <Avatar name="林砚秋" tone="blue" /> , keywords: ["lin", "design"] },
+  { value: "zhou-qiran", label: "周其然", description: "前端工程", visual: <Avatar name="周其然" tone="teal" />, keywords: ["zhou", "frontend"] },
+  { value: "song-jianing", label: "宋嘉宁", description: "内容策略", visual: <Avatar name="宋嘉宁" tone="amber" />, keywords: ["song", "content"] },
+  { value: "none", label: "未分配", visual: <UserRound className="size-3.5 text-muted-foreground" /> },
+];
+
+const labelOptions: InlineEditOption[] = [
+  { value: "research", label: "研究", visual: <span className="size-2.5 rounded-full bg-info" /> },
+  { value: "interaction", label: "交互", visual: <span className="size-2.5 rounded-full bg-success" /> },
+  { value: "review", label: "待评审", visual: <span className="size-2.5 rounded-full bg-warning" /> },
+];
+
+function firstSelectedValue(selected: InlineEditOption[], fallback: ReactNode) {
+  const option = selected[0];
+  if (!option) return <span className="text-muted-foreground">{fallback}</span>;
+  return <span className="inline-flex min-w-0 items-center gap-1.5">{option.visual}<span className="truncate">{option.label}</span></span>;
+}
+
+function formatDate(value: string) {
+  if (!value) return "未设置";
+  return new Intl.DateTimeFormat("zh-CN", { month: "short", day: "numeric", weekday: "short" }).format(new Date(`${value}T00:00:00`));
+}
+
+function offsetDate(days: number) {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function InlineEditDemo() {
+  const [status, setStatus] = useState<InlineEditSelectValue>("in-progress");
+  const [priority, setPriority] = useState<InlineEditSelectValue>("high");
+  const [assignee, setAssignee] = useState<InlineEditSelectValue>("lin-yanqiu");
+  const [labels, setLabels] = useState<InlineEditSelectValue>(["research", "interaction"]);
+  const [dueDate, setDueDate] = useState(offsetDate(6));
+
+  return (
+    <Surface className="w-full max-w-[34rem] overflow-visible" aria-label="项目属性即时编辑示例">
+      <div className="flex items-start justify-between border-b border-border px-5 py-4">
+        <div>
+          <p className="text-sm font-medium tracking-tight">研究计划 · Q3</p>
+          <p className="mt-1 text-micro text-muted-foreground">直接点击右侧属性值进行修改</p>
+        </div>
+        <Badge variant="outline" size="xs">实时示例</Badge>
+      </div>
+      <div className="divide-y divide-border/70 px-3 py-1">
+        <div className="grid min-h-11 grid-cols-[6.5rem_minmax(0,1fr)] items-center px-2">
+          <span className="text-xs text-muted-foreground">状态</span>
+          <InlineEditSelect label="状态" value={status} onValueChange={setStatus} options={statusOptions} renderValue={(selected) => firstSelectedValue(selected, "未设置")} />
+        </div>
+        <div className="grid min-h-11 grid-cols-[6.5rem_minmax(0,1fr)] items-center px-2">
+          <span className="text-xs text-muted-foreground">优先级</span>
+          <InlineEditSelect label="优先级" value={priority} onValueChange={setPriority} options={priorityOptions} renderValue={(selected) => firstSelectedValue(selected, "无优先级")} />
+        </div>
+        <div className="grid min-h-11 grid-cols-[6.5rem_minmax(0,1fr)] items-center px-2">
+          <span className="text-xs text-muted-foreground">负责人</span>
+          <InlineEditSelect label="负责人" value={assignee} onValueChange={setAssignee} options={assigneeOptions} searchable searchPlaceholder="搜索成员…" renderValue={(selected) => firstSelectedValue(selected, "未分配")} />
+        </div>
+        <div className="grid min-h-11 grid-cols-[6.5rem_minmax(0,1fr)] items-center px-2">
+          <span className="text-xs text-muted-foreground">截止日期</span>
+          <InlineEdit<string>
+            label="截止日期"
+            value={dueDate}
+            onValueChange={setDueDate}
+            renderValue={(currentValue) => <span className="inline-flex items-center gap-1.5"><CalendarDays className="size-3.5 text-muted-foreground" />{formatDate(currentValue)}</span>}
+            panelClassName="w-64"
+            editor={({ value: currentValue, commit }) => (
+              <div className="p-2">
+                <label className="block px-1 pb-2 text-micro font-medium uppercase tracking-[0.1em] text-muted-foreground" htmlFor="inline-edit-date">截止日期</label>
+                <Input id="inline-edit-date" autoFocus type="date" value={currentValue} onChange={(event) => void commit(event.target.value)} />
+                <div className="mt-2 grid grid-cols-3 gap-1 border-t border-border pt-2">
+                  {[{ label: "今天", days: 0 }, { label: "明天", days: 1 }, { label: "下周", days: 7 }].map((preset) => (
+                    <Button key={preset.label} size="xs" variant="ghost" onClick={() => void commit(offsetDate(preset.days))}>{preset.label}</Button>
+                  ))}
+                </div>
+              </div>
+            )}
+          />
+        </div>
+        <div className="grid min-h-11 grid-cols-[6.5rem_minmax(0,1fr)] items-center px-2">
+          <span className="text-xs text-muted-foreground">标签</span>
+          <InlineEditSelect
+            label="标签"
+            value={labels}
+            onValueChange={setLabels}
+            options={labelOptions}
+            multiple
+            searchable
+            searchPlaceholder="搜索或创建标签…"
+            createOption={(query) => ({ value: `custom-${query.toLocaleLowerCase("zh-CN").replace(/\s+/gu, "-")}`, label: query, visual: <span className="size-2.5 rounded-full bg-muted-foreground" /> })}
+            renderValue={(selected) => selected.length === 0 ? <span className="text-muted-foreground">添加标签</span> : (
+              <span className="inline-flex min-w-0 items-center gap-1.5"><Tags className="size-3.5 text-muted-foreground" /><span className="truncate">{selected.map((option) => option.label).join(" · ")}</span></span>
+            )}
+          />
+        </div>
+      </div>
+      <div className="flex items-center gap-2 border-t border-border bg-muted/20 px-5 py-3 text-micro text-muted-foreground">
+        <CheckCircle2 className="size-3.5 text-success-foreground" />选中即提交；页面上下文和布局保持不变
+      </div>
+    </Surface>
+  );
+}
+
+const inlineEditCode = `const [status, setStatus] = useState("in-progress")
+
+<InlineEditSelect
+  label="状态"
+  value={status}
+  onValueChange={setStatus}
+  onCommit={(nextValue, previousValue) => saveStatus(nextValue, previousValue)}
+  options={statusOptions}
+  renderValue={(selected) => <StatusValue option={selected[0]} />}
+/>
+
+// 日期等特殊类型复用同一个锚定编辑外壳
+<InlineEdit
+  label="截止日期"
+  value={dueDate}
+  onValueChange={setDueDate}
+  renderValue={(value) => formatDate(value)}
+  editor={({ value, commit }) => (
+    <Input type="date" value={value} onChange={(event) => commit(event.target.value)} />
+  )}
+/>`;
+
+function InlineEditPage() {
+  return (
+    <>
+      <PageIntro eyebrow="Components" title="Inline Edit" description="基于锚定浮层的原位属性编辑。当前值就是编辑入口；组件在不打断页面上下文的前提下完成选择、即时提交、保存反馈和失败回滚。" status="New" meta={<span>Source: <InlineCode>@dionysus/ui</InlineCode></span>} />
+      <DocSection id="inline-edit-specimen" title="Live specimen" description="状态、优先级、成员、日期和标签共享相同的空间与提交模型，但使用与字段类型匹配的编辑器。">
+        <Specimen title="Property quick edit" description="点击任意属性值；尝试键盘、搜索、多选和创建标签" code={inlineEditCode} previewClassName="min-h-[32rem] overflow-visible bg-app-shell/65 px-4 py-12 sm:p-12">
+          <InlineEditDemo />
+        </Specimen>
+      </DocSection>
+      <DocSection id="inline-edit-anatomy" title="Anatomy" description="Inline Edit 是模式组件，不是某一种下拉菜单。它把四项稳定职责留在设计系统内。">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2">
+          {[
+            ["01", "Value trigger", "查看态即入口；hover、focus 和打开态只逐级增强，不制造独立编辑按钮。"],
+            ["02", "Anchored popover", "浮层贴近字段，自动翻转并避让视口边缘；不推动页面布局。"],
+            ["03", "Typed editor", "枚举使用 Select，成员使用可搜索 Combobox，日期与特殊数据通过 editor 插槽接入。"],
+            ["04", "Commit feedback", "选择后乐观更新；保存中、成功与错误都附着在原字段，失败自动恢复旧值。"],
+          ].map(([index, title, copy]) => (
+            <div key={title} className="bg-background p-4">
+              <span className="font-mono text-micro text-muted-foreground">{index}</span>
+              <p className="mt-7 text-xs font-medium">{title}</p>
+              <p className="mt-1 text-micro leading-4 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="inline-edit-fields" title="Field types" description="选择正确的编辑器比统一外观更重要；只共享外壳、反馈和行为，不强迫所有字段长成一种控件。">
+        <div className="overflow-hidden rounded-xl border border-border text-xs">
+          {[
+            ["状态 / 优先级", "InlineEditSelect", "少量稳定枚举；单选后立即关闭。"],
+            ["负责人 / 关联对象", "Searchable select", "选项较多或需要按名称、关键词定位。"],
+            ["标签 / 分类", "Multi-select + create", "保持浮层打开，允许连续选择；创建只在查询无精确匹配时出现。"],
+            ["日期 / 时间", "InlineEdit + date editor", "复用锚定外壳，编辑区使用日期选择器或明确的快捷值。"],
+            ["自由文本", "InlineEdit + Input", "短文本可原位编辑；长文本、富文本与多字段内容改用面板。"],
+          ].map(([field, editor, guidance]) => (
+            <div key={field} className="grid gap-1 border-b border-border px-3 py-3 last:border-b-0 sm:grid-cols-[9rem_10rem_minmax(0,1fr)] sm:gap-3">
+              <span className="font-medium">{field}</span><code className="font-mono text-micro text-info-foreground">{editor}</code><span className="text-muted-foreground">{guidance}</span>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="inline-edit-commit" title="Commit model" description="即时不等于不可靠。视觉反馈可以先发生，持久化结果仍必须被组件接住。">
+        <div className="grid gap-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr] sm:items-center">
+          {[
+            ["1", "Optimistic", "本地立即呈现新值"],
+            ["2", "Persist", "onCommit 写入事实源"],
+            ["3", "Resolve", "成功确认；失败回滚"],
+          ].map(([index, title, copy], itemIndex) => (
+            <div key={title} className="contents">
+              <Surface variant="subtle" padding="md"><span className="font-mono text-micro text-muted-foreground">{index}</span><p className="mt-4 text-xs font-medium">{title}</p><p className="mt-1 text-micro text-muted-foreground">{copy}</p></Surface>
+              {itemIndex < 2 ? <ArrowRight className="hidden size-4 text-muted-foreground sm:block" /> : null}
+            </div>
+          ))}
+        </div>
+        <div className="mt-4"><RuleNote kind="safety">只有低风险、单字段、可逆变更默认使用“选中即提交”。删除、发布、付款、权限移交，以及需要同时校验多个字段的操作必须进入明确的确认流或完整表单。</RuleNote></div>
+      </DocSection>
+      <DocSection id="inline-edit-principles" title="Usage principles" description="是否采用 Inline Edit，先判断任务结构，再判断视觉空间。">
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div>
+            <p className="mb-3 text-xs font-medium text-success-foreground">Use when</p>
+            <ul className="space-y-2 text-xs leading-5 text-muted-foreground">
+              <li>单次只修改一个彼此独立的属性</li><li>操作高频、结果容易理解并可撤销</li><li>选项数量较少，或能够通过搜索快速定位</li><li>保留当前对象和相邻信息能帮助用户判断</li>
+            </ul>
+          </div>
+          <div>
+            <p className="mb-3 text-xs font-medium text-destructive">Avoid when</p>
+            <ul className="space-y-2 text-xs leading-5 text-muted-foreground">
+              <li>字段之间存在复杂联动、解释或校验</li><li>操作不可逆、高风险或需要预览影响</li><li>内容较长，需要比较、编排或多步骤决策</li><li>移动端浮层无法提供可靠命中区；此时转为 Bottom Sheet</li>
+            </ul>
+          </div>
+        </div>
+      </DocSection>
+      <DocSection id="inline-edit-accessibility" title="Accessibility" description="组件维护浮层的通用焦点路径；具体 editor 仍需提供与字段类型匹配的语义。">
+        <div className="space-y-3 text-xs leading-5 text-muted-foreground">
+          <p><InlineCode>Enter / Space</InlineCode> 打开；<InlineCode>ArrowDown</InlineCode> 从触发器进入；<InlineCode>Escape</InlineCode> 关闭并把焦点还给字段。</p>
+          <p>选择器使用 <InlineCode>combobox + listbox + option</InlineCode>；通用编辑器使用非模态 <InlineCode>dialog</InlineCode>。不要把所有值选择都实现成 action menu。</p>
+          <p>保存中、成功与失败通过 <InlineCode>aria-live</InlineCode> 宣告；错误不能只依赖颜色。系统开启 reduced motion 后，浮层过渡自动降为即时变化。</p>
+        </div>
+      </DocSection>
+      <DocSection id="inline-edit-api" title="API">
+        <PropTable rows={[
+          { name: "value / defaultValue", type: "T", defaultValue: "—", description: "受控或非受控字段值；两者至少提供一个。" },
+          { name: "renderValue", type: "(value, state) => ReactNode", defaultValue: "—", description: "渲染查看态；当前值本身始终是编辑入口。" },
+          { name: "editor", type: "(context) => ReactNode", defaultValue: "—", description: "自定义字段编辑器；context 提供 value、commit、close、state 和 error。" },
+          { name: "onValueChange", type: "(value) => void", defaultValue: "—", description: "乐观值变化时立即触发；失败时组件用旧值再次调用以回滚受控状态。" },
+          { name: "onCommit", type: "(next, previous) => Promise<void>", defaultValue: "—", description: "业务持久化边界；reject 会进入错误态并恢复 previousValue。" },
+          { name: "closeOnCommit", type: '"start" | "success" | "never"', defaultValue: '"start"', description: "单选默认即时关闭；多选封装固定保持打开。" },
+          { name: "options", type: "InlineEditOption[]", defaultValue: "[]", description: "InlineEditSelect 的稳定选项描述，支持 visual、description、keywords 和 disabled。" },
+          { name: "searchable / multiple", type: "boolean", defaultValue: "false", description: "按字段数据规模与选择基数开启搜索或多选。" },
+          { name: "createOption", type: "(query) => option | Promise<option>", defaultValue: "—", description: "查询没有精确匹配时允许创建；副作用和权限仍由业务层负责。" },
+        ]} />
+      </DocSection>
+    </>
+  );
+}
+
 function SurfacePage() {
   return (
     <>
@@ -985,10 +1344,12 @@ function DocsPage({ pageId }: { pageId: string }) {
     case "principles": content = <PrinciplesPage />; break;
     case "colors": content = <ColorsPage />; break;
     case "typography": content = <TypographyPage />; break;
+    case "icons": content = <IconsPage />; break;
     case "layout": content = <LayoutPage />; break;
     case "button": content = <ButtonPage />; break;
     case "input": content = <InputPage />; break;
     case "dropdown-menu": content = <DropdownMenuPage />; break;
+    case "inline-edit": content = <InlineEditPage />; break;
     case "surface": content = <SurfacePage />; break;
     case "feedback": content = <FeedbackPage />; break;
     case "app-shell": content = <AppShellPage />; break;

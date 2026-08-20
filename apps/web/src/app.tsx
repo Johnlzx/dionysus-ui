@@ -1,12 +1,12 @@
 /**
- * [INPUT]: 依赖 React Router、设计系统导航模型、DocsShell 和 DocsPage
+ * [INPUT]: 依赖 React Router、设计系统图标与导航模型、DocsShell 和 DocsPage
  * [OUTPUT]: 对外提供 Web 设计系统的 BrowserRouter 路由树、默认跳转和 404 页面
  * [POS]: web/src 的应用组合根，使每个设计资产拥有可刷新、可复制的稳定 URL
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { ArrowLeft, FileQuestion } from "lucide-react";
 import { Button, Surface } from "@dionysus/ui";
+import { ArrowLeft, FileQuestion } from "@dionysus/ui/icons";
 import { DocsShell } from "./docs-shell";
 import { DocsPage } from "./pages";
 import { DEFAULT_DOC_PATH, DOC_ITEMS } from "./navigation";

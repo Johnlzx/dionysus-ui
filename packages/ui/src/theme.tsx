@@ -1,11 +1,11 @@
 /**
- * [INPUT]: 依赖浏览器 localStorage、matchMedia、DOM 根节点与 React 状态
+ * [INPUT]: 依赖浏览器 localStorage、matchMedia、DOM 根节点、React 状态与设计系统主题图标
  * [OUTPUT]: 对外提供 Theme 类型、主题初始化/应用函数和 ThemeToggle 控件
  * [POS]: ui/src 的平台无关主题边界，统一 system/light/dark 行为而不感知具体 Token 数值
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
 import { useEffect, useState } from "react";
-import { Laptop, Moon, Sun } from "lucide-react";
+import { Laptop, Moon, Sun } from "./icons";
 import { Button } from "./primitives";
 
 type Theme = "system" | "light" | "dark";

@@ -1,5 +1,17 @@
 # Third-party notices
 
+## Lucide React
+
+Dionysus UI 使用 Lucide React 作为基础图标字形库。应用只通过 `@dionysus/ui/icons` 使用经过设计系统批准的静态子集；仓库不复制或维护完整 SVG 图标集。
+
+- Project: `lucide-icons/lucide`
+- Package: `lucide-react@1.24.0`
+- Source: <https://github.com/lucide-icons/lucide>
+- Copyright: © 2026 Lucide Icons and Contributors
+- License: ISC；部分源自 Feather 的图标同时适用 MIT
+
+完整上游许可证文本保存在 [`docs/licenses/lucide-react.LICENSE`](docs/licenses/lucide-react.LICENSE)，分发构建时必须随第三方声明一并保留。
+
 ## Multica visual system
 
 Dionysus Desktop 的视觉 Token、桌面 App Shell 密度、看板列与卡片层级、部分组件变体约定，基于以下开源项目研究与适配：

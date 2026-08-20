@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 React DOM 属性、CVA 变体系统、Lucide 搜索图标与 cn 类名工具
+ * [INPUT]: 依赖 React DOM 属性、CVA 变体系统、设计系统搜索图标与 cn 类名工具
  * [OUTPUT]: 对外提供 Button、Badge、Avatar、Input、SearchField、Surface、Dialog、SegmentedControl 等平台无关 UI 原语
  * [POS]: ui/src 的核心组件层，从 Desktop 视觉基线摘录并维持同一密度、状态和语义 Token
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
@@ -16,9 +16,9 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { Search, X } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./cn";
+import { Search, X } from "./icons";
 
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/45 active:translate-y-px disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",

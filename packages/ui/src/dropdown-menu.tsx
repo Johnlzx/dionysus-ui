@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 React 状态/DOM 副作用、Lucide 勾选/层级图标、Surface 与 cn 类名工具
+ * [INPUT]: 依赖 React 状态/DOM 副作用、设计系统勾选/层级图标、Surface 与 cn 类名工具
  * [OUTPUT]: 对外提供可搜索、可多选、可触发指令项的 DropdownMenu 浮层组件
  * [POS]: ui/src 的高级浮层原语，复用 Raised Surface、语义 Token 与平台无关交互，不感知业务数据
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
@@ -15,8 +15,8 @@ import {
   type ReactNode,
   type Ref,
 } from "react";
-import { Check, ChevronRight } from "lucide-react";
 import { cn } from "./cn";
+import { Check, ChevronRight } from "./icons";
 import { Surface } from "./primitives";
 
 type DropdownMenuAvatarTone = "violet" | "blue" | "amber" | "teal" | "rose" | "neutral";
