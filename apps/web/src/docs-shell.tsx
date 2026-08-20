@@ -66,6 +66,7 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   layout: LayoutGrid,
   button: MousePointer2,
   input: TextCursorInput,
+  "compact-select": TextSelect,
   "dropdown-menu": ListFilter,
   "inline-edit": TextSelect,
   "floating-panel": PanelRight,

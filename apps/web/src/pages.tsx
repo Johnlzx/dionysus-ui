@@ -53,6 +53,7 @@ import {
   Badge,
   Button,
   CollapsibleSidebar,
+  CompactSelect,
   DropdownMenu,
   FloatingSidePanel,
   FloatingSidePanelCard,
@@ -67,6 +68,7 @@ import {
   SidebarToggle,
   Surface,
   cn,
+  type CompactSelectOption,
   type DropdownMenuGroup,
   type InlineEditOption,
   type InlineEditSelectValue,
@@ -127,6 +129,14 @@ const PAGE_TOC: Record<string, TocItem[]> = {
     { id: "search-field", label: "Search field" },
     { id: "input-states", label: "States" },
     { id: "input-api", label: "API" },
+  ],
+  "compact-select": [
+    { id: "compact-select-specimen", label: "Live specimen" },
+    { id: "compact-select-anatomy", label: "Anatomy" },
+    { id: "compact-select-comparison", label: "vs. Inline Edit" },
+    { id: "compact-select-practice", label: "Best practices" },
+    { id: "compact-select-accessibility", label: "Accessibility" },
+    { id: "compact-select-api", label: "API" },
   ],
   "dropdown-menu": [
     { id: "assignee-menu", label: "Assignee menu" },
@@ -938,6 +948,170 @@ function InputPage() {
   );
 }
 
+const homeViewOptions: CompactSelectOption[] = [
+  { value: "linear-agent", label: "Linear Agent (default)" },
+  { value: "inbox", label: "Inbox" },
+  { value: "my-issues", label: "My issues" },
+  { value: "all-issues", label: "All issues" },
+  { value: "active-issues", label: "Active issues" },
+  { value: "current-cycle", label: "Current cycle" },
+  { value: "projects", label: "Projects" },
+  { value: "initiatives", label: "Initiatives" },
+];
+
+const displayNameOptions: CompactSelectOption[] = [
+  { value: "username", label: "Username" },
+  { value: "full-name", label: "Full name" },
+];
+
+const weekStartOptions: CompactSelectOption[] = [
+  { value: "sunday", label: "Sunday" },
+  { value: "monday", label: "Monday" },
+  { value: "saturday", label: "Saturday" },
+];
+
+function CompactSelectDemo() {
+  const [homeView, setHomeView] = useState("linear-agent");
+  const [displayName, setDisplayName] = useState("username");
+  const [weekStart, setWeekStart] = useState("sunday");
+
+  return (
+    <div className="w-full max-w-[40rem]">
+      <p className="mb-4 px-4 text-sm font-medium">General</p>
+      <Surface className="overflow-visible p-0" aria-label="通用设置紧凑选择示例">
+        {[
+          {
+            title: "Default home view",
+            description: "Select which view to display when launching Dionysus",
+            control: <CompactSelect label="默认首页" value={homeView} onValueChange={setHomeView} options={homeViewOptions} />,
+          },
+          {
+            title: "Display names",
+            description: "Select how names are displayed in the interface",
+            control: <CompactSelect label="名称显示方式" value={displayName} onValueChange={setDisplayName} options={displayNameOptions} />,
+          },
+          {
+            title: "First day of the week",
+            description: "Used for date pickers",
+            control: <CompactSelect label="每周起始日" value={weekStart} onValueChange={setWeekStart} options={weekStartOptions} />,
+          },
+        ].map((item) => (
+          <div key={item.title} className="grid min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-6 border-b border-border/70 px-4 py-3 last:border-b-0">
+            <div className="min-w-0">
+              <p className="truncate text-xs font-medium">{item.title}</p>
+              <p className="mt-0.5 truncate text-micro text-muted-foreground">{item.description}</p>
+            </div>
+            {item.control}
+          </div>
+        ))}
+      </Surface>
+    </div>
+  );
+}
+
+const compactSelectCode = `const [homeView, setHomeView] = useState("linear-agent")
+
+<CompactSelect
+  label="Default home view"
+  value={homeView}
+  onValueChange={setHomeView}
+  options={homeViewOptions}
+/>`;
+
+function CompactSelectPage() {
+  return (
+    <>
+      <PageIntro
+        eyebrow="Components"
+        title="Compact Select"
+        description="为设置行和高密度工具区设计的单选控件。菜单以当前选中项为锚点展开，让触发器与选项在空间上连续，而不是把用户的视线带到另一个位置。"
+        status="New"
+        meta={<span>Reference: Linear preferences · Source: <InlineCode>@dionysus/ui</InlineCode></span>}
+      />
+      <DocSection id="compact-select-specimen" title="Live specimen" description="32px 触发器与选项行、4px 菜单内边距、11px 浮层圆角；菜单宽度由内容和触发器共同决定，并在当前选项处展开。">
+        <Specimen title="Selection-anchored select" description="打开任一设置；移动指针或使用方向键并选择新值" code={compactSelectCode} previewClassName="min-h-[32rem] items-start overflow-visible bg-app-shell/65 px-4 py-12 sm:p-12">
+          <CompactSelectDemo />
+        </Specimen>
+      </DocSection>
+      <DocSection id="compact-select-anatomy" title="Anatomy" description="视觉连续性来自选中行锚定，而不是额外的位移动效。">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2">
+          {[
+            ["01", "Persistent trigger", "常驻边框、值与 Chevron 明确表示这是可选择的表单控件；查看态不会伪装成纯文本。"],
+            ["02", "Selection anchor", "浮层打开时，当前选项中心与触发器中心重合；菜单向上下自然展开并在视口边缘夹取。"],
+            ["03", "Compact rows", "触发器和选项均为 32px；外层 4px inset 为高亮行保留轮廓，Check 独立表达选中。"],
+            ["04", "Immediate choice", "点击选项即更新本地值并关闭；持久化、错误和撤销由所在设置模式明确承接。"],
+          ].map(([index, title, copy]) => (
+            <div key={title} className="bg-background p-4">
+              <span className="font-mono text-micro text-muted-foreground">{index}</span>
+              <p className="mt-7 text-xs font-medium">{title}</p>
+              <p className="mt-1 text-micro leading-4 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="compact-select-comparison" title="Compact Select vs. Inline Edit" description="两者都在原页面完成单字段选择，但它们解决的是不同层级的问题。">
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="w-full min-w-[46rem] border-collapse text-left text-xs">
+            <thead className="bg-muted/45 text-muted-foreground"><tr><th className="px-3 py-2.5 font-medium">维度</th><th className="px-3 py-2.5 font-medium">Compact Select</th><th className="px-3 py-2.5 font-medium">Inline Edit / InlineEditSelect</th></tr></thead>
+            <tbody>
+              {[
+                ["角色", "紧凑的单选表单原语", "原位编辑模式与提交外壳"],
+                ["入口", "始终显示边框与 Chevron，编辑性持续可见", "当前值就是入口，默认弱化控件外观"],
+                ["范围", "只处理稳定枚举的单选", "可装载选择、搜索、日期、文本、多选或创建"],
+                ["提交", "只发出 onValueChange；不假设保存方式", "内建 optimistic → saving → saved/error → rollback"],
+                ["浮层", "选中项覆盖触发器并围绕它展开", "Popover 贴在值的上方或下方，不覆盖触发器"],
+                ["适用", "设置页、筛选栏、紧凑工具栏", "对象属性、表格单元格、详情页快速编辑"],
+              ].map(([dimension, compact, inline]) => <tr key={dimension} className="border-t border-border align-top"><td className="px-3 py-3 font-medium">{dimension}</td><td className="px-3 py-3 leading-5 text-muted-foreground">{compact}</td><td className="px-3 py-3 leading-5 text-muted-foreground">{inline}</td></tr>)}
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-4"><RuleNote>关系上，Compact Select 可以成为某个 Inline Edit editor 的视觉基础，但二者不能互相替代：前者是输入控件，后者还负责业务提交状态和失败恢复。</RuleNote></div>
+      </DocSection>
+      <DocSection id="compact-select-practice" title="Best practices" description="先判断语义，再决定是否采用这种紧凑外观。">
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div>
+            <p className="mb-3 text-xs font-medium text-success-foreground">Use when</p>
+            <ul className="space-y-2 text-xs leading-5 text-muted-foreground">
+              <li>设置值来自少量、稳定且互斥的选项</li><li>控件需要长期显示可编辑性，而不是只在 hover 时出现</li><li>选中后可以立即生效，或设置页有统一的保存状态</li><li>菜单内容短、没有分组、搜索、二级指令和多选</li>
+            </ul>
+          </div>
+          <div>
+            <p className="mb-3 text-xs font-medium text-destructive">Choose another pattern</p>
+            <ul className="space-y-2 text-xs leading-5 text-muted-foreground">
+              <li>需要搜索、多选、成员头像或指令项：使用 DropdownMenu 或 Combobox</li><li>需要保存反馈、失败回滚或编辑多种字段：使用 Inline Edit</li><li>操作会删除、发布、付款或移交权限：进入确认流</li><li>移动端菜单会超出安全命中区：切换原生 Select 或 Bottom Sheet</li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          {[
+            ["Keep labels stable", "选项 value 必须稳定唯一；label 可本地化，但不能充当业务 ID。"],
+            ["Show persistence", "异步保存由设置行或页面呈现 saving/error；不要让失败看起来像已成功。"],
+            ["Avoid menu creep", "一旦需要分组、搜索、说明或命令，就升级模式而不是继续压缩行高。"],
+          ].map(([title, copy]) => <Surface key={title} variant="subtle" padding="md"><p className="text-xs font-medium">{title}</p><p className="mt-1 text-micro leading-4 text-muted-foreground">{copy}</p></Surface>)}
+        </div>
+      </DocSection>
+      <DocSection id="compact-select-accessibility" title="Accessibility" description="视觉上覆盖触发器，语义上仍是 button + listbox。">
+        <div className="space-y-3 text-xs leading-5 text-muted-foreground">
+          <p><InlineCode>Enter / Space</InlineCode> 打开，<InlineCode>ArrowUp / ArrowDown</InlineCode> 移动，<InlineCode>Home / End</InlineCode> 跳转，<InlineCode>Escape</InlineCode> 关闭并恢复触发器焦点。</p>
+          <p>选项使用 <InlineCode>role="option"</InlineCode> 与 <InlineCode>aria-selected</InlineCode>；Check 只是冗余视觉信号，不能替代可访问状态。</p>
+          <p>字符键支持 500ms typeahead。系统开启 reduced motion 后，围绕当前选项的缩放淡入会退化为即时显示。</p>
+        </div>
+      </DocSection>
+      <DocSection id="compact-select-api" title="API">
+        <PropTable rows={[
+          { name: "label", type: "string", defaultValue: "—", description: "触发器和 listbox 的可访问名称；必须描述所编辑字段，而不是当前值。" },
+          { name: "options", type: "CompactSelectOption[]", defaultValue: "[]", description: "稳定单选项；支持 label、textValue、visual 和 disabled。" },
+          { name: "value / defaultValue", type: "string", defaultValue: "首个可用项", description: "受控或非受控选择值。" },
+          { name: "onValueChange", type: "(value, option) => void", defaultValue: "—", description: "选择后立即触发；持久化与失败反馈属于消费方。" },
+          { name: "open / defaultOpen", type: "boolean", defaultValue: "false", description: "支持受控和非受控浮层状态。" },
+          { name: "align", type: '"start" | "center" | "end"', defaultValue: '"center"', description: "菜单相对触发器的水平锚定；中心对齐最接近参考交互。" },
+          { name: "triggerClassName / panelClassName", type: "string", defaultValue: "—", description: "只允许做布局宽度和消费场景适配；不要改变 32px 密度契约。" },
+        ]} />
+      </DocSection>
+    </>
+  );
+}
+
 function NoAssigneeMark() {
   return (
     <span className="relative flex size-8 items-center justify-center text-foreground">
@@ -1701,6 +1875,7 @@ function DocsPage({ pageId }: { pageId: string }) {
     case "button": content = <ButtonPage />; break;
     case "prismatic-button": content = <PrismaticButtonPage />; break;
     case "input": content = <InputPage />; break;
+    case "compact-select": content = <CompactSelectPage />; break;
     case "dropdown-menu": content = <DropdownMenuPage />; break;
     case "inline-edit": content = <InlineEditPage />; break;
     case "floating-panel": content = <FloatingPanelPage />; break;

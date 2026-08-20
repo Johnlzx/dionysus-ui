@@ -17,6 +17,7 @@ export {
   CalendarDays,
   Check,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   Circle,
   CircleAlert,

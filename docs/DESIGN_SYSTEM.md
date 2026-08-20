@@ -13,7 +13,7 @@
 
 - 唯一 Token 真相源：`packages/ui/src/styles.css`。
 - 共享原语入口：`packages/ui/src/index.ts`；图标入口：`packages/ui/src/icons.tsx`。消费者只从 `@dionysus/ui`、`@dionysus/ui/icons` 和 `@dionysus/ui/styles.css` 引入。
-- 当前稳定原语：`Button / PrismaticButton / Badge / Avatar / Input / SearchField / DropdownMenu / InlineEdit / InlineEditSelect / Surface / Dialog / SegmentedControl / ThemeToggle`。
+- 当前稳定原语：`Button / PrismaticButton / Badge / Avatar / Input / SearchField / CompactSelect / DropdownMenu / InlineEdit / InlineEditSelect / Surface / Dialog / SegmentedControl / ThemeToggle`。
 - Web 活规范入口：`apps/web`，侧栏、搜索、示例和页面模式必须消费真实共享组件。
 - Web 站点样式：`apps/web/src/styles.css` 只定义文档呈现、动画和打印规则，不创建第二套基础视觉 Token。
 - 后续产品原语：`FogSphere / GlassSurface / TreeView / MarkdownEditor / Page primitives` 等必须先进入 `packages/ui` 或明确标注为路线图，再允许业务消费。
@@ -178,6 +178,16 @@
 - 当主内容无法保持可读宽度时，产品层应在断点处切换为 Drawer / Bottom Sheet；共享组件不自行推断断点。需要阻断操作时使用 Dialog，少量锚定信息使用 Popover / Menu。
 - `prefers-reduced-motion: reduce` 下宽度、位移和透明度立即到达终态。通过快捷键关闭且焦点原本在面板内时，业务层负责把焦点还给 Toggle。
 
+### CompactSelect
+
+- `CompactSelect` 是设置行、高密度工具区和短筛选栏中的紧凑单选原语；常驻边框与 Chevron 明确表示可编辑性，不伪装成只读文本。
+- 触发器和选项行固定 32px，菜单使用 4px inset、11px 圆角与 `--menu-shadow`。浮层打开时当前选项中心与触发器中心重合，再按视口安全边距夹取位置。
+- 只用于少量、稳定、互斥且无需搜索的选项。需要搜索、分组、多选、成员信息或指令项时使用 DropdownMenu / Combobox；需要多种 editor、保存状态与失败回滚时使用 Inline Edit。
+- 组件只触发 `onValueChange(value, option)`，不连接网络、不显示伪保存成功。异步持久化、错误与撤销必须由所在设置行或页面模式持续呈现。
+- `value` 必须稳定唯一；label 可以本地化。disabled 选项保留语义但不可进入键盘 roving focus。
+- 使用 `button + listbox + option` 语义；支持 Enter/Space、方向键、Home/End、Escape 和 500ms typeahead，关闭后恢复触发器焦点。
+- 移动端无法保证浮层命中区时，产品层切换为原生 Select 或 Bottom Sheet；共享组件不自行推断断点。
+
 ### DropdownMenu
 
 - 用于搜索型下拉选择、成员分配、标签选择和轻量 command palette；支持分组、多选、右侧计数与指令项。
@@ -329,7 +339,7 @@
 
 - [ ] 是否只使用语义 Token，没有组件硬编码色值？
 - [ ] Light / Dark Token 是否对称？
-- [ ] 是否复用现有 Button、Badge、Avatar、DropdownMenu、InlineEdit、Dialog 与 SegmentedControl？
+- [ ] 是否复用现有 Button、Badge、Avatar、CompactSelect、DropdownMenu、InlineEdit、Dialog 与 SegmentedControl？
 - [ ] 是否复用 Input、SearchField、Surface 与已发布页面模式，而不是在业务页重复拼接？
 - [ ] 认证是否默认保持验证码登录/注册同路、密码入口避免账号枚举，并且未在 Renderer 持久化 Token 或密码？
 - [ ] Agent Composer 是否只在聚焦时高亮、只在非空时激活发送，并正确处理 Enter/Shift+Enter/输入法？

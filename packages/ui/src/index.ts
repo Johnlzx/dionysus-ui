@@ -1,10 +1,12 @@
 /**
- * [INPUT]: 依赖 ui/src 内部原语、Prismatic Button、左右侧栏、下拉浮层、原位编辑、主题与类名工具模块
- * [OUTPUT]: 对外提供 @dionysus/ui 的稳定公共导出面、Prismatic Button、Inline Edit 模式与 App Shell/浮动面板运动契约
+ * [INPUT]: 依赖 ui/src 内部原语、Prismatic Button、左右侧栏、紧凑选择/下拉浮层、原位编辑、主题与类名工具模块
+ * [OUTPUT]: 对外提供 @dionysus/ui 的稳定公共导出面、Compact Select、Prismatic Button、Inline Edit 模式与 App Shell/浮动面板运动契约
  * [POS]: ui/src 的包入口，阻止消费者依赖内部文件结构
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
 export { cn } from "./cn";
+export { CompactSelect } from "./compact-select";
+export type { CompactSelectAlign, CompactSelectOption, CompactSelectProps } from "./compact-select";
 export { DropdownMenu } from "./dropdown-menu";
 export type {
   DropdownMenuAvatarConfig,
