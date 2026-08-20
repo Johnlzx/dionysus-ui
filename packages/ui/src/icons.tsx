@@ -44,6 +44,7 @@ export {
   MousePointer2,
   Palette,
   PanelLeft,
+  PanelRight,
   PanelsTopLeft,
   Paperclip,
   Plus,

@@ -21,6 +21,7 @@ import {
   MousePointer2,
   Palette,
   PanelLeft,
+  PanelRight,
   PanelsTopLeft,
   Search,
   Shapes,
@@ -67,6 +68,7 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   input: TextCursorInput,
   "dropdown-menu": ListFilter,
   "inline-edit": TextSelect,
+  "floating-panel": PanelRight,
   surface: Layers3,
   feedback: MessageSquareWarning,
   "app-shell": PanelLeft,
@@ -86,7 +88,7 @@ function Navigation({ collapsed = false, onNavigate }: { collapsed?: boolean; on
     >
       {DOC_NAVIGATION.map((group) => (
         <div key={group.label} className={cn("last:mb-0", collapsed ? "mb-3" : "mb-5")}>
-          <p className={cn("mb-1.5 px-2 text-micro font-medium uppercase tracking-[0.12em] text-muted-foreground/80", collapsed && "sr-only")}>{group.label}</p>
+          <p className={cn("nav-section-label mb-1.5 px-2", collapsed && "sr-only")}>{group.label}</p>
           <div className="space-y-0.5">
             {group.items.map((item) => {
               const active = pathname === item.path;

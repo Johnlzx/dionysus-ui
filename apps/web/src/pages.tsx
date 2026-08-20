@@ -34,6 +34,7 @@ import {
   MoreHorizontal,
   Paperclip,
   PanelLeft,
+  PanelRight,
   Plus,
   Search,
   SearchIcon,
@@ -53,10 +54,13 @@ import {
   Button,
   CollapsibleSidebar,
   DropdownMenu,
+  FloatingSidePanel,
+  FloatingSidePanelCard,
   InlineEdit,
   InlineEditSelect,
   Input,
   SearchField,
+  SidePanelToggle,
   SidebarHeader,
   SidebarToggle,
   Surface,
@@ -127,6 +131,14 @@ const PAGE_TOC: Record<string, TocItem[]> = {
     { id: "inline-edit-principles", label: "Usage principles" },
     { id: "inline-edit-accessibility", label: "Accessibility" },
     { id: "inline-edit-api", label: "API" },
+  ],
+  "floating-panel": [
+    { id: "floating-panel-specimen", label: "Live specimen" },
+    { id: "floating-panel-anatomy", label: "Anatomy" },
+    { id: "floating-panel-motion", label: "Motion" },
+    { id: "floating-panel-behavior", label: "Behavior" },
+    { id: "floating-panel-accessibility", label: "Accessibility" },
+    { id: "floating-panel-api", label: "API" },
   ],
   surface: [
     { id: "surface-variants", label: "Variants" },
@@ -296,6 +308,76 @@ function SidebarMotionSpecimen() {
   );
 }
 
+function FloatingPanelSpecimen() {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <div className="flex h-[28rem] w-full flex-col overflow-hidden rounded-xl border border-surface-border bg-app-shell shadow-[var(--surface-shadow)]">
+      <div className="flex h-11 shrink-0 items-center gap-2 px-3">
+        <span className="flex size-6 items-center justify-center rounded-lg bg-primary text-micro text-primary-foreground">D</span>
+        <div className="min-w-0">
+          <p className="truncate text-xs font-medium">内容工作台</p>
+          <p className="text-micro text-muted-foreground">正文 / 当前草稿</p>
+        </div>
+        <SidePanelToggle
+          aria-controls="floating-panel-specimen"
+          className="ml-auto"
+          onClick={() => setOpen((current) => !current)}
+          open={open}
+        >
+          <PanelRight />
+        </SidePanelToggle>
+      </div>
+      <div className="flex min-h-0 flex-1">
+        <main className="m-2 mr-0 flex min-w-0 flex-1 flex-col overflow-hidden rounded-xl bg-page-canvas ring-1 ring-surface-border">
+          <div className="flex h-10 shrink-0 items-center border-b border-border px-4 text-micro text-muted-foreground">Draft · 已保存</div>
+          <div className="min-h-0 flex-1 overflow-hidden px-6 py-8 sm:px-10">
+            <div className="mx-auto max-w-md">
+              <p className="text-micro font-medium text-muted-foreground">03 / 交互结构</p>
+              <h3 className="mt-3 text-balance text-lg font-semibold tracking-tight">让辅助信息保持在视野内，但不与正文争夺注意力。</h3>
+              <p className="mt-4 text-xs leading-6 text-muted-foreground">主内容通过真实布局宽度让位。面板关闭后，画布自然取回空间；打开时，圆角表面与四周留白共同表达它是可临时收起的上下文。</p>
+              <div className="mt-7 space-y-3">
+                <div className="h-2.5 w-full rounded-full bg-muted" />
+                <div className="h-2.5 w-[88%] rounded-full bg-muted" />
+                <div className="h-2.5 w-[72%] rounded-full bg-muted" />
+              </div>
+            </div>
+          </div>
+        </main>
+        <FloatingSidePanel
+          aria-label="写作上下文"
+          id="floating-panel-specimen"
+          open={open}
+          width={276}
+        >
+          <FloatingSidePanelCard>
+            <div className="flex items-center border-b border-border/70 px-3 py-2.5">
+              <p className="text-xs font-medium">写作计划</p>
+              <Badge className="ml-auto" size="xs" variant="success">Ready</Badge>
+            </div>
+            <div className="space-y-3 p-3">
+              {["说明布局让位", "保留浮动间距", "检查按钮双态"].map((item, index) => (
+                <div className="flex items-center gap-2 text-micro" key={item}>
+                  <span className={cn("flex size-4 items-center justify-center rounded-full border", index < 2 ? "border-success/25 bg-success/10 text-success-foreground" : "border-border text-muted-foreground")}>{index < 2 ? <Check className="size-2.5" /> : index + 1}</span>
+                  <span className={index < 2 ? "text-muted-foreground line-through" : "font-medium"}>{item}</span>
+                </div>
+              ))}
+            </div>
+          </FloatingSidePanelCard>
+          <FloatingSidePanelCard className="p-3">
+            <div className="flex items-center gap-2"><FileText className="size-3.5 text-muted-foreground" /><p className="text-xs font-medium">引用材料</p><span className="ml-auto font-mono text-micro text-muted-foreground">3</span></div>
+            <p className="mt-3 text-micro leading-4 text-muted-foreground">研究笔记、交互录屏、现有设计规范</p>
+          </FloatingSidePanelCard>
+          <FloatingSidePanelCard className="min-h-24 p-3">
+            <p className="text-xs font-medium">复核记录</p>
+            <p className="mt-2 text-micro leading-4 text-muted-foreground">面板与主内容没有硬分割线；空间和表面层级承担边界。</p>
+          </FloatingSidePanelCard>
+        </FloatingSidePanel>
+      </div>
+    </div>
+  );
+}
+
 function OverviewPage() {
   return (
     <>
@@ -458,12 +540,13 @@ function TypographyPage() {
             ["Heading", "20 / 28", "text-xl", "颜色与表面"],
             ["Body", "14 / 28", "text-sm", "长文阅读通过更大的行高保持舒展。"],
             ["Label", "12 / 16", "text-xs", "组件状态与操作标签"],
+            ["Nav section", "10 / 14", "text-nav-section", "FOUNDATIONS"],
             ["Micro", "10 / 14", "text-micro", "VERSION 0.1 · UPDATED TODAY"],
           ].map(([role, metrics, token, sample]) => (
             <div key={role} className="grid items-baseline gap-3 py-5 sm:grid-cols-[5rem_6rem_1fr]">
               <span className="text-micro text-muted-foreground">{role}</span>
               <span className="font-mono text-micro text-muted-foreground">{metrics}</span>
-              <p className={cn("font-medium tracking-tight", token)}>{sample}</p>
+              <p className={cn("font-medium", role === "Nav section" ? "uppercase tracking-nav-section" : "tracking-tight", token)}>{sample}</p>
             </div>
           ))}
         </div>
@@ -1123,6 +1206,121 @@ function InlineEditPage() {
   );
 }
 
+function FloatingPanelPage() {
+  return (
+    <>
+      <PageIntro
+        eyebrow="Components"
+        title="Floating side panel"
+        description="在桌面工作区里持续呈现上下文，又不制造一条生硬的纵向分割线。面板通过真实布局让位进入，以 inset、圆角卡片和轻阴影表达可收起的第二层信息。"
+        status="New"
+        meta={<><Metric value="320px" label="Default card width" /><Metric value="8px" label="Rail inset" /><Metric value="100–180ms" label="Visible transition" /><Metric value="AA" label="Focus target" /></>}
+      />
+      <DocSection id="floating-panel-specimen" title="Live specimen" description="点击右上角按钮审阅打开/关闭、主内容重排和按钮双态；快速连续点击可直接反向。">
+        <Specimen
+          title="Inset contextual rail"
+          description="主内容让位，卡片保持固有宽度，不在过渡中挤压文字"
+          previewClassName="p-0"
+          code={'const [open, setOpen] = useState(true)\n\n<header>\n  <SidePanelToggle open={open} aria-controls="writing-plan"\n    onClick={() => setOpen(value => !value)}>\n    <PanelRight />\n  </SidePanelToggle>\n</header>\n\n<div className="flex min-h-0">\n  <main className="min-w-0 flex-1">…</main>\n  <FloatingSidePanel id="writing-plan" open={open}>\n    <FloatingSidePanelCard>…</FloatingSidePanelCard>\n  </FloatingSidePanel>\n</div>'}
+        >
+          <FloatingPanelSpecimen />
+        </Specimen>
+        <RuleNote>该模式来自三段参考录屏的共同结构：触发器留在稳定工具栏内，下面的内容区形成 <InlineCode>main + aside</InlineCode> 布局；面板不是覆盖主内容的 Drawer，也不是靠一条全高边线切割页面。</RuleNote>
+      </DocSection>
+      <DocSection id="floating-panel-anatomy" title="Anatomy" description="Rail 管布局与间距，Card 管表面，Toggle 管状态。三者不能由业务页面重复拼装。">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["A", "Stable trigger", "工具栏中的 28–32px 图标按钮"],
+            ["B", "Animated track", "0 → card width + 2 × inset"],
+            ["C", "Inset rail", "四周 8px；多卡片间距 8px"],
+            ["D", "Floating card", "12px 圆角 + 弱 ring + tinted shadow"],
+          ].map(([mark, title, copy]) => (
+            <div className="bg-background p-4" key={mark}>
+              <span className="font-mono text-micro text-muted-foreground">{mark}</span>
+              <p className="mt-4 text-xs font-medium">{title}</p>
+              <p className="mt-1 text-micro leading-4 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-5 divide-y divide-border border-y border-border">
+          {[
+            ["边界", "优先依赖 8px inset、圆角和低对比阴影；ring 只负责抗锯齿与暗色模式边缘，不承担硬分栏。"],
+            ["宽度", "默认卡片宽 320px；检查器可取 320–400px。宽度由任务密度决定，不随内容瞬间跳变。"],
+            ["卡片栈", "同一上下文可以拆成多张内容高度卡片；滚动归 Rail 所有，卡片之间保持 8px，不嵌套多层阴影。"],
+            ["Header", "全局或页面工具栏跨越整个工作区并保持稳定；面板只参与工具栏下方的内容布局。"],
+          ].map(([title, copy]) => (
+            <div className="grid gap-2 py-4 sm:grid-cols-[10rem_1fr]" key={title}>
+              <p className="text-xs font-medium">{title}</p>
+              <p className="text-xs leading-5 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="floating-panel-motion" title="Motion" description="录屏中的感知变化短而克制：先建立空间，再让内容稳定落位。">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["Track", "0 → 336px", "spring 700 / 48 / 0.62"],
+            ["Card x", "26 → 0px", "spring 760 / 50 / 0.62"],
+            ["Opacity", "0 → 1", "140ms in / 90ms out"],
+            ["Observed", "100–180ms", "无缩放、无旋转、无明显回弹"],
+          ].map(([title, value, copy]) => (
+            <div className="bg-background p-4" key={title}>
+              <p className="text-micro uppercase tracking-[0.12em] text-muted-foreground">{title}</p>
+              <p className="mt-3 font-mono text-xs font-medium">{value}</p>
+              <p className="mt-2 text-micro leading-4 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-5 space-y-3 text-xs leading-5 text-muted-foreground">
+          <p><strong className="font-medium text-foreground">打开：</strong>Aside 宽度和卡片 x 同时开始；固定宽度的卡片从右侧被逐步揭示，因此文字不会在每一帧重新换行。</p>
+          <p><strong className="font-medium text-foreground">关闭：</strong>交互立即失效并退出无障碍树，视觉用更快的 90ms 淡出配合宽度回收；主内容从当前宽度连续取回空间。</p>
+          <p><strong className="font-medium text-foreground">中断：</strong>spring 从当前速度反向，不排队、不等待前一次完成。Reduced motion 下宽度、位移和透明度都立即到达终态。</p>
+        </div>
+      </DocSection>
+      <DocSection id="floating-panel-behavior" title="Behavior" description="是否使用 Floating panel，取决于内容是否需要与主任务同时可见。">
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div>
+            <p className="mb-3 text-xs font-medium text-success-foreground">Use when</p>
+            <ul className="space-y-2 text-xs leading-5 text-muted-foreground">
+              <li>属性、写作计划、来源或活动需要与主内容并行对照</li>
+              <li>用户会反复开关，但不希望离开当前页面或失去滚动位置</li>
+              <li>桌面宽度足以让主内容保留其最小可用宽度</li>
+              <li>面板内容有自己的分组与滚动，却不需要模态焦点</li>
+            </ul>
+          </div>
+          <div>
+            <p className="mb-3 text-xs font-medium text-destructive">Avoid when</p>
+            <ul className="space-y-2 text-xs leading-5 text-muted-foreground">
+              <li>用户必须先处理面板才能继续；此时使用 Dialog</li>
+              <li>面板是一级导航或完整页面，不是当前对象的辅助上下文</li>
+              <li>可用宽度会把主内容压到不可读；小屏切换为 Drawer / Bottom Sheet</li>
+              <li>只是显示一句 Tooltip 或少量选项；此时使用 Popover / Menu</li>
+            </ul>
+          </div>
+        </div>
+        <RuleNote kind="safety">Floating panel 是非模态布局区，不添加遮罩、不锁定页面滚动、不自动抢焦点。不可逆操作仍需独立确认流。</RuleNote>
+      </DocSection>
+      <DocSection id="floating-panel-accessibility" title="Accessibility" description="视觉上的浮动感不能削弱结构语义与键盘可达性。">
+        <div className="space-y-3 text-xs leading-5 text-muted-foreground">
+          <p>触发器必须提供 <InlineCode>aria-controls</InlineCode>、动态 <InlineCode>aria-expanded</InlineCode>、可见 focus ring 和随状态变化的操作名称；打开态同时通过 Selected Surface 表达，不只依赖图标变化。</p>
+          <p>关闭后 Aside 立即获得 <InlineCode>aria-hidden</InlineCode> 与 <InlineCode>inert</InlineCode>，避免零宽内容仍进入 Tab 顺序。通过快捷键关闭且焦点原本在面板内时，业务层应把焦点还给触发器。</p>
+          <p>面板本身使用 <InlineCode>aside</InlineCode> 和可理解的 <InlineCode>aria-label</InlineCode>；卡片内继续使用真实 heading、section、list 与 form，不把所有内容做成无语义的可点击行。</p>
+        </div>
+      </DocSection>
+      <DocSection id="floating-panel-api" title="API">
+        <PropTable rows={[
+          { name: "open", type: "boolean", defaultValue: "—", description: "受控终态；同时驱动 Aside 宽度、卡片位移、透明度和 inert 状态。" },
+          { name: "width", type: "number", defaultValue: "320", description: "卡片内容宽度（px）；动画轨道还会加上两侧 inset。" },
+          { name: "inset", type: "number", defaultValue: "8", description: "Rail 四周间距（px）；同一数值用于浮动关系，不由业务页额外补 margin。" },
+          { name: "railClassName", type: "string", defaultValue: "—", description: "只调整 Rail 的滚动与布局；禁止覆盖运动几何。" },
+          { name: "FloatingSidePanelCard", type: "HTMLAttributes<HTMLDivElement>", defaultValue: "—", description: "允许一张或多张卡片；统一圆角、语义表面、弱 ring 与面板阴影。" },
+          { name: "SidePanelToggle.open", type: "boolean", defaultValue: "—", description: "关闭态为 Ghost，打开态为 Selected；自动设置 aria-expanded、title 与动态名称。" },
+        ]} />
+      </DocSection>
+    </>
+  );
+}
+
 function SurfacePage() {
   return (
     <>
@@ -1350,6 +1548,7 @@ function DocsPage({ pageId }: { pageId: string }) {
     case "input": content = <InputPage />; break;
     case "dropdown-menu": content = <DropdownMenuPage />; break;
     case "inline-edit": content = <InlineEditPage />; break;
+    case "floating-panel": content = <FloatingPanelPage />; break;
     case "surface": content = <SurfacePage />; break;
     case "feedback": content = <FeedbackPage />; break;
     case "app-shell": content = <AppShellPage />; break;

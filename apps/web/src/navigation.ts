@@ -41,6 +41,7 @@ const DOC_NAVIGATION: DocNavGroup[] = [
       { id: "input", label: "Input", description: "文本输入、搜索与表单反馈", path: "/components/input" },
       { id: "dropdown-menu", label: "DropdownMenu", description: "搜索、多选、分组与指令弹窗", path: "/components/dropdown-menu", badge: "New" },
       { id: "inline-edit", label: "Inline Edit", description: "锚定浮层、即时提交与失败回滚", path: "/components/inline-edit", badge: "New" },
+      { id: "floating-panel", label: "Floating panel", description: "布局内浮动右栏、卡片栈与双态触发器", path: "/components/floating-panel", badge: "New" },
       { id: "surface", label: "Surface", description: "常驻、浮层、选中与低层级表面", path: "/components/surface" },
       { id: "feedback", label: "Feedback", description: "Badge、状态、空态和错误", path: "/components/feedback", badge: "4" },
     ],

@@ -65,7 +65,9 @@
 
 - UI 主字体：Inter Variable；中文依次回退至 PingFang SC、Microsoft YaHei、Noto Sans CJK SC。
 - 等宽字体：SFMono-Regular、Consolas、Liberation Mono。
-- 字号纪律：`text-base` 用于重要正文，`text-sm` 用于主界面，`text-xs` 用于元数据；`text-[0.8rem]` 仅用于小按钮。
+- 字号纪律：`text-base` 用于重要正文，`text-sm` 用于主界面，`text-xs` 用于操作标签，`text-micro` 用于元数据；`text-button-sm` 仅用于小按钮。
+- 导航分组使用语义角色 `nav-section-label`：复用 Micro 10/14 字阶、500 字重与大写，字距固定为 `tracking-nav-section` (0.08em)；不允许页面内追加任意 tracking。
+- 新增 `--text-*` 或 `--tracking-*` Token 时，必须同步登记到共享 `cn()` 的 tailwind-merge 配置，避免字号被文字颜色类误删。
 - 字重仅使用 `font-normal` 与 `font-medium`。禁止 `font-bold`、`font-semibold`。
 - 同一区块最多两种字号；第三层级优先通过颜色或字重表达。
 
@@ -152,6 +154,18 @@
 
 - `card / raised / subtle / selected / flat` 是允许的基础表面变体。
 - 业务页面不得重复组合 `border + background + shadow + radius` 创建平行卡片。
+
+### FloatingSidePanel
+
+- 桌面端属性、写作计划、来源、活动等上下文统一使用 `FloatingSidePanel + FloatingSidePanelCard + SidePanelToggle`；它是工具栏下方内容区中的 `main + aside` 布局，不是覆盖主内容的 Drawer。
+- 默认卡片宽 320px、Rail 四周 inset 8px、多卡片间距 8px。Rail 宽度包含卡片和两侧 inset；页面不得再追加平行 margin、硬分割线或另一层全高 Card。
+- 主内容必须以 `min-width: 0; flex: 1` 真实让位并保留自身最小可用宽度。卡片在动画中保持固有宽度，由父级 `overflow` 揭示；禁止把卡片本身从 0 拉伸到终态，避免文字逐帧换行。
+- 宽度使用 Motion spring `700 / 48 / 0.62`，卡片 x 使用 `760 / 50 / 0.62`，进入淡入 140ms、退出淡出 90ms。感知完成控制在约 100–180ms；不缩放、不旋转、不明显回弹，连续点击必须从当前速度反向。
+- 触发器固定在不参与面板宽度重排的 Header / Toolbar 中；关闭态使用 Ghost，打开态使用 Selected Surface、弱 ring 与轻阴影，并保留同一尺寸、位置和图标笔画。状态不能只依赖图标或颜色。
+- 组件是非模态区：不显示遮罩、不锁主页面滚动、不自动抢焦点。关闭时 Aside 立即进入 `aria-hidden + inert`；Toggle 必须提供 `aria-controls`、动态 `aria-expanded`、操作名称、tooltip 和 focus-visible。
+- Rail 拥有自己的纵向滚动，卡片可以按内容高度堆叠；只在单一信息连续且需要固定 footer 时使用一张满高卡片。嵌套 Card、重阴影和卡片内卡片都会破坏浮动层级。
+- 当主内容无法保持可读宽度时，产品层应在断点处切换为 Drawer / Bottom Sheet；共享组件不自行推断断点。需要阻断操作时使用 Dialog，少量锚定信息使用 Popover / Menu。
+- `prefers-reduced-motion: reduce` 下宽度、位移和透明度立即到达终态。通过快捷键关闭且焦点原本在面板内时，业务层负责把焦点还给 Toggle。
 
 ### DropdownMenu
 

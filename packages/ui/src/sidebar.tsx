@@ -117,7 +117,14 @@ function SidebarToggle({ children, className, collapsed, title, ...props }: Side
       <Button
         aria-expanded={!collapsed}
         aria-label={props["aria-label"] ?? actionLabel}
-        className={cn("text-sidebar-foreground hover:bg-sidebar-accent focus-visible:ring-sidebar-ring", className)}
+        className={cn(
+          "focus-visible:ring-sidebar-ring",
+          collapsed
+            ? "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            : "bg-sidebar-accent text-sidebar-accent-foreground shadow-[var(--surface-shadow)] ring-1 ring-inset ring-sidebar-border hover:bg-sidebar-accent",
+          className,
+        )}
+        data-state={collapsed ? "collapsed" : "expanded"}
         size="icon-sm"
         title={title ?? actionLabel}
         variant="ghost"

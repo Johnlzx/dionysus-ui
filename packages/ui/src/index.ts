@@ -1,6 +1,6 @@
 /**
- * [INPUT]: 依赖 ui/src 内部原语、侧栏、下拉浮层、原位编辑、主题与类名工具模块
- * [OUTPUT]: 对外提供 @dionysus/ui 的稳定公共导出面、Inline Edit 模式与 App Shell 侧栏运动契约
+ * [INPUT]: 依赖 ui/src 内部原语、左右侧栏、下拉浮层、原位编辑、主题与类名工具模块
+ * [OUTPUT]: 对外提供 @dionysus/ui 的稳定公共导出面、Inline Edit 模式与 App Shell/浮动面板运动契约
  * [POS]: ui/src 的包入口，阻止消费者依赖内部文件结构
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
@@ -27,6 +27,21 @@ export type {
   InlineEditSelectValue,
   InlineEditState,
 } from "./inline-edit";
+export {
+  FloatingSidePanel,
+  FloatingSidePanelCard,
+  SidePanelToggle,
+} from "./floating-panel";
+export type {
+  FloatingSidePanelCardProps,
+  FloatingSidePanelProps,
+  SidePanelToggleProps,
+} from "./floating-panel";
+export {
+  FLOATING_PANEL_CONTENT_SPRING,
+  FLOATING_PANEL_SIZE,
+  FLOATING_PANEL_SPRING,
+} from "./floating-panel-motion";
 export {
   Avatar,
   Badge,

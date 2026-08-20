@@ -1,0 +1,34 @@
+{
+  "analysis": "floating-side-panel",
+  "createdAt": "2026-08-20",
+  "references": [
+    {
+      "source": "Screen Recording 2026-08-20 at 14.14.46.mov",
+      "durationSeconds": 9.816667,
+      "width": 3822,
+      "height": 1916,
+      "role": "single content-height card and repeated toggling"
+    },
+    {
+      "source": "Screen Recording 2026-08-20 at 14.14.03.mov",
+      "durationSeconds": 13.433333,
+      "width": 3822,
+      "height": 1916,
+      "role": "stacked property cards and rail scrolling"
+    },
+    {
+      "source": "Screen Recording 2026-08-20 at 14.11.21.mov",
+      "durationSeconds": 16.431667,
+      "width": 3090,
+      "height": 1848,
+      "role": "stable toolbar triggers, selected state, pinned summary"
+    }
+  ],
+  "derivedAssets": {
+    "contactSheets": "contact/*.jpg at 2 fps",
+    "terminalStills": "stills/*-open.jpg and stills/*-closed.jpg",
+    "motionSequences": "motion/*-sequence.jpg at 30 fps",
+    "verifiedSpecimens": "design-system-specimen-open.png and design-system-specimen-closed.png"
+  },
+  "fidelity": "visual-and-motion-level clean-room analysis"
+}
