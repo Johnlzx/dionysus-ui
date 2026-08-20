@@ -48,6 +48,44 @@ React Bits 使用 `MIT + Commons Clause License Condition v1.0`：允许把软�
 
 Upstream license: <https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md>
 
+## React Bits Prismatic Burst
+
+Dionysus UI 的 `PrismaticButton` 使用 React Bits `PrismaticBurst` 的 OGL/GLSL 光场实现范式，并依据 Laper 登录按钮的运行时结构校准高性能 6 步 shader、亮度透明度、绿色源色板与 6px 后置模糊。归档版本以 Dionysus Token 保留绿色源色板并提供蓝、紫、琥珀、玫红、青色受控扩展，同时重组原生按钮语义、生命周期释放、reduced-motion 静帧和 WebGL 降级。
+
+- Project: `DavidHDev/react-bits`
+- Component: Prismatic Burst
+- Source: <https://reactbits.dev/backgrounds/prismatic-burst>
+- Reference runtime: <https://laper.ai/login>
+- Copyright: © 2026 David Haz
+- Local evidence: [`docs/reference-analysis/prismatic-button/component-catalog.md`](docs/reference-analysis/prismatic-button/component-catalog.md)
+
+React Bits 仓库当前使用 `MIT + Commons Clause License Condition v1.0`。Dionysus UI 将该实现作为产品内部设计系统原语归档；在把 PrismaticButton 单独、打包或移植后销售、再许可、公开发布或作为独立组件分发前，必须按实际发布方式复核上游条款并按需取得授权或完成 clean-room 替换。
+
+Upstream license: <https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md>
+
+## OGL
+
+`PrismaticBurst` 使用 OGL 提供 WebGL2 Renderer、Program、Triangle、Mesh 与 Texture。
+
+- Project: `oframe/ogl`
+- Package: `ogl@1.0.11`
+- Source: <https://github.com/oframe/ogl>
+- Author: Nathan Gordon
+- License: Unlicense
+
+完整许可证文本保存在 [`docs/licenses/ogl.UNLICENSE`](docs/licenses/ogl.UNLICENSE)。
+
+## Montserrat Variable
+
+`PrismaticButton` 使用 Fontsource 打包的 Montserrat Variable，保持参考按钮的 13px / 500 字形比例。
+
+- Typeface: Montserrat
+- Package: `@fontsource-variable/montserrat@5.3.0`
+- Copyright: © 2011 The Montserrat Project Authors
+- License: SIL Open Font License 1.1
+
+完整许可证文本保存在 [`docs/licenses/montserrat.OFL-1.1`](docs/licenses/montserrat.OFL-1.1)，分发字体文件时必须一并保留。
+
 ## React Bits Pro Fog Sphere
 
 Dionysus Desktop 的 `FogSphere` WebGL 体积雾球组件来自产品所有者 React Bits Pro 账户提供的授权源码，并在项目内适配为 light/dark 语义 Token、自动主题反转、受控 GPU 质量和 reduced-motion 静止帧。它只作为应用内部的大纲生成等待原语及开发态设计系统样例使用。

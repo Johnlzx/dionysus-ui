@@ -38,6 +38,7 @@ const DOC_NAVIGATION: DocNavGroup[] = [
     label: "Components",
     items: [
       { id: "button", label: "Button", description: "操作层级、尺寸和状态", path: "/components/button" },
+      { id: "prismatic-button", label: "Prismatic Button", description: "OGL 棱光、高强调操作与 GPU 降级", path: "/components/prismatic-button", badge: "New" },
       { id: "input", label: "Input", description: "文本输入、搜索与表单反馈", path: "/components/input" },
       { id: "dropdown-menu", label: "DropdownMenu", description: "搜索、多选、分组与指令弹窗", path: "/components/dropdown-menu", badge: "New" },
       { id: "inline-edit", label: "Inline Edit", description: "锚定浮层、即时提交与失败回滚", path: "/components/inline-edit", badge: "New" },

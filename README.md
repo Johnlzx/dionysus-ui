@@ -4,7 +4,7 @@ Dionysus UI 是一套面向高密度创作工具的 React 设计系统。它采�
 
 本仓库当前包含：
 
-- `packages/ui`：语义 Token、Button、Badge、Avatar、Input、SearchField、DropdownMenu、InlineEdit、InlineEditSelect、Surface、Dialog、SegmentedControl 与主题控制。
+- `packages/ui`：语义 Token、Button、PrismaticButton、Badge、Avatar、Input、SearchField、DropdownMenu、InlineEdit、InlineEditSelect、Surface、Dialog、SegmentedControl 与主题控制。
 - `apps/web`：使用真实共享组件构建的设计系统文档站。
 - `docs`：设计语言规范、视觉提取评估与后续产品化路线。
 

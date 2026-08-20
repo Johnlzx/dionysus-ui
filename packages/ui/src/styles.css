@@ -1,9 +1,10 @@
 /**
  * [INPUT]: 依赖 Tailwind CSS v4 CSS-first 主题能力与 @dionysus/ui 语义组件类
- * [OUTPUT]: 对外提供 Dionysus 共享 light/dark Token、字体、表面、状态、圆角、浮层/面板动效与基础浏览器样式
+ * [OUTPUT]: 对外提供 Dionysus 共享 light/dark Token、字体、表面、状态、圆角、Prismatic Button 光场、浮层/面板动效与基础浏览器样式
  * [POS]: ui/src 的视觉真相源，由 Web 设计系统首先消费并为 Desktop 后续迁移提供稳定目标
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
+@import "@fontsource-variable/montserrat";
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -103,6 +104,73 @@
   --floating-shadow: 0 18px 48px rgb(15 23 42 / 0.14), 0 3px 10px rgb(15 23 42 / 0.08);
   --floating-panel-shadow: 0 10px 30px rgb(15 23 42 / 0.08), 0 1px 3px rgb(15 23 42 / 0.06);
   --menu-shadow: 0 8px 24px rgb(15 23 42 / 0.08), 0 2px 6px rgb(15 23 42 / 0.05);
+
+  --prismatic-button-green-gradient: linear-gradient(135deg, #1a4a35 0%, #2d6a4f 50%, #0fa958 100%);
+  --prismatic-button-green-ray-1-rgb: 26 74 53;
+  --prismatic-button-green-ray-2-rgb: 15 169 88;
+  --prismatic-button-green-ray-3-rgb: 45 106 79;
+  --prismatic-button-green-ray-4-rgb: 34 197 94;
+  --prismatic-button-green-ray-5-rgb: 22 101 52;
+  --prismatic-button-green-ray-6-rgb: 21 128 61;
+  --prismatic-button-green-signal-rgb: 26 74 53;
+  --prismatic-button-blue-gradient: linear-gradient(135deg, #1e3a5f 0%, #315f91 50%, #2563eb 100%);
+  --prismatic-button-blue-ray-1-rgb: 30 58 95;
+  --prismatic-button-blue-ray-2-rgb: 37 99 235;
+  --prismatic-button-blue-ray-3-rgb: 49 95 145;
+  --prismatic-button-blue-ray-4-rgb: 56 189 248;
+  --prismatic-button-blue-ray-5-rgb: 30 58 138;
+  --prismatic-button-blue-ray-6-rgb: 29 78 216;
+  --prismatic-button-blue-signal-rgb: 37 99 235;
+  --prismatic-button-violet-gradient: linear-gradient(135deg, #321553 0%, #6d28d9 50%, #8b5cf6 100%);
+  --prismatic-button-violet-ray-1-rgb: 50 21 83;
+  --prismatic-button-violet-ray-2-rgb: 109 40 217;
+  --prismatic-button-violet-ray-3-rgb: 76 29 149;
+  --prismatic-button-violet-ray-4-rgb: 139 92 246;
+  --prismatic-button-violet-ray-5-rgb: 91 33 182;
+  --prismatic-button-violet-ray-6-rgb: 124 58 237;
+  --prismatic-button-violet-signal-rgb: 109 40 217;
+  --prismatic-button-amber-gradient: linear-gradient(135deg, #451a03 0%, #92400e 50%, #d97706 100%);
+  --prismatic-button-amber-ray-1-rgb: 69 26 3;
+  --prismatic-button-amber-ray-2-rgb: 217 119 6;
+  --prismatic-button-amber-ray-3-rgb: 146 64 14;
+  --prismatic-button-amber-ray-4-rgb: 245 158 11;
+  --prismatic-button-amber-ray-5-rgb: 120 53 15;
+  --prismatic-button-amber-ray-6-rgb: 180 83 9;
+  --prismatic-button-amber-signal-rgb: 146 64 14;
+  --prismatic-button-rose-gradient: linear-gradient(135deg, #4c172e 0%, #9f1239 50%, #e11d48 100%);
+  --prismatic-button-rose-ray-1-rgb: 76 23 46;
+  --prismatic-button-rose-ray-2-rgb: 225 29 72;
+  --prismatic-button-rose-ray-3-rgb: 159 18 57;
+  --prismatic-button-rose-ray-4-rgb: 244 63 94;
+  --prismatic-button-rose-ray-5-rgb: 136 19 55;
+  --prismatic-button-rose-ray-6-rgb: 190 24 73;
+  --prismatic-button-rose-signal-rgb: 159 18 57;
+  --prismatic-button-cyan-gradient: linear-gradient(135deg, #083344 0%, #0e7490 50%, #06b6d4 100%);
+  --prismatic-button-cyan-ray-1-rgb: 8 51 68;
+  --prismatic-button-cyan-ray-2-rgb: 6 182 212;
+  --prismatic-button-cyan-ray-3-rgb: 14 116 144;
+  --prismatic-button-cyan-ray-4-rgb: 34 211 238;
+  --prismatic-button-cyan-ray-5-rgb: 21 94 117;
+  --prismatic-button-cyan-ray-6-rgb: 8 145 178;
+  --prismatic-button-cyan-signal-rgb: 14 116 144;
+  --prismatic-button-render-dpr: 1;
+  --prismatic-button-intensity: 15;
+  --prismatic-button-speed: 0.4;
+  --prismatic-button-distort: 30;
+  --prismatic-button-noise-amount: 0.45;
+  --prismatic-button-ray-count: 18;
+  --prismatic-button-foreground: #fff;
+  --prismatic-button-font-family: "Montserrat Variable", Montserrat, var(--font-sans);
+  --prismatic-button-height: 2.75rem;
+  --prismatic-button-reference-width: 20.375rem;
+  --prismatic-button-radius: 1.5rem;
+  --prismatic-button-padding-x: 1.25rem;
+  --prismatic-button-font-size: 0.8125rem;
+  --prismatic-button-line-height: 1.21875rem;
+  --prismatic-button-blur: 0.375rem;
+  --prismatic-button-press-scale: 0.98;
+  --prismatic-button-transition-duration: 400ms;
+  --prismatic-button-ease: linear(0, 0.191 10%, 0.475 20%, 0.692 30%, 0.829 40%, 0.908 50%, 0.952 60%, 0.976 70%, 0.988 80%, 0.994 90%, 1);
 
   --background: var(--page-canvas);
   --foreground: oklch(0.141 0.005 285.823);
@@ -222,6 +290,42 @@
     transform: translateY(0) scale(1);
     filter: blur(0);
   }
+}
+
+.prismatic-button[data-tone="green"] {
+  --prismatic-button-gradient: var(--prismatic-button-green-gradient);
+  --prismatic-button-hover-shadow: 0 4px 16px rgb(var(--prismatic-button-green-signal-rgb) / 40%);
+  --prismatic-button-focus-ring: rgb(var(--prismatic-button-green-signal-rgb) / 40%);
+}
+
+.prismatic-button[data-tone="blue"] {
+  --prismatic-button-gradient: var(--prismatic-button-blue-gradient);
+  --prismatic-button-hover-shadow: 0 4px 16px rgb(var(--prismatic-button-blue-signal-rgb) / 40%);
+  --prismatic-button-focus-ring: rgb(var(--prismatic-button-blue-signal-rgb) / 40%);
+}
+
+.prismatic-button[data-tone="violet"] {
+  --prismatic-button-gradient: var(--prismatic-button-violet-gradient);
+  --prismatic-button-hover-shadow: 0 4px 16px rgb(var(--prismatic-button-violet-signal-rgb) / 40%);
+  --prismatic-button-focus-ring: rgb(var(--prismatic-button-violet-signal-rgb) / 40%);
+}
+
+.prismatic-button[data-tone="amber"] {
+  --prismatic-button-gradient: var(--prismatic-button-amber-gradient);
+  --prismatic-button-hover-shadow: 0 4px 16px rgb(var(--prismatic-button-amber-signal-rgb) / 40%);
+  --prismatic-button-focus-ring: rgb(var(--prismatic-button-amber-signal-rgb) / 40%);
+}
+
+.prismatic-button[data-tone="rose"] {
+  --prismatic-button-gradient: var(--prismatic-button-rose-gradient);
+  --prismatic-button-hover-shadow: 0 4px 16px rgb(var(--prismatic-button-rose-signal-rgb) / 40%);
+  --prismatic-button-focus-ring: rgb(var(--prismatic-button-rose-signal-rgb) / 40%);
+}
+
+.prismatic-button[data-tone="cyan"] {
+  --prismatic-button-gradient: var(--prismatic-button-cyan-gradient);
+  --prismatic-button-hover-shadow: 0 4px 16px rgb(var(--prismatic-button-cyan-signal-rgb) / 40%);
+  --prismatic-button-focus-ring: rgb(var(--prismatic-button-cyan-signal-rgb) / 40%);
 }
 
 @layer base {

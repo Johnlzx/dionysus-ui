@@ -59,7 +59,9 @@ import {
   InlineEdit,
   InlineEditSelect,
   Input,
+  PrismaticButton,
   SearchField,
+  SegmentedControl,
   SidePanelToggle,
   SidebarHeader,
   SidebarToggle,
@@ -68,6 +70,8 @@ import {
   type DropdownMenuGroup,
   type InlineEditOption,
   type InlineEditSelectValue,
+  type PrismaticButtonTone,
+  type SegmentedControlItem,
 } from "@dionysus/ui";
 import { DocSection, InlineCode, PageIntro, PropTable, RuleNote, Specimen, TokenRow } from "./docs-elements";
 import { DOC_ITEMS } from "./navigation";
@@ -111,6 +115,12 @@ const PAGE_TOC: Record<string, TocItem[]> = {
     { id: "sizes", label: "Sizes" },
     { id: "hierarchy", label: "操作层级" },
     { id: "api", label: "API" },
+  ],
+  "prismatic-button": [
+    { id: "prismatic-live", label: "Live specimen" },
+    { id: "prismatic-anatomy", label: "Anatomy" },
+    { id: "prismatic-behavior", label: "Behavior" },
+    { id: "prismatic-api", label: "API" },
   ],
   input: [
     { id: "text-input", label: "Text input" },
@@ -737,6 +747,150 @@ function ButtonPage() {
           { name: "size", type: '"xs" | "sm" | "default" | …', defaultValue: '"default"', description: "控制视觉密度，不替代触屏 hit area 规则。" },
           { name: "disabled", type: "boolean", defaultValue: "false", description: "保留动作可见性并阻止交互。" },
           { name: "aria-label", type: "string", defaultValue: "—", description: "Icon-only Button 必填。" },
+        ]} />
+      </DocSection>
+    </>
+  );
+}
+
+const PRISMATIC_PALETTE_META: Record<PrismaticButtonTone, { name: string; description: string }> = {
+  green: { name: "Green · source", description: "经确认的原始绿色光谱" },
+  blue: { name: "Blue · extension", description: "共享光学结构的受控蓝色扩展" },
+  violet: { name: "Violet · extension", description: "偏冷的高饱和紫色扩展" },
+  amber: { name: "Amber · extension", description: "温暖但保持文字对比的琥珀扩展" },
+  rose: { name: "Rose · extension", description: "深玫红到亮红的受控扩展" },
+  cyan: { name: "Cyan · extension", description: "深青到亮青的清晰扩展" },
+};
+
+const PRISMATIC_TONE_ITEMS: SegmentedControlItem[] = [
+  {
+    value: "green",
+    label: <span className="flex items-center gap-1.5"><span aria-hidden className="size-2 rounded-full" style={{ backgroundColor: "rgb(var(--prismatic-button-green-ray-2-rgb))" }} />绿色</span>,
+  },
+  {
+    value: "blue",
+    label: <span className="flex items-center gap-1.5"><span aria-hidden className="size-2 rounded-full" style={{ backgroundColor: "rgb(var(--prismatic-button-blue-ray-2-rgb))" }} />蓝色</span>,
+  },
+  {
+    value: "violet",
+    label: <span className="flex items-center gap-1.5"><span aria-hidden className="size-2 rounded-full" style={{ backgroundColor: "rgb(var(--prismatic-button-violet-ray-2-rgb))" }} />紫色</span>,
+  },
+  {
+    value: "amber",
+    label: <span className="flex items-center gap-1.5"><span aria-hidden className="size-2 rounded-full" style={{ backgroundColor: "rgb(var(--prismatic-button-amber-ray-2-rgb))" }} />琥珀</span>,
+  },
+  {
+    value: "rose",
+    label: <span className="flex items-center gap-1.5"><span aria-hidden className="size-2 rounded-full" style={{ backgroundColor: "rgb(var(--prismatic-button-rose-ray-2-rgb))" }} />玫红</span>,
+  },
+  {
+    value: "cyan",
+    label: <span className="flex items-center gap-1.5"><span aria-hidden className="size-2 rounded-full" style={{ backgroundColor: "rgb(var(--prismatic-button-cyan-ray-2-rgb))" }} />青色</span>,
+  },
+];
+
+const PRISMATIC_TONES = new Set<PrismaticButtonTone>(["green", "blue", "violet", "amber", "rose", "cyan"]);
+
+function toPrismaticTone(value: string): PrismaticButtonTone {
+  const tone = value as PrismaticButtonTone;
+  return PRISMATIC_TONES.has(tone) ? tone : "green";
+}
+
+function PrismaticButtonPage() {
+  const [tone, setTone] = useState<PrismaticButtonTone>("green");
+  const selectedPalette = PRISMATIC_PALETTE_META[tone];
+
+  return (
+    <>
+      <PageIntro
+        eyebrow="Components"
+        title="Prismatic Button"
+        description="用于极少量高强调主操作的动态按钮。静态渐变保证稳定对比，OGL/GLSL 光场只作为渐进增强；WebGL 不可用时仍保留完整按钮语义。"
+        status="Ready"
+        meta={<span>Source: <InlineCode>@dionysus/ui</InlineCode> · OGL 1.0.11</span>}
+      />
+      <DocSection id="prismatic-live" title="Live specimen" description="使用色板切换器控制同一枚按钮。绿色是经确认的源色板，其余五组是共享光学结构上的受控扩展。静态渐变、六色光谱、hover 辉光和 focus ring 会作为完整色板一起切换。">
+        <Specimen
+          title="Controlled palette"
+          description="六组完整光学 Token，不开放任意取色"
+          code={'const [tone, setTone] = useState<PrismaticButtonTone>("green")\n\n<PrismaticButton tone={tone}>Login</PrismaticButton>'}
+        >
+          <div className="flex w-full max-w-[36rem] flex-col items-center gap-8">
+            <div className="flex w-full flex-col gap-3 border-b border-border/80 pb-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-foreground">按钮色板</p>
+                <p className="mt-1 text-micro leading-4 text-muted-foreground">切换完整的静态与动态颜色 Token</p>
+              </div>
+              <SegmentedControl
+                value={tone}
+                onValueChange={(nextTone) => setTone(toPrismaticTone(nextTone))}
+                label="Prismatic Button 色板"
+                size="xs"
+                className="grid w-full grid-cols-3 sm:w-auto sm:grid-cols-6"
+                items={PRISMATIC_TONE_ITEMS}
+              />
+            </div>
+            <div className="w-full" style={{ maxWidth: "var(--prismatic-button-reference-width)" }}>
+              <div aria-live="polite" className="mb-3 flex items-end justify-between gap-4">
+                <p className="font-mono text-micro uppercase tracking-nav-section text-foreground">{selectedPalette.name}</p>
+                <p className="text-right text-micro text-muted-foreground">{selectedPalette.description}</p>
+              </div>
+              <PrismaticButton tone={tone}>Login</PrismaticButton>
+            </div>
+          </div>
+        </Specimen>
+        <RuleNote kind="safety"><strong className="font-medium">绿色在这里是受控色板，不是 Success 状态。</strong> 每个 Surface 最多使用一个 Prismatic Button，只用于明确、高价值且可逆的主操作；危险、删除和发布确认继续使用现有风险语义与确认流。</RuleNote>
+      </DocSection>
+      <DocSection id="prismatic-anatomy" title="Anatomy" description="按钮把稳定语义与 GPU 增强分层，任何视觉层失败都不影响名称、焦点或点击行为。">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["01", "Static gradient", "三段底色始终存在，承担对比度与 WebGL 降级。"],
+            ["02", "PrismaticBurst", "全屏 Triangle 通过 GLSL 生成 18 束动态棱光。"],
+            ["03", "Blur composite", "6px 后置模糊把低成本射线融合为液态光斑。"],
+            ["04", "Content layer", "文字与图标位于独立前景层，始终保持清晰。"],
+          ].map(([index, title, copy]) => (
+            <Surface key={index} padding="md">
+              <p className="font-mono text-micro text-muted-foreground">{index}</p>
+              <p className="mt-6 text-xs font-medium">{title}</p>
+              <p className="mt-2 text-micro leading-4 text-muted-foreground">{copy}</p>
+            </Surface>
+          ))}
+        </div>
+        <div className="mt-5 grid gap-3 sm:grid-cols-4">
+          <Metric value="326×44" label="参考几何（px）" />
+          <Metric value="1 DPR" label="固定渲染密度" />
+          <Metric value="6" label="Ray-march steps" />
+          <Metric value="18" label="受控光束数量" />
+        </div>
+      </DocSection>
+      <DocSection id="prismatic-behavior" title="Behavior" description="动效服从状态、可访问性和设备成本，不制造额外业务含义。">
+        <div className="divide-y divide-border rounded-xl border border-border">
+          {[
+            ["Rest", "静态渐变与连续光场同时存在，不额外缩放或投影。"],
+            ["Hover", "只增加同色 4px / 16px 柔和阴影，几何与光场速度不变。"],
+            ["Pressed", "缩放到 0.98，不改变布局占位。"],
+            ["Focus visible", "显示与 tone 对应的 2px 焦点环，按钮名称来自可见内容。"],
+            ["Reduced motion", "停止时间推进并绘制确定性静帧，文字和底色保持不变。"],
+            ["WebGL unavailable", "不挂载 Canvas；原生 button 与静态三段渐变继续工作。"],
+          ].map(([state, behavior]) => (
+            <div key={state} className="grid gap-2 px-4 py-4 sm:grid-cols-[9rem_1fr]">
+              <p className="font-mono text-micro text-foreground">{state}</p>
+              <p className="text-xs leading-5 text-muted-foreground">{behavior}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <Surface variant="subtle" padding="md"><p className="text-xs font-medium">生命周期约束</p><p className="mt-2 text-micro leading-4 text-muted-foreground">IntersectionObserver、visibilitychange 与 ResizeObserver 控制暂停、恢复和尺寸同步；卸载时释放 Geometry、Program 与 Texture。</p></Surface>
+          <Surface variant="subtle" padding="md"><p className="text-xs font-medium">性能预算</p><p className="mt-2 text-micro leading-4 text-muted-foreground">参考尺寸每帧约 14,344 个 fragment × 6 次 march；Canvas 只在按钮可见且页面活跃时持续渲染。</p></Surface>
+        </div>
+      </DocSection>
+      <DocSection id="prismatic-api" title="API">
+        <PropTable rows={[
+          { name: "tone", type: '"green" | "blue" | "violet" | "amber" | "rose" | "cyan"', defaultValue: '"green"', description: "切换受控静态渐变、六色光谱、hover 阴影与焦点环。" },
+          { name: "type", type: '"button" | "submit" | "reset"', defaultValue: '"button"', description: "默认避免在表单内意外提交；需要提交时显式选择。" },
+          { name: "disabled", type: "boolean", defaultValue: "false", description: "保留完整视觉和可读名称，同时使用原生禁用语义阻止操作。" },
+          { name: "className", type: "string", defaultValue: "—", description: "允许覆盖布局宽度；内部光学尺寸和色板继续由 Token 维护。" },
+          { name: "…button props", type: "ButtonHTMLAttributes", defaultValue: "—", description: "透传 aria、表单、事件和 data 属性。" },
         ]} />
       </DocSection>
     </>
@@ -1517,7 +1671,7 @@ function AdoptionPage() {
         </div>
       </DocSection>
       <DocSection id="license" title="许可证" description="设计原则可以借鉴，受限源码不能默认进入独立公开组件仓库。">
-        <RuleNote kind="safety">当前基础包只摘录 Dionysus 的语义 Token 和通用基础原语。React Bits Pro Fog Sphere 不进入公开基础包；Glass Surface 与 Multica 相关实现公开分发前仍需完成许可复核或 clean-room 替换。</RuleNote>
+        <RuleNote kind="safety">当前基础包只摘录 Dionysus 的语义 Token 和通用基础原语。React Bits Pro Fog Sphere 不进入公开基础包；Glass Surface、Multica 相关实现与 PrismaticButton 公开分发前仍需完成许可复核或 clean-room 替换。PrismaticButton 的来源和证据边界已单独归档到 <InlineCode>docs/reference-analysis/prismatic-button</InlineCode>。</RuleNote>
       </DocSection>
     </>
   );
@@ -1545,6 +1699,7 @@ function DocsPage({ pageId }: { pageId: string }) {
     case "icons": content = <IconsPage />; break;
     case "layout": content = <LayoutPage />; break;
     case "button": content = <ButtonPage />; break;
+    case "prismatic-button": content = <PrismaticButtonPage />; break;
     case "input": content = <InputPage />; break;
     case "dropdown-menu": content = <DropdownMenuPage />; break;
     case "inline-edit": content = <InlineEditPage />; break;

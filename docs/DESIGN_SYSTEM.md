@@ -1,6 +1,6 @@
 # Dionysus UI Design System
 
-> 当前仓库是 Dionysus 设计系统的 React 源码预览：`packages/ui` 提供共享 Token 与基础原语，`apps/web` 使用真实共享组件生成活文档。Desktop、FogSphere、GlassSurface 等更完整产品原语仍属于后续迁移/发布范围。视觉基线来源、授权边界与再分发限制见仓库根目录 `THIRD_PARTY_NOTICES.md`。
+> 当前仓库是 Dionysus 设计系统的 React 源码预览：`packages/ui` 提供共享 Token 与基础原语，`apps/web` 使用真实共享组件生成活文档。PrismaticButton 已完成源码级迁移与证据归档；Desktop、FogSphere、GlassSurface 等更完整产品原语仍属于后续迁移/发布范围。视觉基线来源、授权边界与再分发限制见仓库根目录 `THIRD_PARTY_NOTICES.md` 及各 `docs/reference-analysis/` 目录。
 
 ## 1. 设计哲学
 
@@ -13,7 +13,7 @@
 
 - 唯一 Token 真相源：`packages/ui/src/styles.css`。
 - 共享原语入口：`packages/ui/src/index.ts`；图标入口：`packages/ui/src/icons.tsx`。消费者只从 `@dionysus/ui`、`@dionysus/ui/icons` 和 `@dionysus/ui/styles.css` 引入。
-- 当前稳定原语：`Button / Badge / Avatar / Input / SearchField / DropdownMenu / InlineEdit / InlineEditSelect / Surface / Dialog / SegmentedControl / ThemeToggle`。
+- 当前稳定原语：`Button / PrismaticButton / Badge / Avatar / Input / SearchField / DropdownMenu / InlineEdit / InlineEditSelect / Surface / Dialog / SegmentedControl / ThemeToggle`。
 - Web 活规范入口：`apps/web`，侧栏、搜索、示例和页面模式必须消费真实共享组件。
 - Web 站点样式：`apps/web/src/styles.css` 只定义文档呈现、动画和打印规则，不创建第二套基础视觉 Token。
 - 后续产品原语：`FogSphere / GlassSurface / TreeView / MarkdownEditor / Page primitives` 等必须先进入 `packages/ui` 或明确标注为路线图，再允许业务消费。
@@ -85,7 +85,7 @@
 - 4px 基础网格：4 紧密关联、8 同组项目、12 组件内区块、16 组间、24 大节。
 - 基准圆角 `--radius: 0.625rem`；按钮 8–10px，卡片 10px，看板列与主画布 12px。
 - 常驻 Surface 只使用 `--surface-shadow`；浮层使用 `--menu-shadow` 或 `--floating-shadow`。
-- Hover 禁止缩放和增加阴影，避免布局与视觉重量跳动。
+- Hover 默认禁止缩放和增加阴影，避免布局与视觉重量跳动；仅允许像 `PrismaticButton` 这类已经归档几何、阴影和用途边界的稀缺高强调原语使用固定同色辉光。
 - Markdown 编辑密度由 `--editor-font-size / --editor-line-height / --editor-content-padding` 统一声明，CodeMirror 配置不得写第二份像素值。
 
 ## 7. 交互状态
@@ -107,6 +107,17 @@
 - 尺寸：`default / xs / sm / lg / icon / icon-xs / icon-sm`。
 - Icon-only Button 必须有 `aria-label` 和 `title`。
 - 危险操作使用低饱和背景，不使用整块高纯度红色。
+
+### PrismaticButton
+
+- 只用于每个 Surface 中唯一、明确、高价值且可逆的主操作；不替代通用 Button，不用于危险、删除、被动状态、进度或导航。
+- 绿色是受控光学色板，不等于 `success` 语义；业务状态仍使用 Badge、图标和可见文字。
+- `tone` 只允许 `green / blue / violet / amber / rose / cyan`。色调同时切换静态渐变、六色 Texture、hover 阴影与 focus ring，不改变几何、shader、速度或交互。
+- 参考几何为 `326 × 44px`、24px 圆角、Montserrat 13px/500；宽度可由布局覆盖，其余光学值只由 `--prismatic-button-*` Token 维护。
+- `PrismaticBurst` 固定使用 OGL/WebGL2、DPR 1、6 步 ray march、18 束约束与 6px 后置模糊；业务层不得直接导入底层 renderer 或暴露强度、速度、射线数和任意色板参数。
+- WebGL2 不可用时退化为完整静态渐变按钮；离开视口、页面隐藏或 reduced motion 时停止连续 rAF，并保留确定性静帧。
+- 视觉层全部 `aria-hidden`；可访问名称来自按钮内容，默认 `type="button"`，focus-visible 和 disabled 使用原生按钮语义。
+- 来源、实现证据、许可证边界和性能预算见 `docs/reference-analysis/prismatic-button/component-catalog.md`。
 
 ### Badge
 
