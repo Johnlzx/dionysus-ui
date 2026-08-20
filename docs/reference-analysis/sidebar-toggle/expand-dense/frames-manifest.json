@@ -1,0 +1,25 @@
+{
+  "video": "/Users/zhongxin/Desktop/Screen Recording 2026-08-20 at 09.22.11.mov",
+  "duration": 7.98,
+  "start": 4.2,
+  "end": 4.8,
+  "interval": 0.05,
+  "explicit_times": false,
+  "scale": "480:1034",
+  "frame_count": 13,
+  "frames": [
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_200.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_250.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_300.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_350.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_400.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_450.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_500.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_550.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_600.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_650.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_700.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_750.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/expand-dense/frames/frame_t4_800.jpg"
+  ]
+}

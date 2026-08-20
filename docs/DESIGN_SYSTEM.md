@@ -204,6 +204,12 @@
 ### Desktop App Shell
 
 - 默认侧栏 256px，收缩态 56px。
+- 侧栏使用 `CollapsibleSidebar + SidebarHeader + SidebarToggle` 组合；宽度通过 Motion spring `stiffness: 820 / damping: 49 / mass: 0.72` 过渡。按钮轨迹具有方向性：折叠使用 `1500 / 63 / 0.65` 先进入 rail 中心，展开使用 `850 / 49 / 0.65` 随宽度向右，避免越过裁切边界；视觉稳定时间控制在 180–220ms 且不允许回弹、缩放或旋转。
+- 展开态按钮固定在侧栏右侧 8px，28px 控件中心位于 x=234px；折叠态按钮位于 56px rail 中心 x=28px。按钮只沿水平轴移动，纵向位置、命中区和图标方向不变；快速连续点击必须从当前速度自然反向。
+- 折叠触发时，分组标题、导航文字、快捷键和 Badge 立即退出视觉布局，导航图标在侧栏当前宽度内居中；展开触发时文字立即回到布局并由侧栏 `overflow` 自然裁切，禁止按字逐个出现、缩放文字或等待宽度结束后再整体淡入。
+- 品牌区独立于宽度与按钮轨迹：折叠 120ms 淡出并左移 8px，展开等待 60ms 后用 160ms 恢复。折叠态底部状态只保留居中的语义点或头像，完整文字通过 `aria-label/title` 保留。
+- 主画布必须由 Flex 随侧栏真实宽度重排，不得用覆盖层或只做 `transform: scaleX()`；Canvas 的 8px inset、12px 圆角、ring 和滚动归属在整个过渡中保持不变。
+- `prefers-reduced-motion: reduce` 下宽度、按钮和品牌立即到达终态；`aria-expanded`、`aria-controls`、icon-only 的名称/tooltip 与 focus-visible ring 不得因折叠丢失。
 - 顶部工具栏 48px，Electron 拖拽区与交互区必须分离。
 - 主画布使用 inset：外侧保留 8px，12px 圆角、1px ring 和轻阴影。
 - 侧栏导航顺序：个人入口 → 工作区入口 → 配置入口。

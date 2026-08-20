@@ -16,6 +16,7 @@ import {
   ChevronRight,
   Circle,
   CircleCheck,
+  Clock3,
   CornerDownRight,
   FileText,
   Layers3,
@@ -23,6 +24,7 @@ import {
   MailPlus,
   MoreHorizontal,
   Paperclip,
+  PanelLeft,
   Plus,
   Search,
   Send,
@@ -31,7 +33,20 @@ import {
   Type,
   UserRoundX,
 } from "lucide-react";
-import { Avatar, Badge, Button, DropdownMenu, Input, SearchField, Surface, cn, type DropdownMenuGroup } from "@dionysus/ui";
+import {
+  Avatar,
+  Badge,
+  Button,
+  CollapsibleSidebar,
+  DropdownMenu,
+  Input,
+  SearchField,
+  SidebarHeader,
+  SidebarToggle,
+  Surface,
+  cn,
+  type DropdownMenuGroup,
+} from "@dionysus/ui";
 import { DocSection, InlineCode, PageIntro, PropTable, RuleNote, Specimen, TokenRow } from "./docs-elements";
 import { DOC_ITEMS } from "./navigation";
 
@@ -92,6 +107,7 @@ const PAGE_TOC: Record<string, TocItem[]> = {
   ],
   "app-shell": [
     { id: "anatomy", label: "Anatomy" },
+    { id: "sidebar-motion", label: "Sidebar motion" },
     { id: "shell-behavior", label: "Behavior" },
     { id: "shell-rules", label: "Rules" },
   ],
@@ -177,6 +193,70 @@ function MiniAppShell({ workspace = false }: { workspace?: boolean }) {
               </div>
             </div>
           )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SidebarMotionSpecimen() {
+  const [collapsed, setCollapsed] = useState(false);
+  const items = [
+    { icon: Plus, label: "新建", active: true },
+    { icon: Clock3, label: "最近使用", active: false },
+    { icon: FileText, label: "我的文档", active: false },
+    { icon: Layers3, label: "知识库", active: false },
+  ];
+
+  return (
+    <div className="flex h-[24rem] overflow-hidden rounded-xl border border-surface-border bg-app-shell shadow-[var(--surface-shadow)]">
+      <CollapsibleSidebar
+        aria-label="侧栏动效示例"
+        className="flex flex-col bg-sidebar text-sidebar-foreground"
+        collapsed={collapsed}
+        id="sidebar-motion-specimen"
+      >
+        <SidebarHeader
+          toggle={(
+            <SidebarToggle
+              aria-controls="sidebar-motion-specimen"
+              collapsed={collapsed}
+              onClick={() => setCollapsed((current) => !current)}
+            >
+              <PanelLeft />
+            </SidebarToggle>
+          )}
+        >
+          <div className="flex h-10 items-center gap-2 px-2">
+            <span className="flex size-6 items-center justify-center rounded-lg bg-primary text-micro text-primary-foreground">D</span>
+            <span className="text-xs font-medium">Dionysus</span>
+          </div>
+        </SidebarHeader>
+        <nav aria-label="示例导航" className="space-y-1 px-2 pt-3">
+          {items.map(({ active, icon: Icon, label }) => (
+            <div
+              aria-label={collapsed ? label : undefined}
+              className={cn(
+                "flex h-9 min-w-0 items-center overflow-hidden rounded-lg text-xs text-muted-foreground",
+                collapsed ? "justify-center px-0" : "gap-2.5 px-3",
+                active && "bg-sidebar-accent font-medium text-sidebar-accent-foreground",
+              )}
+              key={label}
+              title={collapsed ? label : undefined}
+            >
+              <Icon aria-hidden className="size-4 shrink-0" />
+              <span className={cn("min-w-0 truncate", collapsed && "sr-only")}>{label}</span>
+            </div>
+          ))}
+        </nav>
+      </CollapsibleSidebar>
+      <div className="flex min-w-0 flex-1 flex-col p-2 pl-0">
+        <div className="flex h-10 shrink-0 items-center px-3 text-micro text-muted-foreground">Canvas follows the rail · no overlay</div>
+        <div className="flex min-h-0 flex-1 items-center justify-center rounded-xl bg-page-canvas ring-1 ring-surface-border">
+          <div className="max-w-xs px-5 text-center">
+            <p className="text-sm font-medium">按钮沿水平轨道移动</p>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">连续点击可中断并反向；主画布通过 Flex 重排跟随侧栏宽度。</p>
+          </div>
         </div>
       </div>
     </div>
@@ -758,10 +838,41 @@ function AppShellPage() {
           {[["A", "Navigation", "256 / 56px"], ["B", "Top strip", "48px"], ["C", "Inset", "8px"], ["D", "Canvas", "12px radius"]].map(([mark, label, meta]) => <div key={mark} className="bg-background p-4"><span className="font-mono text-micro text-muted-foreground">{mark}</span><p className="mt-4 text-xs font-medium">{label}</p><p className="mt-1 font-mono text-micro text-muted-foreground">{meta}</p></div>)}
         </div>
       </DocSection>
+      <DocSection id="sidebar-motion" title="Sidebar motion" description="从参考交互提取的可中断折叠模式；点击本页或全局侧栏顶部按钮可直接审阅。">
+        <SidebarMotionSpecimen />
+        <div className="mt-5 grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["Width", "256 → 56px", "主体宽度 spring：820 / 49 / 0.72"],
+            ["Toggle", "x 234 → 28px", "收 1500 / 63；展 850 / 49；mass 0.65"],
+            ["Settle", "180–220ms", "临界阻尼附近，不回弹、不缩放"],
+            ["Brand", "120ms out", "160ms in + 60ms delay，向左 8px"],
+          ].map(([title, value, copy]) => (
+            <div className="bg-background p-4" key={title}>
+              <p className="text-micro uppercase tracking-[0.12em] text-muted-foreground">{title}</p>
+              <p className="mt-3 font-mono text-xs font-medium">{value}</p>
+              <p className="mt-2 text-micro leading-4 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-5 divide-y divide-border border-y border-border">
+          {[
+            ["按钮轨迹", "展开态距右侧 8px；折叠态位于 56px rail 的水平中心。只改变 x，不改变 y、尺寸或旋转。"],
+            ["文字与 Badge", "状态切换时立即进入或退出视觉布局；侧栏 overflow 裁切展开内容，不对文字做缩放。"],
+            ["导航图标", "折叠时立即在当前侧栏宽度内居中，展开时立即回到左侧锚点；图标纵向节奏和 16px 尺寸保持不变。"],
+            ["画布与中断", "Canvas 由 Flex 随宽度重排；Motion spring 保留当前速度，因此连续点击会自然反向而不是重启动画。"],
+            ["Reduced motion", "系统偏好 reduce 时宽度、按钮和品牌反馈都即时到达终态；aria-expanded、title 与 focus ring 始终保留。"],
+          ].map(([title, copy]) => (
+            <div className="grid gap-2 py-4 sm:grid-cols-[10rem_1fr]" key={title}>
+              <p className="text-xs font-medium">{title}</p>
+              <p className="text-xs leading-5 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
       <DocSection id="shell-behavior" title="Behavior">
         <div className="divide-y divide-border border-y border-border">
           {[
-            ["Expand / collapse", "侧栏从 256px 收缩到 56px；图标位置保持稳定。"],
+            ["Expand / collapse", "侧栏从 256px 收缩到 56px；按钮移至 rail 中心，图标纵向位置保持稳定。"],
             ["Scroll ownership", "页面内容在 Canvas 内滚动，侧栏和顶栏保持位置。"],
             ["Selection", "当前页面使用 Selected Surface，不用品牌色大面积填充。"],
             ["Responsive", "小于 1024px 后导航成为 Drawer，Canvas 逐步取消外侧装饰。"],

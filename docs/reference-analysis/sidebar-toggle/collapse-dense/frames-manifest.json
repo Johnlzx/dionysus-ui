@@ -1,0 +1,21 @@
+{
+  "video": "/Users/zhongxin/Desktop/Screen Recording 2026-08-20 at 09.22.11.mov",
+  "duration": 7.98,
+  "start": 1.45,
+  "end": 1.85,
+  "interval": 0.05,
+  "explicit_times": false,
+  "scale": "480:1034",
+  "frame_count": 9,
+  "frames": [
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/collapse-dense/frames/frame_t1_450.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/collapse-dense/frames/frame_t1_500.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/collapse-dense/frames/frame_t1_550.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/collapse-dense/frames/frame_t1_600.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/collapse-dense/frames/frame_t1_650.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/collapse-dense/frames/frame_t1_700.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/collapse-dense/frames/frame_t1_750.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/collapse-dense/frames/frame_t1_800.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/sidebar-toggle/collapse-dense/frames/frame_t1_850.jpg"
+  ]
+}
