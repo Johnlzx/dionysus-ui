@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 React 状态/DOM 副作用、设计系统勾选/层级图标、Surface 与 cn 类名工具
- * [OUTPUT]: 对外提供可搜索、可多选、可触发指令项的 DropdownMenu 浮层组件
+ * [OUTPUT]: 对外提供符合设计系统常规密度、可搜索、可多选、可触发指令项的 DropdownMenu 浮层组件
  * [POS]: ui/src 的高级浮层原语，复用 Raised Surface、语义 Token 与平台无关交互，不感知业务数据
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
@@ -143,9 +143,9 @@ const collectInitiallySelectedValues = (groups: DropdownMenuGroup[]) => (
 );
 
 function DropdownMenuAvatar({ visual }: { visual?: ReactNode | DropdownMenuAvatarConfig }) {
-  if (!visual) return <span className="size-8 shrink-0" aria-hidden />;
+  if (!visual) return <span className="size-6 shrink-0" aria-hidden />;
   if (!isDropdownMenuAvatarConfig(visual)) {
-    return <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full">{visual}</span>;
+    return <span className="flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-full">{visual}</span>;
   }
 
   const { name, initials, src, icon, tone = "neutral", className } = visual;
@@ -153,7 +153,7 @@ function DropdownMenuAvatar({ visual }: { visual?: ReactNode | DropdownMenuAvata
 
   if (src) {
     return (
-      <span className={cn("flex size-8 shrink-0 overflow-hidden rounded-full bg-muted ring-1 ring-foreground/6", className)}>
+      <span className={cn("flex size-6 shrink-0 overflow-hidden rounded-full bg-muted ring-1 ring-foreground/6", className)}>
         <img src={src} alt={name ?? ""} className="size-full object-cover" />
       </span>
     );
@@ -164,7 +164,7 @@ function DropdownMenuAvatar({ visual }: { visual?: ReactNode | DropdownMenuAvata
       aria-hidden={name ? undefined : true}
       aria-label={name}
       className={cn(
-        "flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-medium ring-1 ring-foreground/6 [&>svg]:size-5",
+        "flex size-6 shrink-0 items-center justify-center rounded-full text-micro font-medium ring-1 ring-foreground/6 [&>svg]:size-3.5",
         avatarToneClassName[tone],
         className,
       )}
@@ -387,11 +387,11 @@ function DropdownMenu({
       variant="raised"
       data-slot="dropdown-menu"
       className={cn(
-        "dropdown-menu-enter w-[25.75rem] max-w-[calc(100vw-2rem)] overflow-hidden rounded-[1.375rem] border-surface-border/75 bg-surface-raised text-surface-foreground shadow-[var(--floating-shadow)] ring-1 ring-foreground/5",
+        "dropdown-menu-enter w-80 max-w-[calc(100vw-1rem)] overflow-hidden rounded-xl",
         panelClassName,
       )}
     >
-      <div data-slot="dropdown-menu-search" className="flex h-[4.75rem] items-center gap-3 px-7">
+      <div data-slot="dropdown-menu-search" className="flex h-10 items-center gap-2 px-3">
         <input
           ref={searchRef}
           type="search"
@@ -415,10 +415,10 @@ function DropdownMenu({
           aria-controls={menuId}
           aria-activedescendant={activeItemId}
           placeholder={searchPlaceholder}
-          className="h-full min-w-0 flex-1 bg-transparent text-[1.55rem] font-normal leading-tight text-foreground outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden"
+          className="h-full min-w-0 flex-1 bg-transparent text-sm leading-5 text-foreground outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden"
         />
         {searchShortcut ? (
-          <kbd className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-background/80 font-mono text-xl leading-none text-muted-foreground shadow-[var(--surface-shadow)]">
+          <kbd className="flex h-6 min-w-6 shrink-0 items-center justify-center rounded-md border border-border bg-background/80 px-1.5 font-mono text-micro leading-none text-muted-foreground shadow-[var(--surface-shadow)]">
             {searchShortcut}
           </kbd>
         ) : null}
@@ -428,14 +428,14 @@ function DropdownMenu({
         role="menu"
         aria-label={label}
         data-slot="dropdown-menu-list"
-        className={cn("max-h-[min(52rem,calc(100vh-5rem))] overflow-y-auto px-3 pb-3", listClassName)}
+        className={cn("max-h-[min(24rem,calc(100vh-4rem))] overflow-y-auto px-1.5 pb-1.5", listClassName)}
       >
         {visibleGroups.map((group, groupIndex) => {
           const groupId = `${menuId}-group-${groupIndex}`;
           return (
             <div key={groupId} role="group" aria-labelledby={group.label ? groupId : undefined} data-slot="dropdown-menu-group">
               {group.label ? (
-                <div id={groupId} data-slot="dropdown-menu-group-label" className="px-4 pb-1.5 pt-3 text-[1.35rem] font-medium leading-7 text-muted-foreground">
+                <div id={groupId} data-slot="dropdown-menu-group-label" className="px-2.5 pb-1 pt-2.5 text-micro font-medium leading-4 text-muted-foreground">
                   {group.label}
                 </div>
               ) : null}
@@ -462,7 +462,7 @@ function DropdownMenu({
                       data-active={active ? "" : undefined}
                       data-selected={selected ? "" : undefined}
                       className={cn(
-                        "group/dropdown-item flex h-16 w-full items-center gap-4 rounded-xl px-4 text-left text-[1.55rem] leading-tight text-foreground outline-none transition-colors hover:bg-surface-selected focus-visible:bg-surface-selected focus-visible:ring-3 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-45 data-[active]:bg-surface-selected data-[selected]:font-medium",
+                        "group/dropdown-item flex min-h-9 w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left text-xs leading-4 text-foreground outline-none transition-colors hover:bg-surface-selected focus-visible:bg-surface-selected focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-45 data-[active]:bg-surface-selected data-[selected]:font-medium",
                         item.className,
                       )}
                       onFocus={() => setActiveValue(item.value)}
@@ -471,12 +471,15 @@ function DropdownMenu({
                       onKeyDown={(event) => handleItemKeyDown(event, item)}
                     >
                       <DropdownMenuAvatar visual={item.visual} />
-                      <span className="min-w-0 flex-1 truncate">{item.label}</span>
-                      <span className="ml-auto flex min-w-12 shrink-0 items-center justify-end gap-5 text-[1.35rem] font-normal text-muted-foreground tabular-nums">
-                        {selected ? <Check aria-hidden className="size-6 stroke-[3]" /> : null}
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate">{item.label}</span>
+                        {item.description ? <span className="mt-0.5 block truncate text-micro font-normal text-muted-foreground">{item.description}</span> : null}
+                      </span>
+                      <span className="ml-auto flex min-w-8 shrink-0 items-center justify-end gap-2 text-micro font-normal text-muted-foreground tabular-nums">
+                        {selected ? <Check aria-hidden className="size-3.5 stroke-[2.5]" /> : null}
                         {item.count !== undefined && item.count !== null ? <span>{item.count}</span> : null}
                         {item.shortcut !== undefined && item.shortcut !== null ? <span>{item.shortcut}</span> : null}
-                        {isCommandItem(item) && item.nested ? <ChevronRight aria-hidden className="size-5" /> : null}
+                        {isCommandItem(item) && item.nested ? <ChevronRight aria-hidden className="size-3.5" /> : null}
                       </span>
                     </button>
                   );
@@ -486,7 +489,7 @@ function DropdownMenu({
           );
         })}
         {visibleItems.length === 0 ? (
-          <p className="px-4 py-10 text-center text-sm text-muted-foreground">{emptyMessage}</p>
+          <p className="px-3 py-8 text-center text-xs text-muted-foreground">{emptyMessage}</p>
         ) : null}
       </div>
     </Surface>

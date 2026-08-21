@@ -1,6 +1,6 @@
 /**
- * [INPUT]: 依赖 React 状态/副作用、React Router、设计系统图标、共享 UI 交互与侧栏运动原语、导航模型与页面目录元数据
- * [OUTPUT]: 对外提供含可折叠 Motion 桌面侧栏、移动抽屉、顶栏、搜索面板、页内目录和 inset canvas 的 DocsShell
+ * [INPUT]: 依赖 React 状态/副作用、React Router、设计系统图标、共享 UI 交互/导航图标交接与侧栏运动原语、Rainbow Loading 页面元数据及导航模型
+ * [OUTPUT]: 对外提供含可折叠 Motion 桌面侧栏、图标转箭头主导航、Rainbow Loading 入口、移动抽屉、顶栏、搜索面板、页内目录和 inset canvas 的 DocsShell
  * [POS]: web/src 的顶级文档壳，用 Dionysus 自身布局语言呈现整个设计系统
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
@@ -16,6 +16,7 @@ import {
   LayoutDashboard,
   LayoutGrid,
   ListFilter,
+  LoaderCircle,
   Menu,
   MessageSquareWarning,
   MousePointer2,
@@ -25,6 +26,7 @@ import {
   PanelsTopLeft,
   Search,
   Shapes,
+  Sparkles,
   TextCursorInput,
   TextSelect,
   Type,
@@ -36,6 +38,7 @@ import {
   Button,
   CollapsibleSidebar,
   Dialog,
+  NavArrowMorphIcon,
   SearchField,
   SidebarHeader,
   SidebarToggle,
@@ -63,8 +66,10 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   colors: Palette,
   typography: Type,
   icons: Shapes,
+  motion: Sparkles,
   layout: LayoutGrid,
   button: MousePointer2,
+  "rainbow-loading": LoaderCircle,
   input: TextCursorInput,
   "compact-select": TextSelect,
   "dropdown-menu": ListFilter,
@@ -99,6 +104,7 @@ function Navigation({ collapsed = false, onNavigate }: { collapsed?: boolean; on
                   key={item.id}
                   to={item.path}
                   onClick={onNavigate}
+                  data-nav-icon-trigger
                   aria-current={active ? "page" : undefined}
                   aria-label={collapsed ? item.label : undefined}
                   title={collapsed ? item.label : undefined}
@@ -108,7 +114,7 @@ function Navigation({ collapsed = false, onNavigate }: { collapsed?: boolean; on
                     active && "bg-sidebar-accent font-medium text-sidebar-accent-foreground hover:bg-sidebar-accent",
                   )}
                 >
-                  <Icon aria-hidden className="size-3.5 shrink-0" />
+                  <NavArrowMorphIcon icon={Icon} />
                   <span className={cn("min-w-0 flex-1 truncate", collapsed && "sr-only")}>{item.label}</span>
                   {!collapsed && item.badge ? <span className="tabular-nums text-micro text-muted-foreground">{item.badge}</span> : null}
                 </Link>

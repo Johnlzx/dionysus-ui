@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 无运行时外部依赖
- * [OUTPUT]: 对外提供设计系统站点分组导航、页面元数据、搜索索引和默认路由
+ * [OUTPUT]: 对外提供包含动效、Rainbow Loading 与 Illustrated Card 的设计系统站点分组导航、页面元数据、搜索索引和默认路由
  * [POS]: web/src 的信息架构唯一事实来源，使侧栏、搜索与路由共享同一组页面定义
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
@@ -31,6 +31,7 @@ const DOC_NAVIGATION: DocNavGroup[] = [
       { id: "colors", label: "颜色与表面", description: "灰阶底板、语义色和 elevation", path: "/foundations/colors" },
       { id: "typography", label: "字体与排版", description: "字阶、字重、数字和长文阅读", path: "/foundations/typography" },
       { id: "icons", label: "图标", description: "精选图标、尺寸、语义和无障碍", path: "/foundations/icons" },
+      { id: "motion", label: "动效", description: "方向反馈、时序、降级和最佳实践", path: "/foundations/motion", badge: "New" },
       { id: "layout", label: "布局与密度", description: "4px 网格、inset canvas 和响应式", path: "/foundations/layout" },
     ],
   },
@@ -39,11 +40,14 @@ const DOC_NAVIGATION: DocNavGroup[] = [
     items: [
       { id: "button", label: "Button", description: "操作层级、尺寸和状态", path: "/components/button" },
       { id: "prismatic-button", label: "Prismatic Button", description: "OGL 棱光、高强调操作与 GPU 降级", path: "/components/prismatic-button", badge: "New" },
+      { id: "rainbow-loading", label: "Rainbow Loading", description: "彩虹进度、完成掠过与 reduced motion", path: "/components/rainbow-loading", badge: "New" },
+      { id: "agent-conversation", label: "Agent conversation", description: "悬浮对话、会话管理、缩放与生成反馈", path: "/components/agent-conversation", badge: "New" },
       { id: "input", label: "Input", description: "文本输入、搜索与表单反馈", path: "/components/input" },
       { id: "compact-select", label: "Compact Select", description: "选中项锚定展开的紧凑单选控件", path: "/components/compact-select", badge: "New" },
       { id: "dropdown-menu", label: "DropdownMenu", description: "搜索、多选、分组与指令弹窗", path: "/components/dropdown-menu", badge: "New" },
       { id: "inline-edit", label: "Inline Edit", description: "锚定浮层、即时提交与失败回滚", path: "/components/inline-edit", badge: "New" },
       { id: "floating-panel", label: "Floating panel", description: "布局内浮动右栏、卡片栈与双态触发器", path: "/components/floating-panel", badge: "New" },
+      { id: "illustrated-card", label: "Illustrated Card", description: "配图风格、生成管线与卡片装配解耦", path: "/components/illustrated-card", badge: "New" },
       { id: "surface", label: "Surface", description: "常驻、浮层、选中与低层级表面", path: "/components/surface" },
       { id: "feedback", label: "Feedback", description: "Badge、状态、空态和错误", path: "/components/feedback", badge: "4" },
     ],

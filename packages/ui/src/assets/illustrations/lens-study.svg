@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 760" fill="none">
+  <defs>
+    <linearGradient id="barrel" x1="164" y1="257" x2="481" y2="618" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#566063"/>
+      <stop offset=".38" stop-color="#252D30"/>
+      <stop offset=".72" stop-color="#111719"/>
+      <stop offset="1" stop-color="#485154"/>
+    </linearGradient>
+    <radialGradient id="lens" cx="0" cy="0" r="1" gradientTransform="translate(346 336) rotate(129) scale(158)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D7E4DA"/>
+      <stop offset=".22" stop-color="#6C96A1"/>
+      <stop offset=".46" stop-color="#253F4B"/>
+      <stop offset=".69" stop-color="#121B23"/>
+      <stop offset=".86" stop-color="#455865"/>
+      <stop offset="1" stop-color="#090E12"/>
+    </radialGradient>
+    <linearGradient id="brass" x1="160" y1="181" x2="524" y2="583" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F0D8A5"/>
+      <stop offset=".28" stop-color="#A77936"/>
+      <stop offset=".62" stop-color="#E7C982"/>
+      <stop offset="1" stop-color="#6C481D"/>
+    </linearGradient>
+    <linearGradient id="prism" x1="390" y1="130" x2="511" y2="363" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E7ECE6" stop-opacity=".78"/>
+      <stop offset=".34" stop-color="#82A2AA" stop-opacity=".58"/>
+      <stop offset=".7" stop-color="#C49C74" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#4D6570" stop-opacity=".62"/>
+    </linearGradient>
+  </defs>
+  <g>
+    <path d="m390 122 127 68-30 179-154-96 57-151Z" fill="url(#prism)" stroke="#E3E5DE" stroke-opacity=".55" stroke-width="3"/>
+    <path d="m390 122-57 151 69 45 115-128-127-68Z" fill="#ADC1C0" fill-opacity=".25"/>
+    <path d="m402 318 85 51 30-179-115 128Z" fill="#B08C68" fill-opacity=".24"/>
+    <path d="M165 376c0-130 84-235 187-235 44 0 85 20 117 54l45 48-37 334-73 68c-18 17-40 27-63 27-97 0-176-132-176-296Z" fill="url(#barrel)"/>
+    <ellipse cx="341" cy="378" rx="176" ry="294" fill="#1A2225" stroke="url(#brass)" stroke-width="18"/>
+    <ellipse cx="341" cy="378" rx="148" ry="256" fill="#384246" stroke="#778083" stroke-width="5"/>
+    <ellipse cx="341" cy="378" rx="124" ry="220" fill="url(#lens)"/>
+    <ellipse cx="308" cy="315" rx="44" ry="96" transform="rotate(7 308 315)" fill="#E5EFE9" opacity=".2"/>
+    <ellipse cx="370" cy="471" rx="52" ry="97" transform="rotate(7 370 471)" fill="#091016" opacity=".28"/>
+    <path d="M204 256c-14 74-11 178 9 250M229 205c-17 93-13 227 12 316" stroke="#A6AFAD" stroke-opacity=".26" stroke-width="4" stroke-linecap="round"/>
+    <path d="M451 242c30 91 28 212-5 298" stroke="#E9CD91" stroke-opacity=".36" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="341" cy="378" r="32" fill="#121D24" stroke="#9AB0B0" stroke-opacity=".55" stroke-width="3"/>
+  </g>
+</svg>

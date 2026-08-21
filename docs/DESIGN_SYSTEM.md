@@ -1,6 +1,6 @@
 # Dionysus UI Design System
 
-> 当前仓库是 Dionysus 设计系统的 React 源码预览：`packages/ui` 提供共享 Token 与基础原语，`apps/web` 使用真实共享组件生成活文档。PrismaticButton 已完成源码级迁移与证据归档；Desktop、FogSphere、GlassSurface 等更完整产品原语仍属于后续迁移/发布范围。视觉基线来源、授权边界与再分发限制见仓库根目录 `THIRD_PARTY_NOTICES.md` 及各 `docs/reference-analysis/` 目录。
+> 当前仓库是 Dionysus 设计系统的 React 源码预览：`packages/ui` 提供共享 Token 与基础原语，`apps/web` 使用真实共享组件生成活文档。PrismaticButton 与 Rainbow Loading 已完成源码/逐帧分析及证据归档；Desktop、FogSphere、GlassSurface 等更完整产品原语仍属于后续迁移/发布范围。视觉基线来源、授权边界与再分发限制见仓库根目录 `THIRD_PARTY_NOTICES.md` 及各 `docs/reference-analysis/` 目录。
 
 ## 1. 设计哲学
 
@@ -13,7 +13,7 @@
 
 - 唯一 Token 真相源：`packages/ui/src/styles.css`。
 - 共享原语入口：`packages/ui/src/index.ts`；图标入口：`packages/ui/src/icons.tsx`。消费者只从 `@dionysus/ui`、`@dionysus/ui/icons` 和 `@dionysus/ui/styles.css` 引入。
-- 当前稳定原语：`Button / PrismaticButton / Badge / Avatar / Input / SearchField / CompactSelect / DropdownMenu / InlineEdit / InlineEditSelect / Surface / Dialog / SegmentedControl / ThemeToggle`。
+- 当前稳定原语：`Button / PrismaticButton / RainbowProgress / RainbowSweep / AgentConversationCorner / Badge / Avatar / Input / SearchField / CompactSelect / DropdownMenu / InlineEdit / InlineEditSelect / Surface / CardIllustration / IllustratedCard / Dialog / SegmentedControl / ThemeToggle`。
 - Web 活规范入口：`apps/web`，侧栏、搜索、示例和页面模式必须消费真实共享组件。
 - Web 站点样式：`apps/web/src/styles.css` 只定义文档呈现、动画和打印规则，不创建第二套基础视觉 Token。
 - 后续产品原语：`FogSphere / GlassSurface / TreeView / MarkdownEditor / Page primitives` 等必须先进入 `packages/ui` 或明确标注为路线图，再允许业务消费。
@@ -80,6 +80,15 @@
 - 只使用静态具名导入；禁止 `import * as Icons`、字符串动态查找、复制完整 SVG 集或混用第二套图标库。
 - 新图标必须先确认现有子集无法表达目标语义，再补充出口、活文档和许可证审查。
 
+## 5.2 导航图标交接
+
+- 一级导航行使用 `NavArrowMorphIcon` 时，交互祖先必须声明 `data-nav-icon-trigger`；静止态显示页面类别图标，fine-pointer hover 与 `focus-visible` 时交接为右向箭头。
+- 交接只发生在既有图标槽位内：原图标 `x 0 → 3px / scaleX 1 → 0.56 / opacity 1 → 0`，箭头 `x -3px → 0 / scaleX 0.48 → 1 / opacity 0 → 1`。标签、Badge、行高和点击区域不得移动。
+- 进入使用 160ms、退出使用 120ms，统一 `cubic-bezier(0.16, 1, 0.3, 1)`；连续扫过导航时必须从当前进度自然反向，不排队、不回弹。
+- 只用于会前往另一页面或层级的导航行。删除、提交等原地操作，折叠 disclosure，disabled 行及以图标作为唯一可见含义的控件不得使用。
+- 两层 SVG 均为装饰，导航标签承担可访问名称。`prefers-reduced-motion: reduce` 下保留终态切换但压缩过渡；触摸端不依赖 hover 发现入口。
+- 参考分析、关键帧、候选截图与对齐结论归档在 `docs/reference-analysis/icon-hover/`；活规范页面位于 `/foundations/motion`。
+
 ## 6. 间距、圆角与阴影
 
 - 4px 基础网格：4 紧密关联、8 同组项目、12 组件内区块、16 组间、24 大节。
@@ -118,6 +127,29 @@
 - WebGL2 不可用时退化为完整静态渐变按钮；离开视口、页面隐藏或 reduced motion 时停止连续 rAF，并保留确定性静帧。
 - 视觉层全部 `aria-hidden`；可访问名称来自按钮内容，默认 `type="button"`，focus-visible 和 disabled 使用原生按钮语义。
 - 来源、实现证据、许可证边界和性能预算见 `docs/reference-analysis/prismatic-button/component-catalog.md`。
+
+### RainbowProgress / RainbowSweep
+
+- `RainbowProgress` 用于可量化、持续超过约 600ms 的前台加载；`value` 必须来自真实任务状态，阶段文案、失败原因与完成结果继续由可见文本表达。
+- 默认进度条为 256 × 8px、16px 圆角。160px 光谱周期使用 `3.2s linear infinite`，122px sheen 使用 `5.6s linear infinite`；业务可以覆盖色板与周期，但不得把颜色当作成功/错误等唯一语义。
+- 进度宽度使用 `cubic-bezier(0.16, 1, 0.3, 1)`；首次 0→≤30% 为 520ms，其余更新为 `round(clamp(6200 × abs(next - previous), 1800, 4200))ms`。
+- `RainbowSweep` 是独立完成交接层，只在内容已经就绪时播放一次。`viewport` 使用 fixed 全屏覆盖，`container` 使用 absolute 局部覆盖；两者都必须保持 `pointer-events: none`。
+- 默认掠过总时长 660ms：主色带约 220ms 横跨一屏，峰值 opacity 0.78、blur 48px、saturation 1.15，剩余约 440ms 只用于残影衰减。只能动画 transform 与 opacity。
+- `RainbowProgress` 使用原生 progressbar 的 min/max/now 与可本地化名称；离开视口或显式 paused 时暂停连续循环。`prefers-reduced-motion: reduce` 下保留静态彩虹进度，停止 ribbon 并隐藏 sheen/sweep。
+- 精确进度参数、全屏拟合边界、逐帧时间轴与排除项见 `docs/reference-analysis/rainbow-loading/alignment-report.md`；活规范位于 `/components/rainbow-loading`。
+
+### AgentConversationCorner
+
+- Agent 作为右下角可召回的浮动工作层进入，不使用固定硬分栏、不遮罩主页面，也不永久压缩主画布；关闭态由所在 Surface 唯一的 `PrismaticButton` 触发。
+- 默认窗口为 448 × 592px，最小 360 × 420px，四周安全 inset 12px。右下角保持锚定；上边、左边与左上角允许连续拖动缩放，最大化/恢复记住最后一次人工尺寸。
+- Header 固定承载会话历史、标题、新会话、最大化/恢复和关闭。历史在窗内切换，不跳转页面；删除需二次激活，并在 2.4s 后自动解除确认状态。
+- Composer 始终固定在底部；Enter 发送、Shift + Enter 换行，并必须检查 IME `isComposing`。附件选择、真实 Agent 请求、会话持久化与反馈上报通过回调交还产品层，组件不得直接连接网络或业务协议。
+- 异步链路为 `thinking → streaming → complete | error | stopped`。Thinking 使用固定宽度 ASCII 字形与过程动词轮换；输入区能量光场只在真实请求期间出现；停止按钮必须始终可操作。
+- 完成后显示复制、重试和质量反馈；失败附着在原回答位置并保留用户输入。所有状态通过 live region 宣告，不能只依赖颜色、光效或动效表达。
+- 打开时外壳从右下锚点以非等比 `0.46 × 0.30 → 1` 在 180ms 内快速展开；入口的绿色桥接层在约 50ms 达到 `1.18w × 3.20h`，并在下一帧降到约 21% 对比度。桥接层必须与真实按钮内容分离，禁止把文字、图标、WebGL 光场或圆角一起 transform-scale。内容延迟 260ms 后用 140ms 淡入。收起时内容在 50ms 内先退出，桥接层用 167ms 无回弹关键帧落回原尺寸。
+- 手动 resize 必须直接跟手；窗口 preset 使用 spring `520 / 42 / 0.72`，视图切换 180ms，状态词 cadence 720ms。连续操作从当前状态反向，不排队。
+- `prefers-reduced-motion: reduce` 下窗口立即到达终态，ASCII 变换与能量场停止，但状态文字、停止、错误与完成操作保持完整。
+- 逐帧分析、时间轴、动效参数与验收清单见 `docs/reference-analysis/agent-corner/alignment-report.md`。
 
 ### Badge
 
@@ -166,6 +198,17 @@
 - `card / raised / subtle / selected / flat` 是允许的基础表面变体。
 - 业务页面不得重复组合 `border + background + shadow + radius` 创建平行卡片。
 
+### CardIllustration / IllustratedCard
+
+- 配图资产、呈现方式与卡片内容是三个独立契约：`IllustrationAsset` 只描述透明前景；`CardIllustration` 只负责 placement、scale、clip 与 CSS mask；`IllustratedCard` 只负责 eyebrow、title、metadata、footer 与 `visual` 插槽。
+- 默认 `editorial-cutout` v2 风格是可版本化的真实编辑摄影生成配置，不绑定任何模型或人物题材。它按物件、人物、场景与抽象主体分流 use case 与构图约束；业务可以通过 `defineIllustrationStyle()` 增加风格，但不得在卡片内拼接 prompt。
+- 图片生成由产品层注入 `IllustrationGenerationProvider`。如果 provider 返回不透明背景，必须再注入 `IllustrationAlphaProcessor`；未得到真实 Alpha 的输出不得进入 `IllustrationLibrary`。输出契约固定为 4:5 竖向画布、顶部至少 10% / 两侧至少 8% 安全区、禁外部阴影、禁烘焙 fade；绿幕 / Chroma Key 不是默认生产路径。
+- 默认示例资产由 Zonic `gpt-image-2` high 生成并归一化为 1200×1500 透明 WebP；资产库必须记录 provider 与 Alpha 处理 provenance，布局回归 SVG 不得冒充生产配图。
+- 资产不得包含卡片背景、UI、文字、外部地面阴影或烘焙的底部渐变。底部消隐统一由 `CardIllustration fade="soft | deep | none"` 的 Alpha mask 与 Surface overlay 双层实现，位置和尺寸调整不触发重新生成。
+- 共享通用配图库优先沉淀具有清楚轮廓的工具、文档、材料和抽象造型；人物只是可选题材，不是该卡片模式的身份定义。
+- 默认构图使用暖白 Surface、左上标题、左下两列元数据与右下前景锚点。媒体安全区必须先于卡片最终边界完成布局，卡片只裁切最终圆角，禁止在图片容器顶部提前裁切。Hover 只允许轻微前景位移与阴影收敛；reduced motion 下立即到达终态。
+- 活规范、非人像示例、默认 prompt 与装配代码位于 `/components/illustrated-card`。
+
 ### FloatingSidePanel
 
 - 桌面端属性、写作计划、来源、活动等上下文统一使用 `FloatingSidePanel + FloatingSidePanelCard + SidePanelToggle`；它是工具栏下方内容区中的 `main + aside` 布局，不是覆盖主内容的 Drawer。
@@ -191,12 +234,15 @@
 ### DropdownMenu
 
 - 用于搜索型下拉选择、成员分配、标签选择和轻量 command palette；支持分组、多选、右侧计数与指令项。
+- 默认采用 320px 浮层、40px 搜索头、36px 单行最小高度、24px 视觉列、12px 主标签与 10px 辅助字阶；消费方可以适配宽度和滚动上限，但不得整体放大字号、行高或图标。
 - 同一个菜单内的 `value` 必须稳定且唯一；组件用它维护 active、selection 和键盘状态。
-- 顶部搜索栏是浮层的一部分，不额外套 Input 外框；打开后优先聚焦搜索，`ArrowDown` 进入结果，`Escape` 关闭并返回触发器。
+- 顶部搜索栏是浮层的一部分，不额外套 Input 外框，也不添加前置放大镜；打开后优先聚焦搜索，`ArrowDown` 进入结果，`Escape` 关闭并返回触发器。
+- 主标签负责快速扫描；只有在同名项、相似成员或状态需要消歧时才提供一行 `description`。搜索同义词进入 `keywords`，不挤进可见文案。
 - 多选项使用 `menuitemcheckbox` 与 `aria-checked`；选中通过勾选和字重表达，高亮/hover 行使用 `surface-selected`，两种状态不得混淆。
 - 指令项只触发 `onCommandSelect`，可以打开另一个 `DropdownMenu` 或 `Dialog`；邀请、分配、权限升级等业务副作用不得进入组件库。
 - 非受控搜索默认在关闭后清空；受控搜索值由业务层在 `onOpenChange` 中决定是否清理。
 - 浮层使用 `Raised Surface`、`--floating-shadow`、语义 Token 和平台无关 DOM 事件；不得访问 Electron、Node、网络请求或产品协议。
+- 少量稳定单选使用 CompactSelect 或原生 Select；纯动作集合使用 action menu；不可逆、权限敏感或需要解释后果的操作进入 Dialog / 确认流；移动端空间不足时由产品层切换 Bottom Sheet。
 
 ### InlineEdit / InlineEditSelect
 

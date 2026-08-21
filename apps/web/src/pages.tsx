@@ -1,6 +1,6 @@
 /**
- * [INPUT]: 依赖 React 状态、React Router、设计系统图标、@dionysus/ui 真实原语、文档呈现组件与导航顺序
- * [OUTPUT]: 对外提供所有设计系统页面内容、页内目录、页面分发器和相邻页导航
+ * [INPUT]: 依赖 React 状态、React Router、设计系统图标、@dionysus/ui 真实原语、Rainbow Loading 与导航图标交接、文档呈现组件和导航顺序
+ * [OUTPUT]: 对外提供包含动效、Rainbow Loading 与 Illustrated Card 活规范的所有设计系统页面内容、页内目录、页面分发器和相邻页导航
  * [POS]: web/src 的设计知识主体，以 Foundations→Components→Patterns→Resources 层级呈现视觉语言
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
@@ -49,6 +49,7 @@ import {
   type LucideIcon,
 } from "@dionysus/ui/icons";
 import {
+  AgentConversationCorner,
   Avatar,
   Badge,
   Button,
@@ -60,7 +61,11 @@ import {
   InlineEdit,
   InlineEditSelect,
   Input,
+  NavArrowMorphIcon,
   PrismaticButton,
+  RAINBOW_PROGRESS_COLORS,
+  RainbowProgress,
+  RainbowSweep,
   SearchField,
   SegmentedControl,
   SidePanelToggle,
@@ -68,6 +73,7 @@ import {
   SidebarToggle,
   Surface,
   cn,
+  type AgentConversation,
   type CompactSelectOption,
   type DropdownMenuGroup,
   type InlineEditOption,
@@ -76,6 +82,7 @@ import {
   type SegmentedControlItem,
 } from "@dionysus/ui";
 import { DocSection, InlineCode, PageIntro, PropTable, RuleNote, Specimen, TokenRow } from "./docs-elements";
+import { IllustratedCardPage } from "./illustrated-card-page";
 import { DOC_ITEMS } from "./navigation";
 
 interface TocItem { id: string; label: string }
@@ -107,6 +114,13 @@ const PAGE_TOC: Record<string, TocItem[]> = {
     { id: "icon-semantics", label: "语义与入口" },
     { id: "icon-accessibility", label: "无障碍" },
   ],
+  motion: [
+    { id: "navigation-morph", label: "导航图标交接" },
+    { id: "motion-benefits", label: "为什么有效" },
+    { id: "motion-timing", label: "时序与实现" },
+    { id: "motion-practice", label: "最佳实践" },
+    { id: "motion-accessibility", label: "无障碍与降级" },
+  ],
   layout: [
     { id: "grid", label: "4px 网格" },
     { id: "inset-canvas", label: "Inset canvas" },
@@ -124,6 +138,22 @@ const PAGE_TOC: Record<string, TocItem[]> = {
     { id: "prismatic-behavior", label: "Behavior" },
     { id: "prismatic-api", label: "API" },
   ],
+  "rainbow-loading": [
+    { id: "rainbow-loading-live", label: "Live specimen" },
+    { id: "rainbow-loading-anatomy", label: "Anatomy" },
+    { id: "rainbow-loading-timing", label: "Timing" },
+    { id: "rainbow-loading-composition", label: "Composition" },
+    { id: "rainbow-loading-accessibility", label: "Accessibility" },
+    { id: "rainbow-loading-api", label: "API" },
+  ],
+  "agent-conversation": [
+    { id: "agent-conversation-live", label: "Live specimen" },
+    { id: "agent-conversation-anatomy", label: "Anatomy" },
+    { id: "agent-conversation-states", label: "State model" },
+    { id: "agent-conversation-motion", label: "Motion" },
+    { id: "agent-conversation-accessibility", label: "Accessibility" },
+    { id: "agent-conversation-api", label: "API" },
+  ],
   input: [
     { id: "text-input", label: "Text input" },
     { id: "search-field", label: "Search field" },
@@ -140,7 +170,9 @@ const PAGE_TOC: Record<string, TocItem[]> = {
   ],
   "dropdown-menu": [
     { id: "assignee-menu", label: "Assignee menu" },
+    { id: "dropdown-anatomy", label: "Component anatomy" },
     { id: "behavior", label: "Behavior" },
+    { id: "dropdown-practice", label: "Best practices" },
     { id: "dropdown-api", label: "API" },
   ],
   "inline-edit": [
@@ -159,6 +191,12 @@ const PAGE_TOC: Record<string, TocItem[]> = {
     { id: "floating-panel-behavior", label: "Behavior" },
     { id: "floating-panel-accessibility", label: "Accessibility" },
     { id: "floating-panel-api", label: "API" },
+  ],
+  "illustrated-card": [
+    { id: "illustrated-card-live", label: "Live specimen" },
+    { id: "illustrated-card-pipeline", label: "四层职责" },
+    { id: "illustrated-card-style", label: "配图风格" },
+    { id: "illustrated-card-assembly", label: "装配边界" },
   ],
   surface: [
     { id: "surface-variants", label: "Variants" },
@@ -680,6 +718,118 @@ function IconsPage() {
   );
 }
 
+const motionNavigationItems = [
+  { icon: FileText, label: "文档", meta: "12" },
+  { icon: Layers3, label: "知识库", meta: "" },
+  { icon: ShieldCheck, label: "权限与安全", meta: "" },
+  { icon: Sparkles, label: "AI 工作流", meta: "New" },
+];
+
+function MotionPage() {
+  return (
+    <>
+      <PageIntro
+        eyebrow="Foundations"
+        title="动效解释方向，不表演速度。"
+        description="Dionysus UI 用短促、可中断的状态交接说明界面将去往哪里。每一段运动都必须补足静态画面无法清楚表达的关系。"
+        status="Ready"
+        meta={<span>NavArrowMorphIcon · 160ms enter / 120ms exit</span>}
+      />
+      <DocSection
+        id="navigation-morph"
+        title="导航图标交接"
+        description="悬停或键盘聚焦导航项：原图标向右收束并淡出，箭头从左侧展开。文字和行高保持稳定，方向反馈只发生在图标槽位内。"
+      >
+        <Specimen
+          title="Icon → arrow"
+          description="移动指针或使用 Tab 键；快速扫过多行时，每一项都会从当前进度自然反向"
+          code={'<Link data-nav-icon-trigger to="/documents">\n  <NavArrowMorphIcon icon={FileText} />\n  <span>文档</span>\n</Link>'}
+        >
+          <nav aria-label="导航图标交互动效示例" className="mx-auto w-full max-w-sm space-y-1 rounded-xl bg-sidebar p-2 text-sidebar-foreground ring-1 ring-sidebar-border">
+            {motionNavigationItems.map(({ icon, label, meta }, index) => (
+              <button
+                className={cn(
+                  "flex h-10 w-full items-center gap-2.5 rounded-lg px-3 text-left text-xs text-muted-foreground outline-none transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:bg-sidebar-accent focus-visible:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+                  index === 0 && "bg-sidebar-accent/55",
+                )}
+                data-nav-icon-trigger
+                key={label}
+                type="button"
+              >
+                <NavArrowMorphIcon className="size-4" icon={icon} />
+                <span className="min-w-0 flex-1 truncate">{label}</span>
+                {meta ? <span className="font-mono text-micro tabular-nums text-muted-foreground">{meta}</span> : null}
+              </button>
+            ))}
+          </nav>
+        </Specimen>
+      </DocSection>
+      <DocSection id="motion-benefits" title="为什么有效" description="同一个 16px 槽位同时承担“它是什么”和“它会去往哪里”，不增加永久噪音。">
+        <div className="divide-y divide-border border-y border-border">
+          {[
+            ["保持识别", "静止时保留页面类别图标，用户仍可快速扫描导航结构。"],
+            ["补足意图", "进入交互态后箭头把普通列表项明确为可前往的导航入口。"],
+            ["维持连续", "两个字形共享中心和笔画颜色，变化像一次交接，而不是突然换图。"],
+            ["控制密度", "反馈发生在既有图标槽位内，不新增尾随箭头，也不挤压标签和 Badge。"],
+          ].map(([title, copy]) => (
+            <div className="grid gap-2 py-4 sm:grid-cols-[10rem_1fr]" key={title}>
+              <p className="text-xs font-medium">{title}</p>
+              <p className="text-xs leading-5 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="motion-timing" title="时序与实现" description="参考视频的可见交接约在 100–150ms 内完成；指数缓出让 160ms 动画在前半段迅速抵达可读状态。">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-4">
+          {[
+            ["0ms", "Source", "原图标完整；箭头在左侧压缩并透明。"],
+            ["≈60ms", "Overlap", "两层短暂重叠，制造连续变形的视觉印象。"],
+            ["160ms", "Arrow", "箭头完整到位；槽位、标签和布局均未移动。"],
+            ["120ms", "Return", "移出比进入略快，避免指针扫过时产生拖尾。"],
+          ].map(([time, title, copy]) => (
+            <div className="bg-background p-4" key={time}>
+              <p className="font-mono text-micro tabular-nums text-muted-foreground">{time}</p>
+              <p className="mt-3 text-xs font-medium">{title}</p>
+              <p className="mt-2 text-micro leading-4 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-5"><RuleNote>使用同位双 SVG、opacity 和 transform 实现；不引入路径插值依赖，也不动画 width、left 等布局属性。</RuleNote></div>
+      </DocSection>
+      <DocSection id="motion-practice" title="最佳实践">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2">
+          <div className="bg-background p-4">
+            <p className="text-xs font-medium text-success-foreground">Do</p>
+            <ul className="mt-3 space-y-2 text-micro leading-4 text-muted-foreground">
+              <li>只用于会前往另一页面或层级的导航行。</li>
+              <li>让 hover 与 focus-visible 触发完全相同的终态。</li>
+              <li>保持图标槽位、标签位置和点击区域不变。</li>
+              <li>允许快速反向，不排队、不播放完整序列后再响应。</li>
+            </ul>
+          </div>
+          <div className="bg-background p-4">
+            <p className="text-xs font-medium text-destructive">Avoid</p>
+            <ul className="mt-3 space-y-2 text-micro leading-4 text-muted-foreground">
+              <li>不要用于删除、提交等原地执行的动作。</li>
+              <li>不要覆盖折叠 disclosure 的 Chevron 语义。</li>
+              <li>不要在图标按钮中移除唯一可见的操作含义。</li>
+              <li>不要叠加旋转、回弹、发光或行位移。</li>
+            </ul>
+          </div>
+        </div>
+      </DocSection>
+      <DocSection id="motion-accessibility" title="无障碍与降级" description="动效是增强层，不是导航可发现性的唯一来源。">
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Surface padding="md"><ArrowRight className="size-4" /><p className="mt-5 text-xs font-medium">键盘等价</p><p className="mt-1 text-micro leading-4 text-muted-foreground">focus-visible 与 hover 使用同一箭头终态。</p></Surface>
+          <Surface padding="md"><Type className="size-4" /><p className="mt-5 text-xs font-medium">文本保真</p><p className="mt-1 text-micro leading-4 text-muted-foreground">标签始终可见并提供可访问名称，双 SVG 均为装饰。</p></Surface>
+          <Surface padding="md"><ShieldCheck className="size-4" /><p className="mt-5 text-xs font-medium">Reduced motion</p><p className="mt-1 text-micro leading-4 text-muted-foreground">保留图标状态切换，但移除空间移动与过渡等待。</p></Surface>
+        </div>
+        <div className="mt-4"><RuleNote kind="safety">触摸设备没有稳定 hover。移动端仍依靠标签、选中表面和页面标题表达位置，不要求用户发现这一微动效。</RuleNote></div>
+      </DocSection>
+    </>
+  );
+}
+
 function LayoutPage() {
   return (
     <>
@@ -907,6 +1057,357 @@ function PrismaticButtonPage() {
   );
 }
 
+const AGENT_DEMO_CONVERSATIONS: AgentConversation[] = [
+  {
+    id: "agent-demo-new",
+    title: "新会话",
+    updatedLabel: "刚刚",
+    messages: [],
+  },
+  {
+    id: "agent-demo-structure",
+    title: "Agent 产品交互结构",
+    updatedLabel: "昨天",
+    messages: [
+      {
+        id: "agent-demo-user-1",
+        role: "user",
+        content: "帮我判断这个 Agent 入口为什么不该做成固定右栏。",
+        status: "complete",
+      },
+      {
+        id: "agent-demo-assistant-1",
+        role: "assistant",
+        content: "固定右栏会把偶发任务变成永久占位，也会持续压缩主画布。更合适的方式是把 Agent 作为可召回的浮动工具：默认只保留一个明确入口，需要时再展开，并让尺寸跟随任务深度变化。",
+        status: "complete",
+      },
+    ],
+  },
+  {
+    id: "agent-demo-copy",
+    title: "重写发布说明",
+    updatedLabel: "3 天前",
+    messages: [
+      {
+        id: "agent-demo-user-2",
+        role: "user",
+        content: "把这段发布说明改得更清楚。",
+        status: "complete",
+      },
+      {
+        id: "agent-demo-assistant-2",
+        role: "assistant",
+        content: "可以。建议先把变更结果放在第一句，再用三条短句说明适用范围、迁移影响和回退方式。这样读者不需要先理解实现过程，就能判断是否需要行动。",
+        status: "complete",
+      },
+    ],
+  },
+];
+
+async function createAgentDemoResponse(prompt: string, signal: AbortSignal) {
+  await new Promise<void>((resolve, reject) => {
+    const timer = window.setTimeout(resolve, 620);
+    signal.addEventListener("abort", () => {
+      window.clearTimeout(timer);
+      reject(new Error("已停止生成"));
+    }, { once: true });
+  });
+  if (prompt.includes("失败")) throw new Error("连接暂时中断，请重试。你的输入仍保留在当前会话中。");
+  return "我先把它整理成三个层次：\n\n1. 保持主任务连续——Agent 以悬浮窗口出现，不永久挤压画布。\n2. 让过程可感知——发送后明确呈现理解、检索、组织与生成阶段。\n3. 保留用户控制——窗口可缩放、可停止、可切换会话，失败时可以原位重试。\n\n这套结构既能承载轻量问答，也能自然扩展到更长的 Agent 任务。";
+}
+
+function AgentConversationSpecimen() {
+  const [attachmentReady, setAttachmentReady] = useState(false);
+
+  return (
+    <div className="relative h-[42rem] w-full overflow-hidden rounded-xl bg-app-shell ring-1 ring-inset ring-surface-border">
+      <div className="flex h-11 items-center gap-2 border-b border-border/70 px-3">
+        <span className="flex size-6 items-center justify-center rounded-lg bg-primary text-micro text-primary-foreground">D</span>
+        <div className="min-w-0">
+          <p className="truncate text-xs font-medium">内容工作台</p>
+          <p className="text-micro text-muted-foreground">Agent 交互规范 / 草稿</p>
+        </div>
+        <Badge className="ml-auto" size="xs" variant={attachmentReady ? "success" : "secondary"}>
+          {attachmentReady ? "附件入口已响应" : "本地草稿"}
+        </Badge>
+      </div>
+      <div className="flex h-[calc(100%-2.75rem)] min-h-0">
+        <aside className="hidden w-44 shrink-0 border-r border-border/70 p-3 sm:block">
+          <p className="nav-section-label">Workspace</p>
+          <div className="mt-3 space-y-1">
+            {["问题定义", "交互结构", "状态反馈", "无障碍"].map((item, index) => (
+              <div className={cn("flex h-8 items-center gap-2 rounded-lg px-2 text-xs text-muted-foreground", index === 1 && "bg-sidebar-accent text-sidebar-accent-foreground")} key={item}>
+                <FileText className="size-3.5" />{item}
+              </div>
+            ))}
+          </div>
+        </aside>
+        <main className="min-w-0 flex-1 overflow-hidden bg-page-canvas px-6 py-8 sm:px-10">
+          <div className="mx-auto max-w-2xl">
+            <p className="font-mono text-micro text-muted-foreground">02 / INTERACTION STRUCTURE</p>
+            <h3 className="mt-3 max-w-xl text-xl font-medium tracking-tight">Agent 是可召回的工作层，不是永久占位的第二个应用。</h3>
+            <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground">主内容保持完整，浮窗从右下角进入。短问题使用紧凑尺寸，复杂任务可以连续放大；关闭后，注意力自然回到原任务。</p>
+            <div className="mt-8 border-y border-border/70 py-5">
+              {["入口只在需要时获得高强调", "缩放不改变底部输入锚点", "历史和反馈都留在同一上下文"].map((item, index) => (
+                <div className="flex items-center gap-3 py-2 text-xs" key={item}>
+                  <span className="font-mono text-micro text-muted-foreground">0{index + 1}</span>
+                  <span>{item}</span>
+                  <Check className="ml-auto size-3.5 text-success-foreground" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </main>
+      </div>
+      <AgentConversationCorner
+        className="absolute"
+        initialConversationId="agent-demo-new"
+        initialConversations={AGENT_DEMO_CONVERSATIONS}
+        onAttach={() => setAttachmentReady(true)}
+        onGenerateResponse={(prompt, context) => createAgentDemoResponse(prompt, context.signal)}
+        quickActions={[
+          { label: "梳理交互", prompt: "请梳理这个 Agent 组件最重要的交互。" },
+          { label: "检查状态", prompt: "请检查生成过程还缺少哪些状态反馈。" },
+        ]}
+        triggerLabel="召唤 Agent"
+      />
+    </div>
+  );
+}
+
+function AgentConversationPage() {
+  return (
+    <>
+      <PageIntro
+        eyebrow="Components"
+        title="Agent conversation corner"
+        description="从右下角召回的 Agent 工作层：不硬切主画布，可连续缩放、管理会话，并把思考、生成、停止、完成和失败反馈收进同一个稳定空间。"
+        status="Ready"
+        meta={<><Metric value="448×592" label="Default window" /><Metric value="360×420" label="Minimum size" /><Metric value="8" label="Core states" /><Metric value="AA" label="Keyboard path" /></>}
+      />
+      <DocSection id="agent-conversation-live" title="Live specimen" description="点击右下角 Prismatic 入口。尝试拖动窗口上边/左边/左上角、最大化、打开会话记录、删除历史、发送消息和停止生成。">
+        <Specimen
+          code={'<AgentConversationCorner\n  initialConversations={conversations}\n  onGenerateResponse={(prompt, { signal }) => agent.run(prompt, signal)}\n  onConversationsChange={setConversations}\n  onFeedback={recordFeedback}\n/>'}
+          description="完整状态机运行在真实共享组件中"
+          previewClassName="p-0"
+          title="Resizable Agent workspace"
+        >
+          <AgentConversationSpecimen />
+        </Specimen>
+        <RuleNote>组件使用 <InlineCode>PrismaticButton</InlineCode> 作为关闭态的唯一高强调入口；打开后高强调让位给任务内容和输入，避免光效在长任务中持续争夺注意力。</RuleNote>
+      </DocSection>
+      <DocSection id="agent-conversation-anatomy" title="Anatomy" description="窗口只有一层 Raised Surface，层级依靠锚点、留白和稳定区域建立，不在卡片里继续套卡片。">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["A", "Stable header", "历史、标题、新建、最大化和关闭保持位置稳定。"],
+            ["B", "Conversation plane", "消息使用连续画布；用户消息仅以弱表面区分。"],
+            ["C", "Anchored composer", "输入始终贴近底部，缩放和流式输出不改变其任务。"],
+            ["D", "Resize perimeter", "上、左和左上角提供连续缩放，右下锚点不漂移。"],
+          ].map(([mark, heading, copy]) => (
+            <div className="bg-background p-4" key={mark}>
+              <span className="font-mono text-micro text-muted-foreground">{mark}</span>
+              <p className="mt-4 text-xs font-medium">{heading}</p>
+              <p className="mt-1 text-micro leading-4 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="agent-conversation-states" title="State model" description="系统反馈不是一个无限旋转的 Loader，而是一条可理解、可停止、可恢复的任务路径。">
+        <div className="divide-y divide-border rounded-xl border border-border">
+          {[
+            ["Closed", "只保留 Prismatic 触发器；原页面可完整操作。"],
+            ["Empty", "说明能力边界并提供两条轻量建议，不伪造已存在的任务。"],
+            ["Thinking", "固定宽度的 ASCII 字形与过程动词轮换，输入区出现受控能量反馈。"],
+            ["Streaming", "回答按块揭示，光场继续但逐步收束；停止按钮始终可达。"],
+            ["Complete", "光场退场，复制、重试和质量反馈在回答下出现。"],
+            ["Error", "错误附着在失败回答位置，保留输入与会话，并允许原位重试。"],
+            ["History", "在同一窗口内选择、新建和两步删除会话。"],
+            ["Resizing", "人工拖拽直接跟手；最大化和恢复使用可中断 spring。"],
+          ].map(([state, behavior]) => (
+            <div className="grid gap-2 px-4 py-4 sm:grid-cols-[8rem_1fr]" key={state}>
+              <p className="font-mono text-micro text-foreground">{state}</p>
+              <p className="text-xs leading-5 text-muted-foreground">{behavior}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="agent-conversation-motion" title="Motion" description="动效表达空间关系和系统进度；每段都可以被打断，不排队。">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Metric value="180 + 240ms" label="Shell / content handoff" />
+          <Metric value="520 / 42 / .72" label="Resize spring" />
+          <Metric value="720ms" label="Thinking cadence" />
+          <Metric value="300ms" label="Energy resolve" />
+        </div>
+        <p className="mt-5 text-xs leading-5 text-muted-foreground">打开时外壳先从右下锚点快速展开，入口以纵向鼓包完成能量交接，内容随后淡入；关闭时顺序反转。手动缩放不加插值，最大化和恢复使用 spring。输入能量由三层语义色光斑构成，只在真实异步任务期间出现。Reduced motion 下全部切换为静态状态文字和即时几何。</p>
+      </DocSection>
+      <DocSection id="agent-conversation-accessibility" title="Accessibility" description="悬浮不等于脱离结构：状态、焦点、键盘和取消路径都必须真实存在。">
+        <div className="space-y-3 text-xs leading-5 text-muted-foreground">
+          <p>触发器和全部图标操作都有可见名称、tooltip 与 focus ring；关闭后焦点回到触发器。<InlineCode>Escape</InlineCode> 先退出历史视图，再关闭窗口。</p>
+          <p>输入支持 Enter 发送、Shift + Enter 换行，并检查 <InlineCode>isComposing</InlineCode>，避免中文输入法选词时误提交。Thinking、streaming、complete、stop 与 error 通过 live region 宣告。</p>
+          <p>删除会话必须两次激活；第一次进入有文字的确认状态，2.4 秒后自动解除。状态不能只依赖红色或 hover。</p>
+        </div>
+      </DocSection>
+      <DocSection id="agent-conversation-api" title="API">
+        <PropTable rows={[
+          { name: "open / defaultOpen", type: "boolean", defaultValue: "false", description: "支持受控或非受控打开状态；关闭后恢复触发器焦点。" },
+          { name: "defaultSize / minSize", type: "{ width; height }", defaultValue: "448×592 / 360×420", description: "设置人工尺寸边界；实际值仍会按容器可用空间夹取。" },
+          { name: "initialConversations", type: "AgentConversation[]", defaultValue: "[]", description: "初始化窗内历史；后续变化通过 onConversationsChange 交给事实源。" },
+          { name: "onGenerateResponse", type: "(prompt, { signal }) => Promise<string>", defaultValue: "—", description: "连接真实 Agent；AbortSignal 对应停止生成。组件不直接访问网络。" },
+          { name: "quickActions", type: "AgentQuickAction[]", defaultValue: "2 suggestions", description: "空态短指令；点击即进入与普通发送完全相同的状态机。" },
+          { name: "onAttach", type: "() => void", defaultValue: "—", description: "把附件选择交回产品层，组件只维护入口和可访问反馈。" },
+          { name: "onFeedback", type: "(message, up | down) => void", defaultValue: "—", description: "记录回答质量；本地选中态立即反馈，持久化由产品层负责。" },
+        ]} />
+      </DocSection>
+    </>
+  );
+}
+
+const RAINBOW_LOADING_STAGES = [
+  ["Resolving project", 0],
+  ["Starting engine", 6],
+  ["Connecting", 14],
+  ["Downloading", 26],
+  ["Applying data", 68],
+  ["Building views", 74],
+  ["Loading script", 80],
+  ["Rendering", 88],
+  ["Ready", 100],
+] as const;
+
+function RainbowLoadingPage() {
+  const [stageIndex, setStageIndex] = useState(0);
+  const [sweepActive, setSweepActive] = useState(false);
+  const [stage, progress] = RAINBOW_LOADING_STAGES[stageIndex];
+  const isComplete = stageIndex === RAINBOW_LOADING_STAGES.length - 1;
+
+  const advance = () => {
+    const nextIndex = isComplete ? 0 : stageIndex + 1;
+    setStageIndex(nextIndex);
+    setSweepActive(nextIndex === RAINBOW_LOADING_STAGES.length - 1);
+  };
+
+  return (
+    <>
+      <PageIntro
+        eyebrow="Components"
+        title="Rainbow Loading"
+        description="用连续但克制的光谱进度表达真实加载，在内容接管界面时播放一次短促的彩虹掠过。两层原语可以独立使用，不要求动画库或 Canvas。"
+        status="Ready"
+        meta={<span>Source: <InlineCode>@dionysus/ui</InlineCode> · React + CSS</span>}
+      />
+      <DocSection id="rainbow-loading-live" title="Live specimen" description="手动推进参考阶段。到达 Ready 时，容器内 RainbowSweep 会播放一次；生产环境必须把 value 绑定到真实任务状态。">
+        <Specimen
+          title="Progress → completion sweep"
+          description="默认色板、源码级进度参数与逐帧拟合完成转场"
+          code={'const [complete, setComplete] = useState(false)\n\n<RainbowProgress value={progress} label="项目加载进度" />\n<RainbowSweep active={complete} onComplete={() => setComplete(false)} />'}
+          previewClassName="p-4 sm:p-6"
+        >
+          <div className="relative isolate flex min-h-64 w-full max-w-2xl flex-col justify-between overflow-hidden rounded-xl border border-border bg-background p-5 sm:p-7">
+            <RainbowSweep active={sweepActive} mode="container" onComplete={() => setSweepActive(false)} />
+            <div className="relative">
+              <div className="flex items-start justify-between gap-6">
+                <div>
+                  <p className="font-mono text-micro uppercase tracking-nav-section text-muted-foreground">Reference sequence</p>
+                  <p className="mt-2 text-sm font-medium">{stage}</p>
+                </div>
+                <span aria-live="polite" className="font-mono text-sm tabular-nums">{progress}%</span>
+              </div>
+              <RainbowProgress
+                aria-valuetext={`${stage}，${progress}%`}
+                className="mt-5 w-full"
+                label="项目加载进度"
+                value={progress}
+              />
+              <div className="mt-3 flex justify-between font-mono text-[0.55rem] text-muted-foreground">
+                <span>0</span><span>26</span><span>68</span><span>88</span><span>100</span>
+              </div>
+            </div>
+            <div className="relative mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-border/80 pt-4">
+              <p className="text-micro leading-4 text-muted-foreground">此处为手动审阅器，不模拟网络进度。</p>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" disabled={sweepActive} onClick={() => setSweepActive(true)}>重放掠过</Button>
+                <Button size="sm" onClick={advance}>{isComplete ? "重置" : "下一阶段"}</Button>
+              </div>
+            </div>
+          </div>
+        </Specimen>
+      </DocSection>
+      <DocSection id="rainbow-loading-anatomy" title="Anatomy" description="进度条和完成转场共享光谱语言，但生命周期与责任完全分离。">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["01", "Track", "256 × 8px 默认几何；语义表面混合生成 12% 中性轨道。"],
+            ["02", "Spectrum", "160px 重复周期以 3.2s 匀速平移，颜色自身不被拉伸。"],
+            ["03", "Sheen", "120px 白色窄光以 5.6s 独立循环，并叠加纵向高光。"],
+            ["04", "Sweep", "pointer-events-none 大尺寸渐变层只在完成交接时挂入视觉。"],
+          ].map(([index, title, copy]) => (
+            <Surface key={index} padding="md">
+              <p className="font-mono text-micro text-muted-foreground">{index}</p>
+              <p className="mt-6 text-xs font-medium">{title}</p>
+              <p className="mt-2 text-micro leading-4 text-muted-foreground">{copy}</p>
+            </Surface>
+          ))}
+        </div>
+        <div className="mt-5 flex overflow-hidden rounded-lg border border-border">
+          {RAINBOW_PROGRESS_COLORS.map((color) => <span aria-hidden className="h-8 min-w-3 flex-1" key={color} style={{ backgroundColor: color }} />)}
+        </div>
+      </DocSection>
+      <DocSection id="rainbow-loading-timing" title="Timing" description="默认值直接对应参考源码与录屏拟合；进度插值保留缓出，光谱循环保持匀速。">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-4">
+          {[
+            ["3.2s", "Ribbon loop", "160px / 50px·s⁻¹"],
+            ["5.6s", "Sheen loop", "122px / 21.79px·s⁻¹"],
+            ["0.22s", "Main sweep", "主色带横跨约一屏"],
+            ["0.66s", "Total sweep", "含 0.40–0.45s 残影衰减"],
+          ].map(([value, label, copy]) => (
+            <div className="bg-background p-4" key={label}>
+              <p className="font-mono text-sm tabular-nums">{value}</p>
+              <p className="mt-3 text-xs font-medium">{label}</p>
+              <p className="mt-1 text-micro leading-4 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-5"><RuleNote>进度使用 <InlineCode>cubic-bezier(0.16, 1, 0.3, 1)</InlineCode>；首次 0→≤30% 为 520ms，其余时长为 <InlineCode>clamp(6200 × Δ, 1800, 4200)ms</InlineCode>。</RuleNote></div>
+      </DocSection>
+      <DocSection id="rainbow-loading-composition" title="Composition" description="按任务范围选择最小原语，不把全屏转场塞进每一条进度反馈。">
+        <div className="divide-y divide-border border-y border-border">
+          {[
+            ["RainbowProgress", "文件解析、工作区构建等可量化且持续超过约 600ms 的前台加载。"],
+            ["RainbowSweep · viewport", "顶层加载页退出、页面已经可交互时的一次完成交接。"],
+            ["RainbowSweep · container", "面板或画布独立接管内容；父容器需建立 relative 定位上下文。"],
+            ["Custom palette", "仅在产品有明确光谱 Token 时传 colors；业务状态仍由文字和 aria 表达。"],
+          ].map(([name, copy]) => (
+            <div className="grid gap-2 py-4 sm:grid-cols-[13rem_1fr]" key={name}>
+              <code className="font-mono text-xs">{name}</code>
+              <p className="text-xs leading-5 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="rainbow-loading-accessibility" title="Accessibility" description="视觉增强不替代真实进度、状态文案或完成事件。">
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Surface padding="md"><LoaderCircle className="size-4" /><p className="mt-5 text-xs font-medium">Progress semantics</p><p className="mt-1 text-micro leading-4 text-muted-foreground">根节点提供 progressbar、min/max/now 与可本地化名称。</p></Surface>
+          <Surface padding="md"><ShieldCheck className="size-4" /><p className="mt-5 text-xs font-medium">Reduced motion</p><p className="mt-1 text-micro leading-4 text-muted-foreground">停止循环色带、隐藏 sheen 与完成掠过；进度值仍立即更新。</p></Surface>
+          <Surface padding="md"><Type className="size-4" /><p className="mt-5 text-xs font-medium">Text remains primary</p><p className="mt-1 text-micro leading-4 text-muted-foreground">阶段、失败原因和完成结果必须由可见文本持续表达。</p></Surface>
+        </div>
+      </DocSection>
+      <DocSection id="rainbow-loading-api" title="API">
+        <PropTable rows={[
+          { name: "RainbowProgress.value", type: "number", defaultValue: "required", description: "真实进度值；组件自动限制在 0…max。" },
+          { name: "max", type: "number", defaultValue: "100", description: "原生 progressbar 最大值与归一化基准。" },
+          { name: "colors", type: "readonly string[]", defaultValue: "source palette", description: "至少两个 CSS 颜色；按 cycleWidth 均匀分布。" },
+          { name: "cycleWidth", type: "number", defaultValue: "160", description: "光谱重复周期，单位 CSS px。" },
+          { name: "paused", type: "boolean", defaultValue: "false", description: "暂停 ribbon/sheen；离开视口时组件也会自动暂停。" },
+          { name: "RainbowSweep.active", type: "boolean", defaultValue: "false", description: "false→true 播放一次；动画结束调用 onComplete。" },
+          { name: "mode", type: '"viewport" | "container"', defaultValue: '"viewport"', description: "选择 fixed 全屏层或 absolute 容器层。" },
+          { name: "direction", type: '"left-to-right" | "right-to-left"', defaultValue: '"left-to-right"', description: "切换掠过方向，不改变色板顺序。" },
+          { name: "duration", type: "number", defaultValue: "660", description: "完整掠过时长，单位 ms。" },
+          { name: "intensity / blur", type: "number", defaultValue: "0.78 / 48", description: "控制峰值透明度与 CSS px 模糊半径。" },
+        ]} />
+      </DocSection>
+    </>
+  );
+}
+
 function InputDemo() {
   const [query, setQuery] = useState("设计系统");
   return <div className="w-full max-w-sm space-y-3"><Input aria-label="文章标题" defaultValue="克制如何成为高级感" /><SearchField aria-label="搜索组件" value={query} onChange={(event) => setQuery(event.target.value)} onClear={() => setQuery("")} placeholder="搜索组件…" /></div>;
@@ -1114,23 +1615,23 @@ function CompactSelectPage() {
 
 function NoAssigneeMark() {
   return (
-    <span className="relative flex size-8 items-center justify-center text-foreground">
-      <span className="absolute inset-1 rounded-full border-2 border-dashed border-foreground/80" />
-      <UserRoundX className="size-5 stroke-[2.35]" />
+    <span className="relative flex size-6 items-center justify-center text-foreground">
+      <span className="absolute inset-0.5 rounded-full border border-dashed border-foreground/80" />
+      <UserRoundX className="size-3.5 stroke-[2.25]" />
     </span>
   );
 }
 
 function SketchAvatar() {
   return (
-    <span className="relative flex size-8 overflow-hidden rounded-full bg-background ring-1 ring-foreground/10">
-      <span className="absolute inset-1 rounded-full border border-foreground/15" />
-      <span className="absolute left-1 top-2 h-px w-7 rotate-12 bg-foreground/18" />
-      <span className="absolute left-0.5 top-3 h-px w-8 -rotate-12 bg-foreground/16" />
-      <span className="absolute left-2 top-4 h-px w-6 rotate-45 bg-foreground/18" />
-      <span className="absolute left-1.5 top-5 h-px w-7 -rotate-45 bg-foreground/14" />
-      <span className="absolute left-3 top-1 h-7 w-px rotate-12 bg-foreground/12" />
-      <span className="absolute left-5 top-0.5 h-8 w-px -rotate-12 bg-foreground/10" />
+    <span className="relative flex size-6 overflow-hidden rounded-full bg-background ring-1 ring-foreground/10">
+      <span className="absolute inset-0.5 rounded-full border border-foreground/15" />
+      <span className="absolute left-0.5 top-1.5 h-px w-6 rotate-12 bg-foreground/18" />
+      <span className="absolute left-0 top-2.5 h-px w-6 -rotate-12 bg-foreground/16" />
+      <span className="absolute left-1 top-3 h-px w-5 rotate-45 bg-foreground/18" />
+      <span className="absolute left-1 top-4 h-px w-5 -rotate-45 bg-foreground/14" />
+      <span className="absolute left-2 top-0.5 h-5 w-px rotate-12 bg-foreground/12" />
+      <span className="absolute left-4 top-0 h-6 w-px -rotate-12 bg-foreground/10" />
     </span>
   );
 }
@@ -1193,7 +1694,7 @@ function AssigneeDropdownDemo() {
           type: "command",
           value: "invite",
           label: "Invite and assign...",
-          visual: <Send className="-ml-0.5 size-7 -rotate-12 stroke-[2.35] text-muted-foreground" />,
+          visual: <Send className="size-4 -rotate-12 stroke-[2.25] text-muted-foreground" />,
           className: inviteOpen ? "bg-surface-selected font-medium" : undefined,
         },
       ],
@@ -1216,7 +1717,7 @@ function AssigneeDropdownDemo() {
   ];
 
   return (
-    <div className="relative flex min-h-[46rem] w-full max-w-[47rem] flex-col items-center lg:block">
+    <div className="relative flex min-h-[32rem] w-full max-w-[38rem] flex-col items-center lg:block">
       <DropdownMenu
         label="Assign issue"
         open
@@ -1235,11 +1736,11 @@ function AssigneeDropdownDemo() {
           if (item.value === "invite") setInviteOpen(true);
         }}
         groups={assigneeGroups}
-        className="block w-full max-w-[25.75rem] shrink-0"
+        className="block w-full max-w-80 shrink-0"
         panelClassName="w-full"
       />
       {inviteOpen ? (
-        <div className="mt-3 w-full max-w-[20rem] lg:absolute lg:left-[26.75rem] lg:top-[31rem] lg:mt-0">
+        <div className="mt-3 w-full max-w-64 lg:absolute lg:left-[21rem] lg:top-[20rem] lg:mt-0">
           <DropdownMenu
             label="Invite user"
             open
@@ -1251,8 +1752,8 @@ function AssigneeDropdownDemo() {
             selectedValues={["member"]}
             groups={inviteGroups}
             className="block w-full"
-            panelClassName="w-full rounded-[1.125rem]"
-            listClassName="max-h-[18rem]"
+            panelClassName="w-full"
+            listClassName="max-h-72"
           />
         </div>
       ) : null}
@@ -1263,31 +1764,75 @@ function AssigneeDropdownDemo() {
 function DropdownMenuPage() {
   return (
     <>
-      <PageIntro eyebrow="Components" title="DropdownMenu" description="一个 Linear 式的高密度浮层：顶部搜索像标题一样安静嵌入，列表支持分组、多选、右侧计数，以及可打开下一层弹窗的指令项。" status="New" meta={<span>Source: <InlineCode>@dionysus/ui</InlineCode></span>} />
-      <DocSection id="assignee-menu" title="Assignee menu" description="复刻参考图的核心比例：412px 浮层宽度、76px 搜索头、64px 行高、32px 头像列、高亮行使用 Selected Surface。">
-        <Specimen title="Linear-style dropdown" description="搜索、多选、分组与指令弹窗" code={dropdownMenuCode} previewClassName="min-h-[50rem] items-start overflow-hidden bg-app-shell/70 p-4 sm:p-10">
+      <PageIntro eyebrow="Components" title="DropdownMenu" description="用于需要搜索、分组、多选或指令项的标准密度浮层。它在一个连续表面内组织查找、浏览和选择，不承担业务保存与权限判断。" status="New" meta={<span>Source: <InlineCode>@dionysus/ui</InlineCode></span>} />
+      <DocSection id="assignee-menu" title="Assignee menu" description="常规桌面密度：320px 默认宽度、40px 搜索头、36px 单行最小高度与 24px 视觉列；高亮行使用 Selected Surface。">
+        <Specimen title="Searchable dropdown" description="搜索、多选、分组与指令弹窗" code={dropdownMenuCode} previewClassName="min-h-[38rem] items-start overflow-hidden bg-app-shell/70 p-4 sm:p-10">
           <AssigneeDropdownDemo />
         </Specimen>
       </DocSection>
-      <DocSection id="behavior" title="Behavior" description="组件维护浮层打开、搜索过滤、键盘移动和选择状态；业务层只接收选择值或指令回调。">
-        <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3">
+      <DocSection id="dropdown-anatomy" title="Component anatomy" description="尺寸、信息层级和交互职责都由同一套紧凑契约约束。">
+        <div className="overflow-hidden rounded-xl border border-border">
           {[
-            [<Check />, "Multi select", "选项使用 menuitemcheckbox；多选时点击不会关闭菜单。"],
-            [<CornerDownRight />, "Command item", "指令项触发 onCommandSelect，可打开另一个 DropdownMenu 或 Dialog。"],
-            [<Search />, "Search first", "打开后聚焦顶部搜索；ArrowDown 进入结果，Escape 返回触发器。"],
-          ].map(([icon, title, copy]) => <div key={String(title)} className="bg-background p-4"><span className="text-muted-foreground [&>svg]:size-4">{icon as ReactNode}</span><p className="mt-6 text-xs font-medium">{title}</p><p className="mt-1 text-micro leading-4 text-muted-foreground">{copy}</p></div>)}
+            ["Search header", "40px 高，输入框直接融入浮层。聚焦态、占位文字和菜单上下文已能表达搜索，不再添加前置放大镜。"],
+            ["Group label", "使用 micro 字阶与紧凑间距标记结果分组；只在分组能帮助扫描时出现。"],
+            ["Menu item", "单行最小 36px；24px 视觉列、主标签和右侧状态保持稳定对齐。说明文字仅在确实有助于区分选项时使用。"],
+            ["Trailing metadata", "勾选、计数、快捷键或进入下一层的 Chevron 位于固定尾部区域，不能同时堆叠无关信息。"],
+          ].map(([part, copy]) => (
+            <div key={part} className="grid gap-1 border-b border-border px-4 py-3 last:border-b-0 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-6">
+              <p className="text-xs font-medium">{part}</p>
+              <p className="text-xs leading-5 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="behavior" title="Behavior" description="组件维护浮层打开、搜索过滤、键盘移动和选择状态；业务层只接收选择值或指令回调。">
+        <div className="grid overflow-hidden rounded-xl border border-border sm:grid-cols-3 sm:divide-x sm:divide-border">
+          {[
+            ["Multi select", "选项使用 menuitemcheckbox；多选时点击不会关闭菜单。"],
+            ["Command item", "指令项触发 onCommandSelect，可打开另一个 DropdownMenu 或 Dialog。"],
+            ["Search first", "打开后聚焦顶部搜索；ArrowDown 进入结果，Escape 返回触发器。"],
+          ].map(([title, copy]) => <div key={title} className="border-b border-border bg-background p-4 last:border-b-0 sm:border-b-0"><p className="text-xs font-medium">{title}</p><p className="mt-1 text-micro leading-4 text-muted-foreground">{copy}</p></div>)}
         </div>
         <RuleNote kind="safety">DropdownMenu 不连接网络、不保存业务状态、不理解成员权限；邀请、分配、权限升级等副作用必须由业务层显式处理。</RuleNote>
       </DocSection>
+      <DocSection id="dropdown-practice" title="Best practices" description="先判断选择任务的复杂度，再决定是否需要可搜索菜单。">
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div>
+            <p className="mb-3 text-xs font-medium text-success-foreground">Use DropdownMenu when</p>
+            <ul className="space-y-2 text-xs leading-5 text-muted-foreground">
+              <li>选项需要按名称或关键词搜索，或必须按业务含义分组</li>
+              <li>任务需要多选、成员视觉信息、计数或轻量指令项</li>
+              <li>选择结果可以由消费方明确保存并持续反馈真实状态</li>
+              <li>键盘用户需要从搜索直接进入结果并连续操作</li>
+            </ul>
+          </div>
+          <div>
+            <p className="mb-3 text-xs font-medium text-destructive">Choose another pattern when</p>
+            <ul className="space-y-2 text-xs leading-5 text-muted-foreground">
+              <li>只有少量稳定单选项：使用 CompactSelect 或原生 Select</li>
+              <li>只是对当前对象执行动作：使用 action menu，不混入选择状态</li>
+              <li>操作不可逆、涉及权限或需要解释后果：进入 Dialog 或确认流</li>
+              <li>移动端空间无法保证菜单命中区：切换 Bottom Sheet</li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-6 space-y-3 text-xs leading-5 text-muted-foreground">
+          <p>保持 <InlineCode>value</InlineCode> 稳定唯一；label 可以本地化，搜索同义词放在 <InlineCode>keywords</InlineCode>，不要把展示文案当业务 ID。</p>
+          <p>默认宽度和密度属于组件契约。<InlineCode>panelClassName</InlineCode> 只适配容器宽度与内容上限，不用于把字号、行高或视觉列整体放大。</p>
+          <p>同一项最多保留一种主要尾部状态；深层级导航、复杂创建流程和异步错误应交给独立浮层或页面模式。</p>
+        </div>
+      </DocSection>
       <DocSection id="dropdown-api" title="API">
         <PropTable rows={[
-          { name: "groups", type: "DropdownMenuGroup[]", defaultValue: "[]", description: "按组提供 option 或 command 项；组件只读取展示描述。" },
+          { name: "groups", type: "DropdownMenuGroup[]", defaultValue: "[]", description: "按组提供 option 或 command 项；支持 label、description、visual、count、shortcut 与 keywords。" },
           { name: "multiple", type: "boolean", defaultValue: "false", description: "开启多选，选项使用 menuitemcheckbox 语义并保持浮层打开。" },
           { name: "selectedValues", type: "string[]", defaultValue: "—", description: "受控选择值；未提供时可用 defaultSelectedValues 或 item.selected 初始化。" },
           { name: "onSelectedValuesChange", type: "(values, item) => void", defaultValue: "—", description: "选项切换时触发，由业务层持久化。" },
           { name: "onCommandSelect", type: "(item) => void", defaultValue: "—", description: "点击 command 项时触发，可打开二级弹窗或确认流。" },
+          { name: "searchValue / defaultSearchValue", type: "string", defaultValue: '""', description: "受控或非受控搜索值；输入区直接融入浮层，不渲染前置搜索图标。" },
           { name: "clearSearchOnClose", type: "boolean", defaultValue: "true", description: "只清理非受控搜索值；受控搜索由业务在 onOpenChange 中决定是否重置。" },
           { name: "trigger", type: "(props) => ReactNode", defaultValue: "—", description: "渲染触发器并接收 aria、ref、click 与键盘属性。" },
+          { name: "panelClassName / listClassName", type: "string", defaultValue: "—", description: "用于消费场景的宽度和滚动上限适配；不应覆盖组件密度契约。" },
         ]} />
       </DocSection>
     </>
@@ -1871,14 +2416,18 @@ function DocsPage({ pageId }: { pageId: string }) {
     case "colors": content = <ColorsPage />; break;
     case "typography": content = <TypographyPage />; break;
     case "icons": content = <IconsPage />; break;
+    case "motion": content = <MotionPage />; break;
     case "layout": content = <LayoutPage />; break;
     case "button": content = <ButtonPage />; break;
     case "prismatic-button": content = <PrismaticButtonPage />; break;
+    case "rainbow-loading": content = <RainbowLoadingPage />; break;
+    case "agent-conversation": content = <AgentConversationPage />; break;
     case "input": content = <InputPage />; break;
     case "compact-select": content = <CompactSelectPage />; break;
     case "dropdown-menu": content = <DropdownMenuPage />; break;
     case "inline-edit": content = <InlineEditPage />; break;
     case "floating-panel": content = <FloatingPanelPage />; break;
+    case "illustrated-card": content = <IllustratedCardPage />; break;
     case "surface": content = <SurfacePage />; break;
     case "feedback": content = <FeedbackPage />; break;
     case "app-shell": content = <AppShellPage />; break;

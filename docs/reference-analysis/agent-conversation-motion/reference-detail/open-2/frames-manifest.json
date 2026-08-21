@@ -1,0 +1,25 @@
+{
+  "video": "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/bottom-right.mp4",
+  "duration": 5.466667,
+  "start": 2.65,
+  "end": 3.25,
+  "interval": 0.05,
+  "explicit_times": false,
+  "scale": "340:400",
+  "frame_count": 13,
+  "frames": [
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t2_650.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t2_700.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t2_750.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t2_800.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t2_850.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t2_900.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t2_950.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t3_000.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t3_050.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t3_100.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t3_150.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t3_200.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/open-2/frames/frame_t3_250.jpg"
+  ]
+}

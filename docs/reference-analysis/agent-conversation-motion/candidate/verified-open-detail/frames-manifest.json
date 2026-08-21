@@ -1,0 +1,29 @@
+{
+  "video": "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-crop.mp4",
+  "duration": 5.16,
+  "start": 1.68,
+  "end": 2.32,
+  "interval": 0.04,
+  "explicit_times": false,
+  "scale": "413:400",
+  "frame_count": 17,
+  "frames": [
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t1_680.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t1_720.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t1_760.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t1_800.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t1_840.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t1_880.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t1_920.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t1_960.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t2_000.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t2_040.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t2_080.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t2_120.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t2_160.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t2_200.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t2_240.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t2_280.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/verified-open-detail/frames/frame_t2_320.jpg"
+  ]
+}

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 760" fill="none">
+  <defs>
+    <linearGradient id="paperA" x1="144" y1="171" x2="489" y2="624" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFDF7"/>
+      <stop offset=".55" stop-color="#E7E0D3"/>
+      <stop offset="1" stop-color="#BAB09F"/>
+    </linearGradient>
+    <linearGradient id="paperB" x1="181" y1="354" x2="510" y2="614" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D5C7AE"/>
+      <stop offset=".52" stop-color="#F5EEE0"/>
+      <stop offset="1" stop-color="#B8AA92"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="221" y1="208" x2="473" y2="574" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#627985"/>
+      <stop offset=".48" stop-color="#344A55"/>
+      <stop offset="1" stop-color="#1D3039"/>
+    </linearGradient>
+    <linearGradient id="clip" x1="353" y1="76" x2="455" y2="279" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F1DBA9"/>
+      <stop offset=".44" stop-color="#B38542"/>
+      <stop offset="1" stop-color="#745026"/>
+    </linearGradient>
+  </defs>
+  <g>
+    <path d="m131 244 289-110 93 296-289 110-93-296Z" fill="url(#paperA)"/>
+    <path d="m171 225 233-88 13 41-233 88-13-41Z" fill="#C7B99E"/>
+    <path d="m224 540 289-110 27 85-289 110-27-85Z" fill="#A99C87"/>
+    <path d="m143 346 310-51 49 297-310 51-49-297Z" fill="url(#blue)"/>
+    <path d="m143 346 310-51 8 49-310 51-8-49Z" fill="#8EA0A5"/>
+    <path d="m192 643 310-51 9 54-310 51-9-54Z" fill="#17272E"/>
+    <path d="m114 432 302-15 11 225-302 15-11-225Z" fill="url(#paperB)"/>
+    <path d="m114 432 302-15 3 49-302 15-3-49Z" fill="#ECE3D4"/>
+    <path d="M169 510h194M170 539h157M172 568h176" stroke="#7E766A" stroke-opacity=".42" stroke-width="7" stroke-linecap="round"/>
+    <path d="M374 107c34-13 70 4 83 38l29 77c13 34-4 70-38 83-34 13-70-4-83-38l-51-135c-9-24 3-51 27-60 24-9 51 3 60 27l46 121c6 15-2 32-17 38-15 6-32-2-38-17l-38-100" stroke="url(#clip)" stroke-width="18" stroke-linecap="round"/>
+    <circle cx="217" cy="380" r="11" fill="#C8A261"/>
+    <circle cx="245" cy="376" r="11" fill="#C8A261"/>
+    <circle cx="273" cy="371" r="11" fill="#C8A261"/>
+  </g>
+</svg>

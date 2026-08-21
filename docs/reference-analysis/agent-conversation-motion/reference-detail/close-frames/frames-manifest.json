@@ -1,0 +1,30 @@
+{
+  "video": "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/bottom-right.mp4",
+  "duration": 5.466667,
+  "start": 0.0,
+  "end": 5.466667,
+  "interval": 0.5,
+  "explicit_times": true,
+  "scale": "340:400",
+  "frame_count": 18,
+  "frames": [
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_183.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_200.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_217.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_233.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_250.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_267.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_283.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_300.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_317.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_333.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_350.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_367.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_383.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_400.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_417.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_433.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_450.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/reference-detail/close-frames/frames/frame_t4_467.jpg"
+  ]
+}

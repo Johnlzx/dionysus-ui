@@ -1,0 +1,31 @@
+{
+  "video": "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-close.webm",
+  "duration": 66.84,
+  "start": 26.2,
+  "end": 26.92,
+  "interval": 0.04,
+  "explicit_times": false,
+  "scale": "480:270",
+  "frame_count": 19,
+  "frames": [
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_200.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_240.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_280.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_320.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_360.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_400.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_440.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_480.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_520.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_560.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_600.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_640.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_680.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_720.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_760.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_800.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_840.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_880.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/final-refined-open-dense/frames/frame_t26_920.jpg"
+  ]
+}

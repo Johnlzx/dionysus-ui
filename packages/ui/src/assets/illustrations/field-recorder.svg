@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 760" fill="none">
+  <defs>
+    <linearGradient id="body" x1="191" y1="207" x2="463" y2="674" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4D5657"/>
+      <stop offset=".48" stop-color="#242C2E"/>
+      <stop offset="1" stop-color="#111719"/>
+    </linearGradient>
+    <linearGradient id="mesh" x1="253" y1="93" x2="411" y2="302" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9A9B91"/>
+      <stop offset=".52" stop-color="#4B5050"/>
+      <stop offset="1" stop-color="#202829"/>
+    </linearGradient>
+    <linearGradient id="brass" x1="199" y1="166" x2="465" y2="598" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F1D69D"/>
+      <stop offset=".28" stop-color="#A67835"/>
+      <stop offset=".66" stop-color="#E5C47D"/>
+      <stop offset="1" stop-color="#6F4B20"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="237" y1="344" x2="401" y2="468" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A8C8CC"/>
+      <stop offset=".45" stop-color="#526F78"/>
+      <stop offset="1" stop-color="#21343B"/>
+    </linearGradient>
+    <pattern id="meshPattern" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(32)">
+      <path d="M0 1h9M0 5h9" stroke="#D4D4C8" stroke-opacity=".25" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <g>
+    <path d="M246 202h148l50 77-19 80H215l-19-80 50-77Z" fill="url(#brass)"/>
+    <rect x="218" y="265" width="204" height="397" rx="45" fill="url(#body)"/>
+    <path d="M258 105c0-37 30-67 67-67s67 30 67 67v103H258V105Z" fill="url(#mesh)"/>
+    <path d="M258 105c0-37 30-67 67-67s67 30 67 67v103H258V105Z" fill="url(#meshPattern)"/>
+    <rect x="249" y="178" width="152" height="40" rx="19" fill="#2A3132"/>
+    <rect x="252" y="180" width="146" height="7" rx="3.5" fill="#E7D29F" opacity=".65"/>
+    <rect x="254" y="325" width="142" height="157" rx="18" fill="#12191B" stroke="#657071" stroke-width="2"/>
+    <rect x="269" y="342" width="112" height="82" rx="9" fill="url(#glass)"/>
+    <path d="M283 393c11-9 16 9 27 0 10-9 15-35 26-17 10 18 15 26 28 8" stroke="#DCE8E4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="284" cy="452" r="8" fill="#B08243"/>
+    <rect x="305" y="444" width="59" height="16" rx="8" fill="#596264"/>
+    <circle cx="288" cy="538" r="24" fill="#171E20" stroke="#8A6A3C" stroke-width="4"/>
+    <circle cx="352" cy="538" r="24" fill="#171E20" stroke="#8A6A3C" stroke-width="4"/>
+    <path d="M236 298c-17 45-20 107-10 158" stroke="#E1E4DD" stroke-opacity=".2" stroke-width="4" stroke-linecap="round"/>
+    <path d="M387 623h-96" stroke="#9A7A48" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>

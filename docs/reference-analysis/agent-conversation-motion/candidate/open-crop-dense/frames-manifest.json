@@ -1,0 +1,28 @@
+{
+  "video": "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop.mp4",
+  "duration": 2.16,
+  "start": 0.64,
+  "end": 1.24,
+  "interval": 0.04,
+  "explicit_times": false,
+  "scale": "443:400",
+  "frame_count": 16,
+  "frames": [
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t0_640.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t0_680.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t0_720.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t0_760.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t0_800.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t0_840.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t0_880.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t0_920.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t0_960.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t1_000.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t1_040.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t1_080.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t1_120.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t1_160.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t1_200.jpg",
+    "/Users/zhongxin/Documents/Apps/dionysus-ui/docs/reference-analysis/agent-conversation-motion/candidate/open-crop-dense/frames/frame_t1_240.jpg"
+  ]
+}
