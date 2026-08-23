@@ -1,0 +1,43 @@
+name: AI Provider Probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  list-models:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List supported model IDs
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL }}
+        run: |
+          node <<'NODE'
+          const baseUrl = process.env.OPENAI_BASE_URL.replace(/\/$/, '');
+          const response = await fetch(`${baseUrl}/models`, {
+            headers: { authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
+          });
+
+          if (!response.ok) {
+            console.error(`Model discovery failed with HTTP ${response.status}.`);
+            process.exit(1);
+          }
+
+          const body = await response.json();
+          const items = Array.isArray(body.data) ? body.data : Array.isArray(body.models) ? body.models : [];
+          const modelIds = items
+            .map((item) => typeof item === 'string' ? item : item?.id ?? item?.name)
+            .filter((value) => typeof value === 'string' && value.length > 0)
+            .sort();
+
+          if (modelIds.length === 0) {
+            console.error('The provider returned no model IDs.');
+            process.exit(1);
+          }
+
+          console.log('Supported model IDs:');
+          for (const modelId of modelIds) console.log(modelId);
+          NODE
