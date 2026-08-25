@@ -1,6 +1,6 @@
 # Dionysus UI Web
 
-独立的 Dionysus 设计系统站点。它使用 `@dionysus/ui` 的真实 Token 与组件构建自身，提供 Overview、Foundations、Components、Patterns、Resources 五级信息架构。
+独立的 Dionysus 设计系统站点。它使用 `@dionysus/ui` 的真实 Token 与组件构建公开 Landing，并提供 Overview、Foundations、Components、Patterns、Resources 五级活规范信息架构。
 
 ## 本地运行
 
@@ -8,7 +8,7 @@
 pnpm dev
 ```
 
-打开 <http://127.0.0.1:20003/overview>。
+打开 <http://127.0.0.1:20003/> 查看 Landing；活规范从 <http://127.0.0.1:20003/overview> 进入。
 
 ## 验证
 

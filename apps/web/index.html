@@ -1,8 +1,8 @@
 <!doctype html>
 <!--
   [INPUT]: 依赖 src/main.tsx React 入口、共享主题 localStorage 键与 Web 字体资源
-  [OUTPUT]: 对外提供 Dionysus UI 中文文档壳、无闪烁主题初始化、SEO 元数据和应用挂载点
-  [POS]: apps/web 的 HTML 启动边界，不承载组件文档业务逻辑
+  [OUTPUT]: 对外提供 Dionysus UI Landing 与中文文档壳、无闪烁主题初始化、SEO 元数据和应用挂载点
+  [POS]: apps/web 的 HTML 启动边界，不承载 Landing 或组件文档业务逻辑
   [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
 -->
 <html lang="zh-CN">
@@ -11,9 +11,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#f5f5f6" />
-    <meta name="description" content="Dionysus UI：面向作者型 AI 工作台的克制型设计系统。" />
+    <meta name="description" content="Dionysus UI：一套面向作者型 AI 工作台的克制型 React 设计系统。" />
+    <meta property="og:title" content="Dionysus UI — Calm tools for serious work" />
+    <meta property="og:description" content="克制、语义化、内容优先的生产力工作台设计系统。" />
+    <meta property="og:type" content="website" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2318181b'/%3E%3Cpath d='M10 8h6.5c4.8 0 7.5 3 7.5 8s-2.7 8-7.5 8H10V8Zm5.8 12.5c2.8 0 4.2-1.5 4.2-4.5s-1.4-4.5-4.2-4.5H14v9h1.8Z' fill='white'/%3E%3C/svg%3E" />
-    <title>Dionysus UI — Design system</title>
+    <title>Dionysus UI — Calm tools for serious work</title>
     <script>
       try {
         var theme = localStorage.getItem("dionysus-ui-theme") || "system";

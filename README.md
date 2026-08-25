@@ -5,7 +5,7 @@ Dionysus UI 是一套面向高密度创作工具的 React 设计系统。它采�
 本仓库当前包含：
 
 - `packages/ui`：语义 Token、Button、PrismaticButton、RainbowProgress、RainbowSweep、AgentConversationCorner、Badge、Avatar、Input、SearchField、DropdownMenu、InlineEdit、InlineEditSelect、Surface、Dialog、SegmentedControl 与主题控制。
-- `apps/web`：使用真实共享组件构建的设计系统文档站。
+- `apps/web`：使用真实共享组件构建的公开 Landing 与设计系统文档站。
 - `docs`：设计语言规范、视觉提取评估与后续产品化路线。
 
 ## 本地运行
@@ -17,7 +17,7 @@ pnpm install
 pnpm dev
 ```
 
-打开 <http://127.0.0.1:20003/overview>。
+打开 <http://127.0.0.1:20003/> 查看 Landing；活规范从 <http://127.0.0.1:20003/overview> 进入。
 
 ## 验证
 
