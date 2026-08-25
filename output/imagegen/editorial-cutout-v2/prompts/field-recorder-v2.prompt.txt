@@ -1,0 +1,12 @@
+Use case: product-mockup
+Asset type: reusable transparent foreground asset for an editorial UI card
+Primary request: a compact professional field recorder with twin silver microphone capsules, a charcoal metal body, two tactile muted-brass control dials, and a small dark glass display with no readable text
+Scene/backdrop: a perfectly flat, evenly lit chroma-key magenta backdrop in exact #FF00FF; no gradient, texture, vignette, floor, horizon, or reflected magenta spill on the subject
+Subject: one real physical field recorder photographed as a refined magazine still-life portrait; realistic industrial design; tactile knobs, anodized metal, fine microphone mesh, subtle handling texture
+Style/medium: photorealistic editorial studio photography with the tactile restraint of an independent culture magazine; natural material detail; gentle filmic grain; slightly softened micro-contrast; quiet cinematic art direction; not glossy advertising and not a 3D render
+Composition/framing: 4:5 portrait canvas; upright three-quarter view; complete object visible; vertically anchored toward the bottom; object occupies about 76% of canvas height; at least 12% clean background above and 10% at both sides; never crop the microphones, corners, dials, or body
+Lighting/mood: large diffused key light from upper left with soft frontal fill; warm-neutral highlight rolloff; low-contrast modelling; all shading contained within the object silhouette
+Color palette: charcoal, graphite, warm silver, muted brass, and smoke glass; restrained saturation; no green, blue, cyan, or magenta materials
+Materials/textures: real anodized aluminum, fine woven microphone mesh, glass, rubber, and lightly worn tactile controls
+Constraints: only the recorder appears; preserve a crisp complete silhouette; no cast shadow, contact shadow, glow, loose shadow pixels, typography, logo, watermark, scenery, card, UI frame, pedestal, or baked-in bottom fade; every subject pixel must remain inside the safe area
+Avoid: cropped or edge-touching subject; visible floor; drop shadow outside the silhouette; colored edge spill; halo; flat vector art; clip art; cartoon; plastic 3D icon; product-catalog gloss; floating fragments; extra cables; hands; text; logo; watermark

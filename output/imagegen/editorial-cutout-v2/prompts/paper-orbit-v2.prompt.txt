@@ -1,0 +1,12 @@
+Use case: product-mockup
+Asset type: reusable transparent foreground asset for an editorial UI card
+Primary request: a restrained sculptural still life made from one folded warm-ivory paper structure, one smoke-blue glass sphere, and one thin muted-brass orbit ring
+Scene/backdrop: genuine transparent alpha across the entire canvas outside the subject; no colored matte, simulated checkerboard, gradient, texture, vignette, floor, horizon, or background pixels
+Subject: one physically believable tabletop-scale editorial sculpture; the folded paper, glass sphere, and brass ring form one coherent compact silhouette; realistic balance and construction
+Style/medium: photorealistic editorial studio photography with the tactile restraint of an independent culture magazine; real materials; gentle filmic grain; slightly softened micro-contrast; quiet cinematic art direction; not glossy advertising and not a 3D icon
+Composition/framing: 4:5 portrait canvas; three-quarter view; complete sculpture visible; compact centered silhouette anchored toward the lower half; subject occupies no more than 64% of canvas height; at least 18% transparent space above and 14% at both sides; never crop the sphere, ring, paper tips, or any attached part
+Lighting/mood: large diffused key light from upper left with soft frontal fill; warm-neutral highlight rolloff; low-contrast modelling; all shading contained within the subject materials
+Color palette: warm ivory paper, charcoal, smoke blue-gray glass, soft stone, and muted aged brass; restrained saturation; no green, cyan, or magenta materials
+Materials/textures: fibrous heavyweight paper with crisp folds, translucent smoke glass with subtle internal refraction, brushed aged brass with natural micro-scratches
+Constraints: only the single sculpture appears; preserve a crisp complete silhouette and true transparent alpha; the folded paper itself is the supporting structure; absolutely no base, pedestal, plinth, stand, cast shadow, contact shadow, glow, loose shadow pixels, typography, logo, watermark, scenery, card, UI frame, or baked-in bottom fade; every subject pixel must remain inside the safe area
+Avoid: cropped or edge-touching subject; base or pedestal of any kind; levitating disconnected parts; impossible geometry; visible floor; drop shadow outside the silhouette; colored edge spill; halo; flat vector art; clip art; cartoon; plastic 3D icon; glossy CGI; text; logo; watermark

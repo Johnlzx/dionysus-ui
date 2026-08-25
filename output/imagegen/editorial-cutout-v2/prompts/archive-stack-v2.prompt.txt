@@ -1,0 +1,12 @@
+Use case: product-mockup
+Asset type: reusable transparent foreground asset for an editorial UI card
+Primary request: a compact editorial archive stack made from three warm-ivory paper dossiers, one charcoal linen binding board, and one oversized muted-brass paper clip
+Scene/backdrop: genuine transparent alpha across the entire canvas outside the subject; no colored matte, simulated checkerboard, gradient, texture, vignette, floor, horizon, or background pixels
+Subject: one coherent stack of real archival materials photographed as a refined magazine still-life portrait; slightly offset paper edges; tactile binding cloth; one elegant brass clip; no readable writing
+Style/medium: photorealistic editorial studio photography with the tactile restraint of an independent culture magazine; natural material detail; gentle filmic grain; slightly softened micro-contrast; quiet cinematic art direction; not glossy advertising and not a 3D render
+Composition/framing: 4:5 portrait canvas; stable three-quarter view; complete stack visible; vertically anchored toward the bottom; subject occupies no more than 64% of canvas height; at least 18% transparent space above and 14% at both sides; never crop the clip, paper corners, board, or edges
+Lighting/mood: large diffused key light from upper left with soft frontal fill; warm-neutral highlight rolloff; low-contrast modelling; all shading contained within the stacked materials
+Color palette: warm ivory, parchment, charcoal linen, soft stone, and muted aged brass; restrained saturation; no green, cyan, blue, or magenta materials
+Materials/textures: fibrous uncoated paper, lightly worn deckled edges, woven charcoal book cloth, brushed brass with subtle patina
+Constraints: only the archive stack appears; preserve a crisp complete silhouette and true transparent alpha; absolutely no cast shadow, contact shadow, glow, loose shadow pixels, typography, logo, watermark, scenery, card, UI frame, pedestal, or baked-in bottom fade; every subject pixel must remain inside the safe area
+Avoid: cropped or edge-touching subject; readable text; open book spread; floating sheets; visible floor; drop shadow outside the silhouette; colored edge spill; halo; flat vector art; clip art; cartoon; plastic 3D icon; product-catalog gloss; logo; watermark
