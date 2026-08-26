@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 无运行时外部依赖
- * [OUTPUT]: 对外提供包含动效、Rainbow Loading 与 Illustrated Card 的设计系统站点分组导航、页面元数据、搜索索引和默认路由
+ * [OUTPUT]: 对外提供包含动效、Rainbow/Drops Loading 与 Illustrated Card 的设计系统站点分组导航、页面元数据、搜索索引和默认路由
  * [POS]: web/src 的信息架构唯一事实来源，使侧栏、搜索与路由共享同一组页面定义
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
@@ -41,6 +41,7 @@ const DOC_NAVIGATION: DocNavGroup[] = [
       { id: "button", label: "Button", description: "操作层级、尺寸和状态", path: "/components/button" },
       { id: "prismatic-button", label: "Prismatic Button", description: "OGL 棱光、高强调操作与 GPU 降级", path: "/components/prismatic-button", badge: "New" },
       { id: "rainbow-loading", label: "Rainbow Loading", description: "彩虹进度、完成掠过与 reduced motion", path: "/components/rainbow-loading", badge: "New" },
+      { id: "drops-progress", label: "Drops Progress", description: "液滴前沿、自动状态机与 WebGL2 降级", path: "/components/drops-progress", badge: "New" },
       { id: "agent-conversation", label: "Agent conversation", description: "悬浮对话、会话管理、缩放与生成反馈", path: "/components/agent-conversation", badge: "New" },
       { id: "input", label: "Input", description: "文本输入、搜索与表单反馈", path: "/components/input" },
       { id: "compact-select", label: "Compact Select", description: "选中项锚定展开的紧凑单选控件", path: "/components/compact-select", badge: "New" },

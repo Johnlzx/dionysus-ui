@@ -1,6 +1,6 @@
 /**
- * [INPUT]: 依赖 React 状态/副作用、React Router、设计系统图标、共享 UI 交互/导航图标交接与侧栏运动原语、Rainbow Loading 页面元数据及导航模型
- * [OUTPUT]: 对外提供含可折叠 Motion 桌面侧栏、图标转箭头主导航、Rainbow Loading 入口、移动抽屉、顶栏、搜索面板、页内目录和 inset canvas 的 DocsShell
+ * [INPUT]: 依赖 React 状态/副作用、React Router、设计系统图标、共享 UI 交互/导航图标交接与侧栏运动原语、Rainbow/Drops Loading 页面元数据及导航模型
+ * [OUTPUT]: 对外提供含可折叠 Motion 桌面侧栏、图标转箭头主导航、Rainbow/Drops Loading 入口、移动抽屉、顶栏、搜索面板、页内目录和 inset canvas 的 DocsShell
  * [POS]: web/src 的顶级文档壳，用 Dionysus 自身布局语言呈现整个设计系统
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
@@ -70,6 +70,7 @@ const NAV_ICONS: Record<string, LucideIcon> = {
   layout: LayoutGrid,
   button: MousePointer2,
   "rainbow-loading": LoaderCircle,
+  "drops-progress": Sparkles,
   input: TextCursorInput,
   "compact-select": TextSelect,
   "dropdown-menu": ListFilter,

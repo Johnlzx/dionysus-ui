@@ -1,6 +1,6 @@
 # Dionysus UI Design System
 
-> 当前仓库是 Dionysus 设计系统的 React 源码预览：`packages/ui` 提供共享 Token 与基础原语，`apps/web` 使用真实共享组件生成活文档。PrismaticButton 与 Rainbow Loading 已完成源码/逐帧分析及证据归档；Desktop、FogSphere、GlassSurface 等更完整产品原语仍属于后续迁移/发布范围。视觉基线来源、授权边界与再分发限制见仓库根目录 `THIRD_PARTY_NOTICES.md` 及各 `docs/reference-analysis/` 目录。
+> 当前仓库是 Dionysus 设计系统的 React 源码预览：`packages/ui` 提供共享 Token 与基础原语，`apps/web` 使用真实共享组件生成活文档。PrismaticButton、Rainbow Loading 与 Drops Progress 已完成参考实现分析；Desktop、FogSphere、GlassSurface 等更完整产品原语仍属于后续迁移/发布范围。视觉基线来源、授权边界与再分发限制见仓库根目录 `THIRD_PARTY_NOTICES.md` 及各 `docs/reference-analysis/` 目录。
 
 ## 1. 设计哲学
 
@@ -13,7 +13,7 @@
 
 - 唯一 Token 真相源：`packages/ui/src/styles.css`。
 - 共享原语入口：`packages/ui/src/index.ts`；图标入口：`packages/ui/src/icons.tsx`。消费者只从 `@dionysus/ui`、`@dionysus/ui/icons` 和 `@dionysus/ui/styles.css` 引入。
-- 当前稳定原语：`Button / PrismaticButton / RainbowProgress / RainbowSweep / AgentConversationCorner / Badge / Avatar / Input / SearchField / CompactSelect / DropdownMenu / InlineEdit / InlineEditSelect / Surface / CardIllustration / IllustratedCard / Dialog / SegmentedControl / ThemeToggle`。
+- 当前稳定原语：`Button / PrismaticButton / RainbowProgress / RainbowSweep / DropsProgress / AgentConversationCorner / Badge / Avatar / Input / SearchField / CompactSelect / DropdownMenu / InlineEdit / InlineEditSelect / Surface / CardIllustration / IllustratedCard / Dialog / SegmentedControl / ThemeToggle`。
 - Web 活规范入口：`apps/web`，侧栏、搜索、示例和页面模式必须消费真实共享组件。
 - Web 站点样式：`apps/web/src/styles.css` 只定义文档呈现、动画和打印规则，不创建第二套基础视觉 Token。
 - 后续产品原语：`FogSphere / GlassSurface / TreeView / MarkdownEditor / Page primitives` 等必须先进入 `packages/ui` 或明确标注为路线图，再允许业务消费。
@@ -137,6 +137,14 @@
 - 默认掠过总时长 660ms：主色带约 220ms 横跨一屏，峰值 opacity 0.78、blur 48px、saturation 1.15，剩余约 440ms 只用于残影衰减。只能动画 transform 与 opacity。
 - `RainbowProgress` 使用原生 progressbar 的 min/max/now 与可本地化名称；离开视口或显式 paused 时暂停连续循环。`prefers-reduced-motion: reduce` 下保留静态彩虹进度，停止 ribbon 并隐藏 sheen/sweep。
 - 精确进度参数、全屏拟合边界、逐帧时间轴与排除项见 `docs/reference-analysis/rainbow-loading/alignment-report.md`；活规范位于 `/components/rainbow-loading`。
+
+### DropsProgress
+
+- `DropsProgress` 用于需要较强品牌存在感、持续时间较长的单一前台任务；默认 `value` 受控并映射到原生 `progressbar` 语义。缺省 `value` 的自动模式只用于演示、骨架预览或进度事实源确实不可用的非承诺式等待，不得伪装成真实百分比。
+- 默认几何为 `aspect-ratio: 3.6`，色板为深绿矿物底与小面积荧光前沿。文字层保持 DOM 渲染，GPU Canvas 只负责稳定网格、概率前沿、activity 抖动和微弱 grain；业务不得把失败、成功或阶段含义只编码进颜色。
+- WebGL2 由 OGL 建立，DPR 上限为 2；离开视口、页面隐藏或显式 `paused` 时停止 rAF。`prefers-reduced-motion: reduce` 下 activity 归零，只保留静态液滴与进度推进；WebGL2 不可用时保留同色 CSS 进度层和完整文字语义。
+- `palette` 只开放背景、底色、填充、高光和文字色，`jitter / churn / feather / cellSize / grain` 固定为参考参数；`scale` 桌面保持 110，矮容器只按高度降低采样密度以避免次像素混叠。百分比使用 tabular nums，标题与副标题超长时截断而不推挤数值。
+- 当前复刻承诺为视觉级一致，不是像素级一致；浏览器 WebGL 光栅化、DPR 与字体抗锯齿可能产生细微差异。验收与组件契约见 `docs/reference-analysis/drops-progress/`，活规范位于 `/components/drops-progress`，单文件研究页为仓库根目录 `tmp-progress-drops-demo.html`。
 
 ### AgentConversationCorner
 

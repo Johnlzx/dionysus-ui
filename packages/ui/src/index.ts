@@ -1,6 +1,6 @@
 /**
- * [INPUT]: 依赖 ui/src 内部原语、Prismatic Button、Rainbow Loading、Agent 对话角、左右侧栏、导航图标微动效、紧凑选择/下拉浮层、原位编辑、配图管线、主题与类名工具模块
- * [OUTPUT]: 对外提供 @dionysus/ui 的稳定公共导出面，以及配图风格、生成管线、CardIllustration 与 IllustratedCard 契约
+ * [INPUT]: 依赖 ui/src 内部原语、Prismatic Button、Rainbow/Drops Loading、Agent 对话角、左右侧栏、导航图标微动效、紧凑选择/下拉浮层、原位编辑、配图管线、主题与类名工具模块
+ * [OUTPUT]: 对外提供 @dionysus/ui 的稳定公共导出面，以及 GPU/CSS 进度反馈、配图风格、生成管线、CardIllustration 与 IllustratedCard 契约
  * [POS]: ui/src 的包入口，阻止消费者依赖内部文件结构
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
@@ -146,6 +146,8 @@ export type {
   RainbowSweepMode,
   RainbowSweepProps,
 } from "./rainbow-loading";
+export { DROPS_PROGRESS_PALETTE, DropsProgress } from "./drops-progress";
+export type { DropsProgressPalette, DropsProgressProps } from "./drops-progress";
 export {
   CollapsibleSidebar,
   SidebarHeader,

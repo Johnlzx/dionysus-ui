@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 Tailwind CSS v4 CSS-first 主题能力与 @dionysus/ui 语义组件类
- * [OUTPUT]: 对外提供 Dionysus 共享 light/dark Token、字体、表面、状态、圆角、Illustrated Card 配图构图、Prismatic Button 光场、Rainbow Loading、Agent 对话角反馈、浮层/面板动效与基础浏览器样式
+ * [OUTPUT]: 对外提供 Dionysus 共享 light/dark Token、字体、表面、状态、圆角、Illustrated Card 配图构图、Prismatic Button 光场、Rainbow/Drops Loading、Agent 对话角反馈、浮层/面板动效与基础浏览器样式
  * [POS]: ui/src 的视觉真相源，由 Web 设计系统首先消费并为 Desktop 后续迁移提供稳定目标
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
@@ -791,6 +791,101 @@
     animation-play-state: paused;
   }
 
+  .drops-progress {
+    position: relative;
+    isolation: isolate;
+    container-type: inline-size;
+    width: 100%;
+    min-width: 0;
+    min-height: 6rem;
+    aspect-ratio: 3.6;
+    overflow: hidden;
+    contain: layout paint;
+    border-radius: clamp(0.875rem, 4cqi, 2.25rem);
+    background: var(--drops-progress-background);
+    color: var(--drops-progress-title);
+    font-family: "Montserrat Variable", Montserrat, var(--font-sans);
+    user-select: none;
+  }
+
+  .drops-progress__canvas,
+  .drops-progress__finish,
+  .drops-progress__content {
+    position: absolute;
+    inset: 0;
+  }
+
+  .drops-progress__canvas {
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .drops-progress__finish {
+    z-index: 0;
+    background:
+      radial-gradient(circle, var(--drops-progress-highlight) 0 24%, transparent 28%) 0 0 / 0.45rem 0.45rem,
+      linear-gradient(90deg, var(--drops-progress-base), var(--drops-progress-fill));
+    clip-path: inset(0 calc(100% - var(--drops-progress-value)) 0 0);
+    transition: clip-path 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .drops-progress__content {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(0.75rem, 4cqi, 2rem);
+    padding-inline: clamp(1rem, 5.5cqi, 3rem);
+    pointer-events: none;
+  }
+
+  .drops-progress__copy {
+    min-width: 0;
+  }
+
+  .drops-progress__title {
+    overflow: hidden;
+    color: var(--drops-progress-title);
+    font-size: clamp(0.75rem, 3.5cqi, 1.375rem);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: 0.015em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-shadow:
+      0 1px 2px rgb(0 0 0 / 90%),
+      0 0 10px rgb(0 0 0 / 64%);
+  }
+
+  .drops-progress__subtitle {
+    margin-top: clamp(0.25rem, 1.4cqi, 0.625rem);
+    overflow: hidden;
+    color: color-mix(in srgb, var(--drops-progress-caption) 72%, var(--drops-progress-title));
+    font-size: clamp(0.5rem, 1.7cqi, 0.6875rem);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: 0.12em;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    text-shadow:
+      0 1px 2px rgb(0 0 0 / 92%),
+      0 0 8px rgb(0 0 0 / 72%);
+    white-space: nowrap;
+  }
+
+  .drops-progress__percentage {
+    flex: none;
+    color: var(--drops-progress-title);
+    font-size: clamp(1rem, 5.5cqi, 2.125rem);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    text-shadow: 0 1px 0 rgb(0 0 0 / 20%);
+  }
+
   .rainbow-sweep {
     inset: 0;
     overflow: hidden;
@@ -924,5 +1019,9 @@
 
   .rainbow-sweep {
     visibility: hidden !important;
+  }
+
+  .drops-progress__finish {
+    transition: none !important;
   }
 }

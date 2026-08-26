@@ -1,6 +1,6 @@
 /**
- * [INPUT]: 依赖 React 状态、React Router、设计系统图标、@dionysus/ui 真实原语、Rainbow Loading 与导航图标交接、文档呈现组件和导航顺序
- * [OUTPUT]: 对外提供包含动效、Rainbow Loading 与 Illustrated Card 活规范的所有设计系统页面内容、页内目录、页面分发器和相邻页导航
+ * [INPUT]: 依赖 React 状态、React Router、设计系统图标、@dionysus/ui 真实原语、Rainbow/Drops Loading 与导航图标交接、文档呈现组件和导航顺序
+ * [OUTPUT]: 对外提供包含动效、Rainbow/Drops Loading 与 Illustrated Card 活规范的所有设计系统页面内容、页内目录、页面分发器和相邻页导航
  * [POS]: web/src 的设计知识主体，以 Foundations→Components→Patterns→Resources 层级呈现视觉语言
  * [PROTOCOL]: 变更时更新此头部，然后检查 AGENTS.md
  */
@@ -55,7 +55,9 @@ import {
   Button,
   CollapsibleSidebar,
   CompactSelect,
+  DROPS_PROGRESS_PALETTE,
   DropdownMenu,
+  DropsProgress,
   FloatingSidePanel,
   FloatingSidePanelCard,
   InlineEdit,
@@ -145,6 +147,13 @@ const PAGE_TOC: Record<string, TocItem[]> = {
     { id: "rainbow-loading-composition", label: "Composition" },
     { id: "rainbow-loading-accessibility", label: "Accessibility" },
     { id: "rainbow-loading-api", label: "API" },
+  ],
+  "drops-progress": [
+    { id: "drops-progress-live", label: "Live specimen" },
+    { id: "drops-progress-anatomy", label: "Anatomy" },
+    { id: "drops-progress-behavior", label: "Behavior" },
+    { id: "drops-progress-accessibility", label: "Accessibility" },
+    { id: "drops-progress-api", label: "API" },
   ],
   "agent-conversation": [
     { id: "agent-conversation-live", label: "Live specimen" },
@@ -1408,6 +1417,132 @@ function RainbowLoadingPage() {
   );
 }
 
+const DROPS_PROGRESS_STAGES = [
+  ["QUEUE INITIALIZED", "PREPARING YOUR FILES", 12],
+  ["SYNCING LIBRARY", "INDEXING LOCAL SOURCES", 38],
+  ["SYNCING LIBRARY", "PREPARING YOUR FILES", 60],
+  ["BUILDING WORKSPACE", "ASSEMBLING THE FINAL VIEW", 82],
+  ["WORKSPACE READY", "HANDING CONTROL BACK TO YOU", 100],
+] as const;
+
+const DROPS_PROGRESS_SWATCHES = [
+  ["Background", DROPS_PROGRESS_PALETTE.background],
+  ["Base", DROPS_PROGRESS_PALETTE.base],
+  ["Fill", DROPS_PROGRESS_PALETTE.fill],
+  ["Highlight", DROPS_PROGRESS_PALETTE.highlight],
+] as const;
+
+function DropsProgressPage() {
+  const [stageIndex, setStageIndex] = useState(2);
+  const [mode, setMode] = useState<"controlled" | "auto">("controlled");
+  const [paused, setPaused] = useState(false);
+  const [stageTitle, stageSubtitle, progress] = DROPS_PROGRESS_STAGES[stageIndex];
+  const automatic = mode === "auto";
+
+  const advance = () => {
+    setStageIndex((current) => (current + 1) % DROPS_PROGRESS_STAGES.length);
+  };
+
+  return (
+    <>
+      <PageIntro
+        eyebrow="Components"
+        title="Drops Progress"
+        description="用稳定网格、概率前沿和短促 activity 表达长任务推进；精确值仍由真实进度与 DOM 文字承担。"
+        status="Ready"
+        meta={<span>Source: <InlineCode>@dionysus/ui</InlineCode> · React + OGL / WebGL2</span>}
+      />
+      <DocSection id="drops-progress-live" title="Live specimen" description="默认展示受控 60% 状态。切换自动模式可观察不规则目标步进，暂停时 GPU 循环停止并保留当前静帧。">
+        <Specimen
+          title="Controlled and automatic progress"
+          description="正式共享组件、参考色板与响应式网格密度"
+          code={'<DropsProgress\n  value={progress}\n  title="SYNCING LIBRARY"\n  subtitle="PREPARING YOUR FILES"\n  label="素材库同步进度"\n/>'}
+          previewClassName="p-4 sm:p-6"
+        >
+          <div className="w-full max-w-4xl">
+            <DropsProgress
+              aria-valuetext={automatic ? "自动进度演示" : `${stageTitle}，${progress}%`}
+              label="素材库同步进度"
+              paused={paused}
+              subtitle={stageSubtitle}
+              title={stageTitle}
+              value={automatic ? undefined : progress}
+            />
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+              <p aria-live="polite" className="font-mono text-micro text-muted-foreground">
+                {automatic ? "AUTO · DETERMINISTIC SIMULATION" : `CONTROLLED · ${progress}%`}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" onClick={() => setPaused((current) => !current)}>{paused ? "继续" : "暂停"}</Button>
+                <Button variant="outline" size="sm" onClick={() => setMode(automatic ? "controlled" : "auto")}>{automatic ? "使用真实进度" : "自动演示"}</Button>
+                <Button size="sm" disabled={automatic} onClick={advance}>下一阶段</Button>
+              </div>
+            </div>
+          </div>
+        </Specimen>
+      </DocSection>
+      <DocSection id="drops-progress-anatomy" title="Anatomy" description="视觉随机感来自确定性数学；任务语义、数字与文字始终留在可访问 DOM 中。">
+        <div className="grid gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["01", "Stable cells", "每个网格 Cell 使用稳定 Hash，刷新和逐帧渲染都不会随机闪烁。"],
+            ["02", "Probability front", "进度映射到宽阔的 smoothstep 前沿，越靠近完成区液滴越密。"],
+            ["03", "Activity", "进度推进时液滴短暂抖动，暂停后回到安静静帧，不持续制造噪声。"],
+            ["04", "DOM overlay", "标题、副标题和 tabular percentage 不进入 Shader，保持锐利与可读。"],
+          ].map(([index, title, copy]) => (
+            <div className="bg-background p-4" key={index}>
+              <p className="font-mono text-micro text-muted-foreground">{index}</p>
+              <p className="mt-6 text-xs font-medium">{title}</p>
+              <p className="mt-2 text-micro leading-4 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-5 grid overflow-hidden rounded-lg border border-border sm:grid-cols-4">
+          {DROPS_PROGRESS_SWATCHES.map(([label, color]) => (
+            <div className="flex min-h-16 items-end p-3" key={label} style={{ backgroundColor: color }}>
+              <span className="font-mono text-[0.55rem] uppercase tracking-nav-section text-white drop-shadow-sm">{label} · {color}</span>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="drops-progress-behavior" title="Behavior" description="真实值、视觉活跃度和动画时钟彼此独立，组件才能在推进时有生命、等待时保持克制。">
+        <div className="divide-y divide-border border-y border-border">
+          {[
+            ["Controlled value", "传入 value 时按 max 归一化并平滑追向目标；业务状态仍是唯一事实源。"],
+            ["Automatic mode", "省略 value 后使用固定 60Hz 状态机，以 1–3.5% 的不规则目标步进循环演示。"],
+            ["GPU lifecycle", "离开视口、页面隐藏或 paused 时取消 rAF；恢复时从当前状态继续。"],
+            ["Responsive density", "桌面维持 110 网格尺度，矮容器按高度降低采样密度，避免次像素摩尔纹。"],
+            ["Fallback", "WebGL2 不可用时保留同色 CSS 进度层、可见文字和完整 progressbar 语义。"],
+          ].map(([name, copy]) => (
+            <div className="grid gap-2 py-4 sm:grid-cols-[13rem_1fr]" key={name}>
+              <code className="font-mono text-xs">{name}</code>
+              <p className="text-xs leading-5 text-muted-foreground">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </DocSection>
+      <DocSection id="drops-progress-accessibility" title="Accessibility" description="Shader 是视觉增强层，不负责传达任务事实。">
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Surface padding="md"><LoaderCircle className="size-4" /><p className="mt-5 text-xs font-medium">Progress semantics</p><p className="mt-1 text-micro leading-4 text-muted-foreground">根节点持续提供 progressbar、min、max、now 和可本地化名称。</p></Surface>
+          <Surface padding="md"><ShieldCheck className="size-4" /><p className="mt-5 text-xs font-medium">Reduced motion</p><p className="mt-1 text-micro leading-4 text-muted-foreground">activity 归零并停止不必要抖动，受控值与文字仍然更新。</p></Surface>
+          <Surface padding="md"><Type className="size-4" /><p className="mt-5 text-xs font-medium">Text remains primary</p><p className="mt-1 text-micro leading-4 text-muted-foreground">阶段、失败、完成和下一步都必须由可见文字表达，不能只看绿色。</p></Surface>
+        </div>
+      </DocSection>
+      <DocSection id="drops-progress-api" title="API">
+        <PropTable rows={[
+          { name: "value", type: "number | undefined", defaultValue: "undefined", description: "受控进度值；省略后进入确定性自动演示模式。" },
+          { name: "max", type: "number", defaultValue: "100", description: "归一化基准与 progressbar 最大值。" },
+          { name: "title / subtitle", type: "ReactNode", defaultValue: "source copy", description: "可见任务与阶段文案；超长时截断，不推挤百分比。" },
+          { name: "paused", type: "boolean", defaultValue: "false", description: "停止 rAF 并保留当前静帧。" },
+          { name: "speed", type: "number", defaultValue: "1", description: "控制追随与自动节奏，内部限制为 0.25…2.5。" },
+          { name: "palette", type: "Partial<DropsProgressPalette>", defaultValue: "source palette", description: "覆盖背景、底色、填充、高光和两级文字色。" },
+          { name: "showPercentage", type: "boolean", defaultValue: "true", description: "切换可见百分比，不改变 progressbar 语义。" },
+          { name: "onProgressChange", type: "(value: number) => void", defaultValue: "—", description: "报告当前视觉值；不要用它反向创建业务事实源。" },
+        ]} />
+      </DocSection>
+    </>
+  );
+}
+
 function InputDemo() {
   const [query, setQuery] = useState("设计系统");
   return <div className="w-full max-w-sm space-y-3"><Input aria-label="文章标题" defaultValue="克制如何成为高级感" /><SearchField aria-label="搜索组件" value={query} onChange={(event) => setQuery(event.target.value)} onClear={() => setQuery("")} placeholder="搜索组件…" /></div>;
@@ -2421,6 +2556,7 @@ function DocsPage({ pageId }: { pageId: string }) {
     case "button": content = <ButtonPage />; break;
     case "prismatic-button": content = <PrismaticButtonPage />; break;
     case "rainbow-loading": content = <RainbowLoadingPage />; break;
+    case "drops-progress": content = <DropsProgressPage />; break;
     case "agent-conversation": content = <AgentConversationPage />; break;
     case "input": content = <InputPage />; break;
     case "compact-select": content = <CompactSelectPage />; break;

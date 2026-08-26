@@ -1,0 +1,1034 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#080b07" />
+  <title>Drops Progress — WebGPU Study</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080b07;
+      --ink: #f2f5ee;
+      --muted: #7d8877;
+      --line: rgba(197, 255, 147, 0.14);
+      --acid: #b2ff59;
+      --acid-dim: #2e850f;
+      --bar-radius: 42px;
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(46, 133, 15, 0.12), transparent 31rem),
+        linear-gradient(180deg, #090c08 0%, var(--bg) 72%);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    button, input { font: inherit; }
+
+    .shell {
+      position: relative;
+      min-height: 100svh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      opacity: 0.36;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(188, 255, 147, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(188, 255, 147, 0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, transparent, #000 24%, #000 74%, transparent);
+    }
+
+    .shell::after {
+      content: "";
+      position: absolute;
+      width: min(72vw, 900px);
+      aspect-ratio: 1;
+      left: 50%;
+      top: 48%;
+      z-index: -1;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(98, 236, 37, 0.08), transparent 66%);
+      filter: blur(20px);
+      pointer-events: none;
+    }
+
+    .topbar,
+    .footer {
+      width: min(1280px, calc(100% - 48px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar {
+      height: 76px;
+      border-bottom: 1px solid rgba(231, 255, 217, 0.08);
+    }
+
+    .brand,
+    .engine {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .brand-mark {
+      width: 10px;
+      height: 10px;
+      border: 1px solid rgba(178, 255, 89, 0.82);
+      transform: rotate(45deg);
+      box-shadow: 0 0 18px rgba(178, 255, 89, 0.38);
+    }
+
+    .engine { color: var(--muted); }
+
+    .engine-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--acid);
+      box-shadow: 0 0 12px rgba(178, 255, 89, 0.75);
+      animation: enginePulse 2.4s ease-in-out infinite;
+    }
+
+    .stage {
+      width: min(1280px, calc(100% - 48px));
+      margin: 0 auto;
+      min-width: 0;
+      min-height: calc(100svh - 148px);
+      display: grid;
+      align-content: center;
+      padding: clamp(42px, 8vh, 92px) 0;
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 650;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      animation: riseIn 700ms 70ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    h1 {
+      margin: 0 0 clamp(30px, 5vw, 64px);
+      max-width: 900px;
+      font-size: clamp(36px, 6vw, 78px);
+      font-weight: 620;
+      letter-spacing: -0.055em;
+      line-height: 0.98;
+      animation: riseIn 850ms 120ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    h1 span { color: #98a491; }
+
+    .progress-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      aspect-ratio: 3.6;
+      min-height: 160px;
+      border-radius: var(--bar-radius);
+      overflow: hidden;
+      background: #12160f;
+      box-shadow:
+        0 42px 90px rgba(0, 0, 0, 0.42),
+        0 0 0 1px rgba(213, 255, 178, 0.10),
+        inset 0 1px rgba(255, 255, 255, 0.05);
+      animation: barIn 1050ms 180ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .progress-wrap::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.045), transparent 24%, transparent 74%, rgba(0,0,0,0.16)),
+        radial-gradient(ellipse at 50% -55%, rgba(211,255,183,0.10), transparent 62%);
+      mix-blend-mode: screen;
+    }
+
+    .progress-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1px rgba(226, 255, 204, 0.08);
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .bar-content {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      min-width: 0;
+      padding: 0 clamp(28px, 7.2vw, 88px);
+      pointer-events: none;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+    }
+
+    .bar-copy { min-width: 0; }
+
+    .bar-title,
+    .bar-subtitle,
+    .percentage {
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .bar-title {
+      font-size: clamp(13px, 2.5vw, 32px);
+      line-height: 1.05;
+      font-weight: 820;
+      letter-spacing: 0.005em;
+    }
+
+    .bar-subtitle {
+      margin-top: 0.55em;
+      color: #9b9f94;
+      font-size: clamp(7px, 1.25vw, 16px);
+      line-height: 1;
+      font-weight: 720;
+      letter-spacing: 0.15em;
+    }
+
+    .percentage {
+      flex: 0 0 auto;
+      font-size: clamp(28px, 4.75vw, 60px);
+      line-height: 1;
+      font-weight: 720;
+      letter-spacing: -0.035em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .controls-row {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: auto minmax(220px, 1fr) auto;
+      align-items: center;
+      gap: 18px;
+      animation: riseIn 850ms 320ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+
+    .transport,
+    .mode-switch {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(14, 18, 12, 0.72);
+      backdrop-filter: blur(18px);
+    }
+
+    .icon-btn,
+    .mode-btn {
+      appearance: none;
+      border: 0;
+      color: #cbd2c6;
+      background: transparent;
+      cursor: pointer;
+      transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+    }
+
+    .icon-btn:hover,
+    .mode-btn:hover { color: #fff; }
+
+    .icon-btn:hover { background: rgba(178, 255, 89, 0.08); }
+    .icon-btn:active, .mode-btn:active { transform: scale(0.96); }
+
+    .icon-btn svg {
+      width: 15px;
+      height: 15px;
+      fill: currentColor;
+    }
+
+    .slider-shell {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      transition: opacity 220ms ease;
+    }
+
+    .slider-shell[data-disabled="true"] {
+      opacity: 0.32;
+      pointer-events: none;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 20px;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--acid) var(--slider-fill, 0%), rgba(205, 255, 171, 0.14) var(--slider-fill, 0%));
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      width: 13px;
+      height: 13px;
+      margin-top: -5.5px;
+      appearance: none;
+      border: 2px solid #0d130b;
+      border-radius: 50%;
+      background: var(--acid);
+      box-shadow: 0 0 0 1px rgba(178,255,89,.55), 0 0 18px rgba(178,255,89,.45);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 2px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(205, 255, 171, 0.14);
+    }
+
+    input[type="range"]::-moz-range-progress {
+      height: 2px;
+      background: var(--acid);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 11px;
+      height: 11px;
+      border: 2px solid #0d130b;
+      border-radius: 50%;
+      background: var(--acid);
+    }
+
+    .mode-btn {
+      min-width: 58px;
+      height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .mode-btn[aria-pressed="true"] {
+      color: #13200d;
+      background: var(--acid);
+      box-shadow: 0 0 24px rgba(178, 255, 89, 0.16);
+    }
+
+    .footer {
+      height: 72px;
+      color: #667060;
+      border-top: 1px solid rgba(231, 255, 217, 0.06);
+      font-size: 10px;
+      font-weight: 650;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .footer strong {
+      color: #8c9786;
+      font-weight: 700;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(18px); filter: blur(6px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
+    @keyframes barIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.975); filter: blur(10px); }
+      to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+
+    @keyframes enginePulse {
+      0%, 100% { opacity: 0.44; transform: scale(0.8); }
+      48% { opacity: 1; transform: scale(1.08); }
+    }
+
+    @media (max-width: 720px) {
+      .topbar, .stage, .footer { width: min(100% - 28px, 1280px); }
+      .topbar { height: 62px; }
+      .stage { min-height: calc(100svh - 126px); padding: 36px 0; }
+      h1 { margin-bottom: 30px; }
+      .progress-wrap { min-height: 132px; aspect-ratio: 2.35; }
+      .bar-content { gap: 14px; padding-inline: 20px; }
+      .bar-title { font-size: clamp(13px, 4vw, 19px); }
+      .bar-subtitle { font-size: clamp(8px, 2.3vw, 11px); }
+      .percentage { font-size: clamp(29px, 8.5vw, 42px); }
+      .controls-row { grid-template-columns: 1fr auto; }
+      .slider-shell { grid-column: 1 / -1; grid-row: 2; }
+      .engine span { display: none; }
+      .footer span:last-child { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><i class="brand-mark" aria-hidden="true"></i> Dionysus Motion Lab</div>
+      <div class="engine"><i class="engine-dot" aria-hidden="true"></i><span id="engineLabel">Initialising renderer</span></div>
+    </header>
+
+    <section class="stage" aria-labelledby="pageTitle">
+      <p class="eyebrow">Procedural progress / study 01</p>
+      <h1 id="pageTitle">Progress that feels <span>alive.</span></h1>
+
+      <div class="progress-wrap" id="progressWrap" role="progressbar" aria-label="同步素材库" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <canvas id="shaderCanvas" aria-hidden="true"></canvas>
+        <div class="bar-content">
+          <div class="bar-copy">
+            <p class="bar-title">SYNCING LIBRARY</p>
+            <p class="bar-subtitle">PREPARING YOUR FILES</p>
+          </div>
+          <p class="percentage"><span id="percentText">0</span>%</p>
+        </div>
+      </div>
+
+      <div class="controls-row" aria-label="动效控制">
+        <div class="transport">
+          <button class="icon-btn" id="playButton" type="button" aria-label="暂停动画" title="播放 / 暂停">
+            <svg id="pauseIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5.25A1.25 1.25 0 0 1 8.25 4h1.5A1.25 1.25 0 0 1 11 5.25v13.5A1.25 1.25 0 0 1 9.75 20h-1.5A1.25 1.25 0 0 1 7 18.75V5.25Zm6 0A1.25 1.25 0 0 1 14.25 4h1.5A1.25 1.25 0 0 1 17 5.25v13.5A1.25 1.25 0 0 1 15.75 20h-1.5A1.25 1.25 0 0 1 13 18.75V5.25Z"/></svg>
+            <svg id="playIcon" viewBox="0 0 24 24" aria-hidden="true" hidden><path d="M7.5 5.75c0-1.1 1.2-1.79 2.15-1.23l10.13 6.02a1.7 1.7 0 0 1 0 2.92L9.65 19.48c-.95.56-2.15-.12-2.15-1.23V5.75Z"/></svg>
+          </button>
+          <button class="icon-btn" id="resetButton" type="button" aria-label="重新开始" title="重新开始">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 1-7.45 5.09 1 1 0 1 1 1.86.73A6 6 0 1 0 8.1 7.34l1.2 1.2a.75.75 0 0 1-.53 1.28H4.75A.75.75 0 0 1 4 9.07V5.05a.75.75 0 0 1 1.28-.53l1.4 1.4A7.97 7.97 0 0 1 12 4Z"/></svg>
+          </button>
+        </div>
+
+        <label class="slider-shell" id="sliderShell" data-disabled="true">
+          <span>Progress</span>
+          <input id="progressSlider" type="range" min="0" max="100" value="60" step="1" disabled />
+          <output id="sliderOutput" for="progressSlider">60%</output>
+        </label>
+
+        <div class="mode-switch" role="group" aria-label="进度模式">
+          <button class="mode-btn" id="autoButton" type="button" aria-pressed="true">Auto</button>
+          <button class="mode-btn" id="manualButton" type="button" aria-pressed="false">Manual</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span><strong>Drops</strong> / deterministic cells</span>
+      <span>60 Hz simulation · GPU fragment shader</span>
+    </footer>
+  </main>
+
+  <script type="module">
+    let canvas = document.querySelector("#shaderCanvas");
+    const progressWrap = document.querySelector("#progressWrap");
+    const percentText = document.querySelector("#percentText");
+    const engineLabel = document.querySelector("#engineLabel");
+    const playButton = document.querySelector("#playButton");
+    const resetButton = document.querySelector("#resetButton");
+    const pauseIcon = document.querySelector("#pauseIcon");
+    const playIcon = document.querySelector("#playIcon");
+    const autoButton = document.querySelector("#autoButton");
+    const manualButton = document.querySelector("#manualButton");
+    const progressSlider = document.querySelector("#progressSlider");
+    const sliderOutput = document.querySelector("#sliderOutput");
+    const sliderShell = document.querySelector("#sliderShell");
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const palette = {
+      background: [0x12 / 255, 0x16 / 255, 0x0f / 255, 1],
+      color1: [0x0e / 255, 0x24 / 255, 0x05 / 255, 1],
+      color2: [0x2e / 255, 0x85 / 255, 0x0f / 255, 1],
+      color3: [0xb2 / 255, 0xff / 255, 0x59 / 255, 1],
+    };
+
+    const settings = {
+      speed: 1,
+      scale: 110,
+      jitter: 0.3,
+      frontIn: -0.3,
+      frontOut: 0.3,
+      churn: 1,
+      feather: 1,
+      cellSize: 1,
+      fill: 1,
+      grain: 0.01,
+    };
+
+    const initialSeed = 0x85ebca77 * 4 + 0x165667b1;
+
+    function freshState() {
+      return {
+        progress: 0,
+        activity: 0,
+        warp: (0x9e3779b1 * 4 % 600) / 10,
+        target: 0,
+        mode: "pause",
+        wait: 0.5,
+        burst: 0,
+        seed: initialSeed >>> 0,
+      };
+    }
+
+    const previewProgress = new URLSearchParams(location.search).get("progress");
+    const previewValue = previewProgress === null
+      ? null
+      : Math.max(0, Math.min(100, Number(previewProgress) || 0));
+    let state = freshState();
+    let playing = true;
+    let controlMode = previewValue === null ? "auto" : "manual";
+    let manualTarget = (previewValue ?? 60) / 100;
+    if (previewValue !== null) {
+      state.progress = manualTarget;
+      progressSlider.value = String(previewValue);
+      sliderOutput.value = `${Math.round(previewValue)}%`;
+    }
+    let accumulator = 0;
+    let lastTime = performance.now();
+    let renderer = null;
+
+    function randomBetween(min, max) {
+      state.seed = (Math.imul(state.seed, 1664525) + 0x3c6ef35f) >>> 0;
+      return min + (state.seed / 0x100000000) * (max - min);
+    }
+
+    function updateFixed(dt) {
+      let active = false;
+
+      if (controlMode === "manual") {
+        const delta = manualTarget - state.progress;
+        if (Math.abs(delta) > 0.002) {
+          state.progress += Math.sign(delta) * Math.min(Math.abs(delta), 0.5 * settings.speed * dt);
+          active = true;
+        }
+      } else if (state.mode === "reset") {
+        state.progress -= settings.speed * dt;
+        active = true;
+        if (state.progress <= 0) {
+          state.progress = 0;
+          state.target = 0;
+          state.mode = "pause";
+          state.wait = 0.8;
+          active = false;
+        }
+      } else {
+        state.wait -= dt * settings.speed;
+
+        if (state.wait <= 0) {
+          if (state.progress >= 0.999) {
+            state.mode = "reset";
+            active = true;
+          } else {
+            state.target = Math.min(1, state.progress + randomBetween(0.01, 0.035));
+            state.wait = randomBetween(0.08, 0.22);
+            state.burst = 0.3;
+          }
+        }
+
+        const delta = state.target - state.progress;
+        state.progress += delta * Math.min(1, 6.5 * settings.speed * dt);
+        state.burst = Math.max(0, state.burst - dt);
+        active = active || state.burst > 0;
+      }
+
+      state.progress = Math.max(0, Math.min(1, state.progress));
+      const response = active ? 1.8 : 0.7;
+      const desiredActivity = reducedMotion ? 0 : (active ? 1 : 0);
+      state.activity += (desiredActivity - state.activity) * (1 - Math.exp(-response * dt));
+      state.warp += dt * (0.45 + state.activity * 0.85);
+    }
+
+    function syncUI() {
+      const value = Math.round(state.progress * 100);
+      percentText.textContent = String(value);
+      progressWrap.setAttribute("aria-valuenow", String(value));
+      progressSlider.style.setProperty("--slider-fill", `${progressSlider.value}%`);
+    }
+
+    function syncModeUI() {
+      const manual = controlMode === "manual";
+      autoButton.setAttribute("aria-pressed", String(!manual));
+      manualButton.setAttribute("aria-pressed", String(manual));
+      progressSlider.disabled = !manual;
+      sliderShell.dataset.disabled = String(!manual);
+    }
+
+    function syncPlayUI() {
+      pauseIcon.hidden = !playing;
+      playIcon.hidden = playing;
+      playButton.setAttribute("aria-label", playing ? "暂停动画" : "播放动画");
+    }
+
+    playButton.addEventListener("click", () => {
+      playing = !playing;
+      lastTime = performance.now();
+      syncPlayUI();
+    });
+
+    resetButton.addEventListener("click", () => {
+      state = freshState();
+      accumulator = 0;
+      if (controlMode === "manual") {
+        state.progress = 0;
+        manualTarget = Number(progressSlider.value) / 100;
+      }
+      syncUI();
+    });
+
+    autoButton.addEventListener("click", () => {
+      controlMode = "auto";
+      state.mode = "pause";
+      state.target = state.progress;
+      state.wait = 0.25;
+      syncModeUI();
+    });
+
+    manualButton.addEventListener("click", () => {
+      controlMode = "manual";
+      manualTarget = Number(progressSlider.value) / 100;
+      syncModeUI();
+    });
+
+    progressSlider.addEventListener("input", () => {
+      manualTarget = Number(progressSlider.value) / 100;
+      sliderOutput.value = `${progressSlider.value}%`;
+      progressSlider.style.setProperty("--slider-fill", `${progressSlider.value}%`);
+    });
+
+    function resizeCanvas() {
+      const rect = progressWrap.getBoundingClientRect();
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      const width = Math.max(1, Math.round(rect.width * dpr));
+      const height = Math.max(1, Math.round(rect.height * dpr));
+      document.documentElement.style.setProperty("--bar-radius", `${Math.round(rect.height * 0.144)}px`);
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+        renderer?.resize?.(width, height);
+      }
+    }
+
+    const wgsl = /* wgsl */`
+      struct Uniforms {
+        frame0: vec4<f32>, // resolution.xy, progress, activity
+        frame1: vec4<f32>, // warp, scale, jitter, frontIn
+        frame2: vec4<f32>, // frontOut, churn, feather, cellSize
+        frame3: vec4<f32>, // fill, grain, time, reserved
+        background: vec4<f32>,
+        color1: vec4<f32>,
+        color2: vec4<f32>,
+        color3: vec4<f32>,
+      };
+
+      @group(0) @binding(0) var<uniform> u: Uniforms;
+
+      struct VertexOut {
+        @builtin(position) position: vec4<f32>,
+      };
+
+      @vertex
+      fn vsMain(@builtin(vertex_index) index: u32) -> VertexOut {
+        var positions = array<vec2<f32>, 3>(
+          vec2<f32>(-1.0, -1.0),
+          vec2<f32>( 3.0, -1.0),
+          vec2<f32>(-1.0,  3.0)
+        );
+        var out: VertexOut;
+        out.position = vec4<f32>(positions[index], 0.0, 1.0);
+        return out;
+      }
+
+      fn hash21(p0: vec2<f32>) -> f32 {
+        var p = fract(p0 * vec2<f32>(123.34, 345.45));
+        p += vec2<f32>(dot(p, p + vec2<f32>(34.345)));
+        return fract(p.x * p.y);
+      }
+
+      fn reverseSmooth(a: f32, b: f32, value: f32) -> f32 {
+        let t = clamp((value - a) / (b - a), 0.0, 1.0);
+        return t * t * (3.0 - 2.0 * t);
+      }
+
+      @fragment
+      fn fsMain(@builtin(position) frag: vec4<f32>) -> @location(0) vec4<f32> {
+        let resolution = max(u.frame0.xy, vec2<f32>(1.0));
+        let pixel = floor(frag.xy) + vec2<f32>(0.5);
+        let uvTop = pixel / resolution;
+        let uv = vec2<f32>(uvTop.x, 1.0 - uvTop.y);
+        let aspect = resolution.x / resolution.y;
+        let p = vec2<f32>(uv.x * aspect, uv.y);
+
+        let progress = clamp(u.frame0.z, 0.0, 1.0);
+        let activity = clamp(u.frame0.w, 0.0, 1.0);
+        let warp = u.frame1.x;
+        let scale = u.frame1.y;
+        let jitter = u.frame1.z;
+        let front = mix(u.frame1.w, aspect + u.frame2.x, progress);
+        let churn = u.frame2.y;
+        let feather = u.frame2.z;
+        let cellSize = u.frame2.w;
+        let fill = u.frame3.x;
+        let grain = u.frame3.y;
+
+        let grade = reverseSmooth(front + 0.34, front - 0.30, p.x);
+        let grid = vec2<f32>(p.x, uv.y) * scale;
+        let cell = floor(grid);
+        let local = fract(grid) - vec2<f32>(0.5);
+        let rnd = hash21(cell);
+        let rnd2 = hash21(cell + vec2<f32>(13.0));
+        let offset = vec2<f32>(
+          sin(warp * 4.0 * churn + rnd * 40.0),
+          cos(warp * 3.1 * churn + rnd2 * 40.0)
+        ) * activity * jitter;
+        let enabled = step(1.0 - grade * fill, rnd);
+        let radius = (0.16 + 0.26 * grade) * cellSize;
+        let disc = 1.0 - reverseSmooth(
+          radius - 0.12 * feather,
+          radius + 0.04 * feather,
+          length(local - offset)
+        );
+
+        var color = u.background.rgb;
+        color += u.color1.rgb * grade * 0.55;
+        color += mix(u.color2.rgb, u.color3.rgb, grade) * disc * enabled;
+        color += vec3<f32>(hash21(pixel) - 0.5) * grain;
+        return vec4<f32>(max(color, vec3<f32>(0.0)), 1.0);
+      }
+    `;
+
+    const glslVertex = `#version 300 es
+      precision highp float;
+      const vec2 POSITIONS[3] = vec2[3](
+        vec2(-1.0, -1.0),
+        vec2( 3.0, -1.0),
+        vec2(-1.0,  3.0)
+      );
+      void main() { gl_Position = vec4(POSITIONS[gl_VertexID], 0.0, 1.0); }
+    `;
+
+    const glslFragment = `#version 300 es
+      precision highp float;
+      uniform vec2 uResolution;
+      uniform float uProgress;
+      uniform float uActivity;
+      uniform float uWarp;
+      uniform float uScale;
+      uniform float uJitter;
+      uniform float uFrontIn;
+      uniform float uFrontOut;
+      uniform float uChurn;
+      uniform float uFeather;
+      uniform float uCellSize;
+      uniform float uFill;
+      uniform float uGrain;
+      uniform vec4 uBackground;
+      uniform vec4 uColor1;
+      uniform vec4 uColor2;
+      uniform vec4 uColor3;
+      out vec4 outColor;
+
+      float hash21(vec2 p) {
+        p = fract(p * vec2(123.34, 345.45));
+        p += dot(p, p + 34.345);
+        return fract(p.x * p.y);
+      }
+
+      float reverseSmooth(float a, float b, float value) {
+        float t = clamp((value - a) / (b - a), 0.0, 1.0);
+        return t * t * (3.0 - 2.0 * t);
+      }
+
+      void main() {
+        vec2 pixel = floor(gl_FragCoord.xy) + 0.5;
+        vec2 uv = pixel / max(uResolution, vec2(1.0));
+        float aspect = uResolution.x / uResolution.y;
+        vec2 p = vec2(uv.x * aspect, uv.y);
+        float front = mix(uFrontIn, aspect + uFrontOut, clamp(uProgress, 0.0, 1.0));
+        float grade = reverseSmooth(front + 0.34, front - 0.30, p.x);
+        vec2 grid = vec2(p.x, uv.y) * uScale;
+        vec2 cell = floor(grid);
+        vec2 local = fract(grid) - 0.5;
+        float rnd = hash21(cell);
+        float rnd2 = hash21(cell + 13.0);
+        vec2 offset = vec2(
+          sin(uWarp * 4.0 * uChurn + rnd * 40.0),
+          cos(uWarp * 3.1 * uChurn + rnd2 * 40.0)
+        ) * uActivity * uJitter;
+        float enabled = step(1.0 - grade * uFill, rnd);
+        float radius = (0.16 + 0.26 * grade) * uCellSize;
+        float disc = 1.0 - reverseSmooth(
+          radius - 0.12 * uFeather,
+          radius + 0.04 * uFeather,
+          length(local - offset)
+        );
+        vec3 color = uBackground.rgb;
+        color += uColor1.rgb * grade * 0.55;
+        color += mix(uColor2.rgb, uColor3.rgb, grade) * disc * enabled;
+        color += vec3(hash21(pixel) - 0.5) * uGrain;
+        outColor = vec4(max(color, vec3(0.0)), 1.0);
+      }
+    `;
+
+    function withTimeout(promise, timeoutMs, message) {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error(message)), timeoutMs)),
+      ]);
+    }
+
+    async function createWebGPURenderer() {
+      if (!navigator.gpu) throw new Error("WebGPU unavailable");
+      const adapter = await withTimeout(
+        navigator.gpu.requestAdapter(),
+        1800,
+        "WebGPU adapter request timed out"
+      );
+      if (!adapter) throw new Error("No WebGPU adapter");
+      const device = await withTimeout(
+        adapter.requestDevice(),
+        1800,
+        "WebGPU device request timed out"
+      );
+      const context = canvas.getContext("webgpu");
+      if (!context) throw new Error("No WebGPU canvas context");
+      const format = navigator.gpu.getPreferredCanvasFormat();
+      context.configure({ device, format, alphaMode: "premultiplied" });
+
+      const module = device.createShaderModule({ code: wgsl, label: "drops-progress" });
+      const info = await module.getCompilationInfo();
+      const errors = info.messages.filter((message) => message.type === "error");
+      if (errors.length) throw new Error(errors.map((message) => message.message).join("\n"));
+
+      const pipeline = device.createRenderPipeline({
+        label: "drops-progress-pipeline",
+        layout: "auto",
+        vertex: { module, entryPoint: "vsMain" },
+        fragment: { module, entryPoint: "fsMain", targets: [{ format }] },
+        primitive: { topology: "triangle-list" },
+      });
+
+      const uniformData = new Float32Array(32);
+      const uniformBuffer = device.createBuffer({
+        size: uniformData.byteLength,
+        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+      });
+      const bindGroup = device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [{ binding: 0, resource: { buffer: uniformBuffer } }],
+      });
+
+      function render() {
+        uniformData.set([canvas.width, canvas.height, state.progress, state.activity], 0);
+        uniformData.set([state.warp, settings.scale, settings.jitter, settings.frontIn], 4);
+        uniformData.set([settings.frontOut, settings.churn, settings.feather, settings.cellSize], 8);
+        uniformData.set([settings.fill, settings.grain, performance.now() / 1000, 0], 12);
+        uniformData.set(palette.background, 16);
+        uniformData.set(palette.color1, 20);
+        uniformData.set(palette.color2, 24);
+        uniformData.set(palette.color3, 28);
+        device.queue.writeBuffer(uniformBuffer, 0, uniformData);
+
+        const encoder = device.createCommandEncoder();
+        const pass = encoder.beginRenderPass({
+          colorAttachments: [{
+            view: context.getCurrentTexture().createView(),
+            loadOp: "clear",
+            storeOp: "store",
+            clearValue: { r: palette.background[0], g: palette.background[1], b: palette.background[2], a: 1 },
+          }],
+        });
+        pass.setPipeline(pipeline);
+        pass.setBindGroup(0, bindGroup);
+        pass.draw(3);
+        pass.end();
+        device.queue.submit([encoder.finish()]);
+      }
+
+      return { render, resize() {}, name: "WebGPU / WGSL" };
+    }
+
+    function compileShader(gl, type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        throw new Error(gl.getShaderInfoLog(shader) || "Shader compile failed");
+      }
+      return shader;
+    }
+
+    function createWebGLRenderer() {
+      const gl = canvas.getContext("webgl2", { alpha: false, antialias: false });
+      if (!gl) throw new Error("WebGL2 unavailable");
+      const program = gl.createProgram();
+      gl.attachShader(program, compileShader(gl, gl.VERTEX_SHADER, glslVertex));
+      gl.attachShader(program, compileShader(gl, gl.FRAGMENT_SHADER, glslFragment));
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        throw new Error(gl.getProgramInfoLog(program) || "Program link failed");
+      }
+
+      const uniformNames = [
+        "uResolution", "uProgress", "uActivity", "uWarp", "uScale", "uJitter",
+        "uFrontIn", "uFrontOut", "uChurn", "uFeather", "uCellSize", "uFill", "uGrain",
+        "uBackground", "uColor1", "uColor2", "uColor3"
+      ];
+      const uniforms = Object.fromEntries(uniformNames.map((name) => [name, gl.getUniformLocation(program, name)]));
+      const vao = gl.createVertexArray();
+
+      function render() {
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.useProgram(program);
+        gl.bindVertexArray(vao);
+        gl.uniform2f(uniforms.uResolution, canvas.width, canvas.height);
+        gl.uniform1f(uniforms.uProgress, state.progress);
+        gl.uniform1f(uniforms.uActivity, state.activity);
+        gl.uniform1f(uniforms.uWarp, state.warp);
+        gl.uniform1f(uniforms.uScale, settings.scale);
+        gl.uniform1f(uniforms.uJitter, settings.jitter);
+        gl.uniform1f(uniforms.uFrontIn, settings.frontIn);
+        gl.uniform1f(uniforms.uFrontOut, settings.frontOut);
+        gl.uniform1f(uniforms.uChurn, settings.churn);
+        gl.uniform1f(uniforms.uFeather, settings.feather);
+        gl.uniform1f(uniforms.uCellSize, settings.cellSize);
+        gl.uniform1f(uniforms.uFill, settings.fill);
+        gl.uniform1f(uniforms.uGrain, settings.grain);
+        gl.uniform4fv(uniforms.uBackground, palette.background);
+        gl.uniform4fv(uniforms.uColor1, palette.color1);
+        gl.uniform4fv(uniforms.uColor2, palette.color2);
+        gl.uniform4fv(uniforms.uColor3, palette.color3);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      }
+
+      return {
+        render,
+        resize(width, height) { gl.viewport(0, 0, width, height); },
+        name: "WebGL2 / GLSL fallback",
+      };
+    }
+
+    async function initRenderer() {
+      try {
+        renderer = await createWebGPURenderer();
+      } catch (gpuError) {
+        console.warn("WebGPU renderer failed; using WebGL2 fallback.", gpuError);
+        try {
+          const replacementCanvas = canvas.cloneNode(false);
+          canvas.replaceWith(replacementCanvas);
+          canvas = replacementCanvas;
+          resizeCanvas();
+          renderer = createWebGLRenderer();
+        } catch (glError) {
+          console.error(glError);
+          engineLabel.textContent = "GPU renderer unavailable";
+          return;
+        }
+      }
+      engineLabel.textContent = `${renderer.name} · live`;
+    }
+
+    function frame(now) {
+      const frameDelta = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+
+      if (playing) {
+        accumulator += frameDelta;
+        let steps = 0;
+        while (accumulator >= 1 / 60 && steps < 6) {
+          updateFixed(1 / 60);
+          accumulator -= 1 / 60;
+          steps += 1;
+        }
+      }
+
+      syncUI();
+      renderer?.render();
+      requestAnimationFrame(frame);
+    }
+
+    new ResizeObserver(resizeCanvas).observe(progressWrap);
+    resizeCanvas();
+    syncModeUI();
+    syncPlayUI();
+    syncUI();
+    await initRenderer();
+    resizeCanvas();
+    requestAnimationFrame(frame);
+  </script>
+</body>
+</html>

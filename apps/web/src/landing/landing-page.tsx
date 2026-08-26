@@ -46,6 +46,7 @@ const CATALOG_ITEMS = [
   ["Floating panel", "布局内浮动右栏、卡片栈与双态触发器。", "/components/floating-panel", "panel"],
   ["Prismatic button", "稀缺高强调操作与可靠的 GPU 降级。", "/components/prismatic-button", "prism"],
   ["Rainbow loading", "真实进度、完成掠过与 reduced motion。", "/components/rainbow-loading", "rainbow"],
+  ["Drops progress", "概率液滴前沿、真实进度与自动状态机。", "/components/drops-progress", "drops"],
   ["Inline edit", "锚定浮层、即时提交与失败回滚。", "/components/inline-edit", "inline"],
   ["Dropdown menu", "搜索、多选、分组与键盘指令。", "/components/dropdown-menu", "menu"],
   ["Compact select", "高密度设置行中的稳定单选原语。", "/components/compact-select", "select"],
@@ -60,6 +61,7 @@ const ECOSYSTEM = [
   ["Feedback", "12 states", "Status and errors", "/components/feedback"],
   ["Agent conversation", "New", "Reviewable AI", "/components/agent-conversation"],
   ["Rainbow loading", "New", "Progress handoff", "/components/rainbow-loading"],
+  ["Drops progress", "New", "Procedural progress", "/components/drops-progress"],
   ["Prismatic button", "New", "Rare emphasis", "/components/prismatic-button"],
   ["Floating panel", "New", "Context rail", "/components/floating-panel"],
   ["Dropdown menu", "New", "Command selection", "/components/dropdown-menu"],
@@ -236,7 +238,7 @@ function Finale() {
 const FOOTER_COLUMNS = [
   ["Product", [["Overview", "/overview"], ["Components", "/components/button"], ["Patterns", "/patterns/app-shell"], ["Tokens", "/foundations/colors"]]],
   ["Resources", [["Principles", "/principles"], ["Adoption", "/resources/adoption"], ["Motion", "/foundations/motion"], ["Layout", "/foundations/layout"]]],
-  ["Components", [["Agent conversation", "/components/agent-conversation"], ["Floating panel", "/components/floating-panel"], ["Rainbow loading", "/components/rainbow-loading"], ["Inline edit", "/components/inline-edit"]]],
+  ["Components", [["Agent conversation", "/components/agent-conversation"], ["Floating panel", "/components/floating-panel"], ["Rainbow loading", "/components/rainbow-loading"], ["Drops progress", "/components/drops-progress"], ["Inline edit", "/components/inline-edit"]]],
   ["Foundations", [["Colors", "/foundations/colors"], ["Typography", "/foundations/typography"], ["Icons", "/foundations/icons"], ["Accessibility", "/principles"]]],
 ] as const;
 

@@ -65,7 +65,7 @@ Upstream license: <https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md>
 
 ## OGL
 
-`PrismaticBurst` 使用 OGL 提供 WebGL2 Renderer、Program、Triangle、Mesh 与 Texture。
+`PrismaticBurst` 与 `DropsProgress` 使用 OGL 提供 WebGL2 Renderer、Program、Triangle、Mesh 与 Texture。
 
 - Project: `oframe/ogl`
 - Package: `ogl@1.0.11`
@@ -74,6 +74,16 @@ Upstream license: <https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md>
 - License: Unlicense
 
 完整许可证文本保存在 [`docs/licenses/ogl.UNLICENSE`](docs/licenses/ogl.UNLICENSE)。
+
+## MetalForge Progress / Drops visual reference
+
+Dionysus UI 的 `DropsProgress` 以 MetalForge 公开编辑器中的 Progress / Drops 效果作为视觉与行为研究对象，重新实现稳定网格、概率前沿、activity 抖动和分段自动进度状态机，并改写为本项目的 React、OGL/WebGL2、无障碍与降级契约。仓库不包含 MetalForge 编辑器 UI、品牌资产、导出模板或原始 bundle 文件。
+
+- Product: MetalForge
+- Reference: <https://metalforge.xyz/editor#effect=progress&style=drops>
+- Local evidence: [`docs/reference-analysis/drops-progress/alignment-report.md`](docs/reference-analysis/drops-progress/alignment-report.md)
+
+当前归档只承诺视觉级复刻，不表示 MetalForge 对本实现的认可或授权。若未来把 `DropsProgress` 作为独立组件公开销售、再许可或分发，发布前必须重新审查参考实现的权利边界，并在必要时完成 clean-room 复核或取得授权。
 
 ## Montserrat Variable
 
